@@ -267,6 +267,11 @@ function getUserName($user_id)
 	return DB::table('users')->where('user_id', $user_id)->select('name')->get()->first();
 }
 
+function postName($post_id)
+{
+	return DB::table('posts')->where('post_id', $post_id)->select('post_title')->get()->first();
+}
+
 function createUuid($name = 'vendorP')
 {
 	return Uuid::generate(5, $name, Uuid::NS_DNS);

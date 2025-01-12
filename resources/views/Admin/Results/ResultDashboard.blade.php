@@ -13,8 +13,10 @@
                             <div class="input-group input-group-merge">
                                 <select name="game_id" id="game_id" class="form-control">
                                     <option value="">Select Option</option>
-                                    @foreach($numberGame as $choice)
+                                    @foreach ($numberGame as $choice)
+                                    @if (isset($choice['extraFields']['close_date']) && $choice['extraFields']['close_date'] >= dateonly())
                                     <option value="{{ $choice->post_id }}">{{ $choice->post_title }}</option>
+                                    @endif
                                     @endforeach
                                 </select>
                             </div>
@@ -23,10 +25,6 @@
                         <div class="col-sm-4">
                             <select name="result" id="result" class="form-control">
                                 <option value="">Select Option</option>
-                                @foreach($numberGame as $choice)
-                                    <option value="{{ $choice['extraFields']['answer_one'] }}">{{ $choice['extraFields']['answer_one'] }}</option>
-                                    <option value="{{ $choice['extraFields']['answer_two'] }}">{{ $choice['extraFields']['answer_two'] }}</option>
-                                @endforeach
                             </select>
                         </div>
 
@@ -42,3 +40,32 @@
     </div>
     <!--/ Basic Bootstrap Table -->
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('#game_id').change(function() {
+            const gameId = $(this).val();
+            const resultDropdown = $('#result');
+            resultDropdown.empty(); // Clear previous options
+            resultDropdown.append('<option value="">Select Option</option>');
+
+            if (gameId) {
+                $.ajax({
+                    url: "{{ route('gameOptions') }}",
+                    method: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        game_id: gameId
+                    },
+                    success: function(response) {
+                        response.answers.forEach(function(answer) {
+                            resultDropdown.append(
+                                `<option value="${answer}">${answer}</option>`
+                            );
+                        });
+                    }
+                });
+            }
+        });
+    });
+</script>

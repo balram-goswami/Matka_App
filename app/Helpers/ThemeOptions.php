@@ -95,17 +95,18 @@ function themeFieldArray()
             [
                 // Banner Section
                 [
-                    'title' =>'Banner Title',
-                    'id' => 'bannerTitle',
-                    'type' => 'text',
-                    'placeholder' =>'Banner Title',
-                    'default' => '',
-                ], 
-                [
                     'title' =>'Banner Logo',
                     'id' => 'bannerLogo',
                     'type' => 'FilesUpload',
                     'slug'=>'bannerLogo',
+                    'placeholder' => 'Banner Logo',
+                    'default' => '',
+                ], 
+                [
+                    'title' =>'Banner Logo',
+                    'id' => 'bannerLogo1',
+                    'type' => 'FilesUpload',
+                    'slug'=>'bannerLogo1',
                     'placeholder' => 'Banner Logo',
                     'default' => '',
                 ], 
@@ -133,137 +134,6 @@ function themeFieldArray()
 
             ]
         ],
-        
-        [
-            'key' => 'footer',
-            'title' => 'Footer',
-            'icon'=>'<i class="fa fa-cog" aria-hidden="true"></i>',
-            'fields' => 
-            [
-                [
-                    'title' =>'logo',
-                    'id' => 'footerLogo',
-                    'type' => 'FilesUpload',
-                    'slug'=>'footer',
-                    'placeholder' => 'Upload Logo',
-                    'default' => '',
-                ], 
-                [
-                    'title' =>'Description',
-                    'id' => 'footerdescription',
-                    'type' => 'textarea',
-                    'placeholder' =>'Description',
-                    'default' => '',
-                ],
-                [
-                    'title' =>'Address',
-                    'id' => 'address',
-                    'type' => 'text',
-                    'placeholder' =>'Address',
-                    'default' => '',
-                ], 
-                [
-                    'title' =>'News Letter Text',
-                    'id' => 'news',
-                    'type' => 'text',
-                    'placeholder' =>'News Letter Text',
-                    'default' => '',
-                ],
-                [
-                    'title' =>'CopyRight',
-                    'id' => 'footercopyright',
-                    'type' => 'textarea',
-                    'placeholder' =>'CopyRight',
-                    'default' => '',
-                ]
-            ]
-        ],
-        [
-            'key' => 'contact_us',
-            'title' => 'Contact Us Page',
-            'icon'=>'<i class="fa fa-cog" aria-hidden="true"></i>',
-            'fields' => 
-            [
-                [
-                    'title' =>'Page Title',
-                    'id' => 'pagetitle',
-                    'type' => 'text',
-                    'placeholder' =>'Page Title',
-                    'default' => '',
-                ],  
-                [
-                    'title' =>'Page Text',
-                    'id' => 'pagetext',
-                    'type' => 'text',
-                    'placeholder' =>'Page Text',
-                    'default' => '',
-                ],  
-                [
-                    'title' =>'Form Title',
-                    'id' => 'formtitle',
-                    'type' => 'text',
-                    'placeholder' =>'Form Title',
-                    'default' => '',
-                ],  
-                [
-                    'title' =>'Form Text',
-                    'id' => 'formtext',
-                    'type' => 'text',
-                    'placeholder' =>'Form Text',
-                    'default' => '',
-                ],  
-                [
-                    'title' =>'Address',
-                    'id' => 'address',
-                    'type' => 'text',
-                    'placeholder' =>'Address',
-                    'default' => '',
-                ], 
-                [
-                    'title' =>'Primery Number',
-                    'id' => 'phoneNumber',
-                    'type' => 'text',
-                    'placeholder' =>'Phone Number',
-                    'default' => '',
-                ],
-                [
-                    'title' =>'Secondary Number',
-                    'id' => 'phoneNumber1',
-                    'type' => 'text',
-                    'placeholder' =>'Phone Number',
-                    'default' => '',
-                ],  
-                [
-                    'title' =>'Email ID',
-                    'id' => 'emailId',
-                    'type' => 'text',
-                    'placeholder' =>'Email ID',
-                    'default' => '',
-                ], 
-                [
-                    'title' =>'Facebook URL',
-                    'id' => 'facebookUrl',
-                    'type' => 'text',
-                    'placeholder' =>'Facebook URL',
-                    'default' => '',
-                ], 
-                [
-                    'title' =>'Instagram URL',
-                    'id' => 'instagramUrl',
-                    'type' => 'text',
-                    'placeholder' =>'Instagram URL',
-                    'default' => '',
-                ], 
-                [
-                    'title' =>'Twitter URL',
-                    'id' => 'twitterUrl',
-                    'type' => 'text',
-                    'placeholder' =>'Twitter URL',
-                    'default' => '',
-                ],
-                
-            ]
-        ]
     ];
 }
 

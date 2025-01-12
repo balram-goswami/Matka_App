@@ -21,6 +21,13 @@ class CreateUsersTable extends Migration
             $table->string('photo')->nullable();
             $table->string('password'); 
             $table->string("role");
+            $table->string('bank_name')->nullable();
+            $table->string('ac_holder_name')->nullable();
+            $table->string('ac_number')->nullable();
+            $table->string('ifsc_code')->nullable();
+            $table->string('upi_one')->nullable();
+            $table->string('upi_two')->nullable();
+            $table->string('upi_three')->nullable();
             $table->datetime('email_verified_at');
             $table->rememberToken();
             $table->timestamps();

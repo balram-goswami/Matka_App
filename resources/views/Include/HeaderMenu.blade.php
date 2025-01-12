@@ -1,7 +1,14 @@
+@php
+$headerOption = getThemeOptions('header');
+$homePage = getThemeOptions('homePage');
+@endphp
+
 <div class="header-area" id="headerArea">
     <div class="container h-100 d-flex align-items-center justify-content-between d-flex rtl-flex-d-row-r">
         <!-- Logo Wrapper -->
-        <div class="logo-wrapper"><a href=""><img src="{{$headerOption['headerlogo']}}" alt="headerLogo" style="height: 50px;"></a>
+         @if(isset($headerOption['headerlogo']))
+        <div class="logo-wrapper"><a href=""><img src="{{ $headerOption['headerlogo'] }}" alt="headerLogo" style="height: 50px;"></a>
+        @endif
         </div>
         <div class="navbar-logo-container d-flex align-items-center">
             <!-- Cart Icon -->

@@ -38,6 +38,8 @@ Route::get('resultDashboard', [UserController::class, 'resultDashboard'])->name(
 Route::post('gameResult', [UserController::class, 'gameResult'])->name('gameResult');
 Route::get('paymentRequest', [UserController::class, 'paymentRequest'])->name('paymentRequest');
 Route::get('confermPayment/{id}', [UserController::class, 'confermPayment'])->name('confermPayment');
+Route::post('/gameOptions', [UserController::class, 'gameOptions'])->name('gameOptions');
+
 
 // Media
 Route::resource('/media', MediaController::class, ['names' => 'media']);

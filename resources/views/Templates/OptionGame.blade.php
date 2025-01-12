@@ -30,22 +30,32 @@
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <form action="{{ route('optionGameEntry') }}" method="POST">
                         @csrf
-                        <input type="text" name="user_id" value="{{ $user->user_id }}" hidden>
-                        <input type="text" name="game_id" value="{{ $post->post_id }}" hidden>
-                        <select class="form-control border mb-1" id="answer" name="answer" required>
-                            <option value="">Select Your Answer</option>
-                            <option value="{{ $post['extraFields']['answer_one'] }}">
-                                {{ $post['extraFields']['answer_one'] }}</option>
-                            <option value="{{ $post['extraFields']['answer_two'] }}">
-                                {{ $post['extraFields']['answer_two'] }}</option>
-                        </select>
-                        @php
-                            $balance = $wallet->balance;
-                            $availableBalance = $balance - $totalAmount;
-                        @endphp
-                        <input class="form-control border mb-1" id="bid_amount" name="bid_amount" type="number"
-                            placeholder="Bid Amount" min="10" max="{{$availableBalance}}" step="0.01" required>
-                        <button type="submit" class="btn btn-primary btn-lg w-100">Place Bid</button>
+                        <div class="input-group row">
+                            <div class="col-md-6 col-6">
+                                <input type="text" name="user_id" value="{{ $user->user_id }}" hidden>
+                                <input type="text" name="game_id" value="{{ $post->post_id }}" hidden>
+                                <select class="form-control border mb-1" id="answer" name="answer" required>
+                                    <option value="">Select Your Answer</option>
+                                    <option value="{{ $post['extraFields']['answer_one'] }}">
+                                        {{ $post['extraFields']['answer_one'] }}
+                                    </option>
+                                    <option value="{{ $post['extraFields']['answer_two'] }}">
+                                        {{ $post['extraFields']['answer_two'] }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 col-6">
+                                @php
+                                $balance = $wallet->balance;
+                                $availableBalance = $balance - $totalAmount;
+                                @endphp
+                                <input class="form-control border mb-1" id="bid_amount" name="bid_amount" type="number"
+                                    placeholder="Bid Amount" min="10" max="{{$availableBalance}}" step="0.01" required>
+                            </div>
+                            <br>
+                            <div class="col-md-6">
+                            <button type="submit" class="btn btn-primary btn-lg w-100">Place Bid</button>
+                            </div>
                     </form>
                 </div>
             </div>
@@ -62,17 +72,17 @@
                         </thead>
                         <tbody>
                             @foreach ($bids as $bid)
-                                <tr>
-                                    <td>{{ $bid->answer }}</td>
-                                    <td>{{ $bid->bid_amount }}</td>
-                                    <th scope="row">
-                                        <form action="{{ route('deleteBid', ['id' => $bid->id]) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="remove-product"><i
-                                                    class="ti ti-x"></i></button>
-                                            <form>
-                                    </th>
-                                </tr>
+                            <tr>
+                                <td>{{ $bid->answer }}</td>
+                                <td>{{ $bid->bid_amount }}</td>
+                                <th scope="row">
+                                    <form action="{{ route('deleteBid', ['id' => $bid->id]) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="remove-product"><i
+                                                class="ti ti-x"></i></button>
+                                        <form>
+                                </th>
+                            </tr>
                             @endforeach
                             <tr>
                                 <td>Total</td>
@@ -105,17 +115,17 @@
 
 <script>
     document.getElementById('bid_amount').addEventListener('input', function() {
-      const bidAmount = parseFloat(this.value);
-      const minAmount = parseFloat(this.min);
-      const maxAmount = parseFloat(this.max);
-      
-      if (bidAmount < minAmount || bidAmount > maxAmount) {
-        this.setCustomValidity(`Avilable Balance ${maxAmount}.`);
-      } else {
-        this.setCustomValidity('');
-      }
+        const bidAmount = parseFloat(this.value);
+        const minAmount = parseFloat(this.min);
+        const maxAmount = parseFloat(this.max);
+
+        if (bidAmount < minAmount || bidAmount > maxAmount) {
+            this.setCustomValidity(`Avilable Balance ${maxAmount}.`);
+        } else {
+            this.setCustomValidity('');
+        }
     });
-  </script>
+</script>
 
 
 <script>

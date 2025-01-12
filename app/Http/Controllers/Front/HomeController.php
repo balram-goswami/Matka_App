@@ -17,7 +17,8 @@ use App\Models\{
   UserDetails,
   Cart,
   WalletTransactions,
-  BidTransaction
+  BidTransaction,
+  GameResult
 };
 
 use Illuminate\Support\Facades\Http;
@@ -389,5 +390,14 @@ class HomeController extends Controller
 
     $view = 'Templates.Transaction';
     return view('Front', compact('view', 'list', 'user', 'wallet'));
+  }
+
+  public function resultPage()
+  {
+    $user = getCurrentUser();
+    $result = GameResult::all();
+    $view = 'Templates.ResultPage';
+
+    return view('Front', compact('view', 'result', 'user'));
   }
 }

@@ -63,14 +63,6 @@ class UserService
         $service->role = $request->input('role') ?? 'user';
         $service->save();
 
-        if (!$userDetail = UserDetails::where('user_id', $service->id)->get()->first()) {
-            $userDetail = new UserDetails();
-            $userDetail->user_id = $service->user_id;
-            $userDetail->created_at = dateTime();
-            $userDetail->save();
-            
-        }
-
         if (!$wallet = Wallet::where('user_id', $service->id)->get()->first()) {
             $wallet = new Wallet();
             $wallet->user_id = $service->user_id;
@@ -107,6 +99,13 @@ class UserService
         $service->name = $request->input('name');
         $service->email = $request->input('email');
         $service->phone = $request->input('phone');
+        $service->bank_name = $request->input('bank_name');
+        $service->ac_holder_name = $request->input('ac_holder_name');
+        $service->ac_number = $request->input('ac_number');
+        $service->ifsc_code = $request->input('ifsc_code');
+        $service->upi_one = $request->input('upi_one');
+        $service->upi_two = $request->input('upi_two');
+        $service->upi_three = $request->input('upi_three');
         if ($password) {
             $service->password = bcrypt($password);
         }
@@ -115,6 +114,7 @@ class UserService
 
         return $service;
     }
+    
     public function delete($service = null)
     {
         if (!is_object($service)) {

@@ -9,7 +9,7 @@
             <div class="user-profile"><img src="../themeAssets/img/bg-img/9.jpg" alt=""></div>
             <div class="user-info">
                 <h5 class="user-name mb-1 text-white">{{$user->name}}</h5>
-                <p class="available-balance text-white">Balance :- 
+                <p class="available-balance text-white">Balance :-
                     @if(isset($wallet->balance))
                     <span class="counter">{{ $wallet->balance }}</span>
                     @endif
@@ -19,10 +19,45 @@
         <!-- Sidenav Nav-->
         <ul class="sidenav-nav ps-0">
             <li><a href="{{ route('profile')}}"><i class="ti ti-user"></i>My Profile</a></li>
-            <li><a href="notifications.html"><i class="ti ti-bell-ringing lni-tada-effect"></i>Notifications<span
-                        class="ms-1 badge badge-warning">3</span></a></li>
-            
-            <li><a href="settings.html"><i class="ti ti-adjustments-horizontal"></i>Settings</a></li>
+            <li><a href="{{ route('myBids') }}"><i class="ti ti-bell-ringing lni-tada-effect"></i>My Bids</a></li>
+            <li><a href="{{ route('transaction')}}"><i class="ti ti-adjustments-horizontal"></i>Transaction</a></li>
+            <li><a href="{{ route('resultPage')}}"><i class="ti ti-adjustments-horizontal"></i>Results</a></li>
+            <li>
+                <div class="card settings-card">
+                    <div class="card-body">
+                        <!-- Single Settings-->
+                        <div class="single-settings d-flex align-items-center justify-content-between">
+                            <div class="title"><i class="ti ti-moon"></i><span>Night Mode</span></div>
+                            <div class="data-content">
+                                <div class="toggle-button-cover">
+                                    <div class="button r">
+                                        <input class="checkbox" id="darkSwitch" type="checkbox">
+                                        <div class="knobs"></div>
+                                        <div class="layer"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card settings-card">
+            <div class="card-body">
+              <!-- Single Settings-->
+              <div class="single-settings d-flex align-items-center justify-content-between">
+                <div class="title"><i class="ti ti-pilcrow"></i><span>RTL Mode</span></div>
+                <div class="data-content">
+                  <div class="toggle-button-cover">
+                    <div class="button r">
+                      <input class="checkbox" id="rtlSwitch" type="checkbox">
+                      <div class="knobs"></div>
+                      <div class="layer"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+            </li>
             <li><a href="{{ route('auth.logout')}}"><i class="ti ti-logout"></i>Sign Out</a></li>
         </ul>
     </div>

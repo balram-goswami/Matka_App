@@ -7,7 +7,7 @@
       <li><a href="{{ route('user-dashboard') }}"><i class="ti ti-home"></i>Home</a></li>
       <li><a href="{{ route('myBids') }}"><i class="ti ti-message"></i>MyBid</a></li>
       <li><a href="{{ route('transaction')}}"><i class="ti ti-basket"></i>Transaction</a></li>
-      <li><a href="settings.html"><i class="ti ti-settings"></i>Results</a></li>
-      <li><a href="pages.html"><i class="ti ti-heart"></i>Profile</a></li>
+      <li><a href="{{ route('resultPage')}}"><i class="ti ti-settings"></i>Results</a></li>
+      <li><a href="{{ route('profile') }}"><i class="ti ti-heart"></i>Profile</a></li>
     </ul>
   </div>

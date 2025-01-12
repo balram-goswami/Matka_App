@@ -5,7 +5,7 @@
         <div class="back-button me-2"><a href="{{ route('user-dashboard') }}"><i class="ti ti-arrow-left"></i></a></div>
         <!-- Page Title-->
         <div class="page-heading">
-            <h6 class="mb-0">Transactions</h6>
+            <h6 class="mb-0">Results</h6>
         </div>
         <!-- Navbar Toggler-->
         <div class="suha-navbar-toggler ms-2" data-bs-toggle="offcanvas" data-bs-target="#suhaOffcanvas"
@@ -26,28 +26,21 @@
                     <table class="table mb-0">
                         <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>UTR No.</th>
-                                <th>Deposit</th>
-                                <th>Withdraw</th>
-                                <th>Status</th>
+                                <th>Game</th>
+                                <th>Result</th>
+                                <th>Result Date</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($list as $item)
-                                <tr>
-                                    <td>{{ $item->updated_at }}</td>
-                                    <td>{{ $item->utr_number }}</td>
-                                    <td>{{ $item->deposit_amount }}</td>
-                                    <td>{{ $item->withdraw_amount }}</td>
-                                    @if ($item->request_status === 'pending')
-                                        <td style="color: red">Pending</td>
-                                    @else
-                                        <td style="color: green">
-                                            <b>Approved</b>
-                                        </td>
-                                    @endif
-                                </tr>
+                            @foreach ($result as $results)
+                            @php
+                            $gameName = postName($results->game_id);
+                            @endphp
+                            <tr>
+                                <td>{{ $gameName->post_title }}</td>
+                                <td>{{ $results->result }}</td>
+                                <td>{{ $results->updated_at }}</td>
+                            </tr>
                             @endforeach
                         </tbody>
                     </table>
@@ -56,5 +49,6 @@
         </div>
     </div>
 </div>
+
 
 @include('Include.FooterMenu')

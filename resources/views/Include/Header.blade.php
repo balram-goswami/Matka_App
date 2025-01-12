@@ -24,7 +24,9 @@ $homePage = getThemeOptions('homePage');
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap"
         rel="stylesheet">
     <!-- Favicon -->
+     @if(isset($headerOption['headerfavicon']))
     <link rel="icon" href="{{$headerOption['headerfavicon']}}">
+    @endif
     <!-- Apple Touch Icon -->
     <link rel="apple-touch-icon" href="../themeAssets/img/icons/icon-96x96.png">
     <link rel="apple-touch-icon" sizes="152x152" href="../themeAssets/img/icons/icon-152x152.png">
@@ -32,6 +34,7 @@ $homePage = getThemeOptions('homePage');
     <link rel="apple-touch-icon" sizes="180x180" href="../themeAssets/img/icons/icon-180x180.png">
 
     @include('Include.Style')
+    
     
 </head>
 

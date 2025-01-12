@@ -19,6 +19,7 @@
                         @php
                         $userName = getUserName($list->user_id);
                         @endphp
+                        @if($list->withdraw_amount == NULL)
                         <tr>
                             <td>{{ $userName->name }}</td>
                             <td>{{ $list->utr_number}}</td>
@@ -39,6 +40,7 @@
                                 @endif
                             </td>
                         </tr>
+                        @endif
                         @endforeach
                     </tbody>
                 </table>
@@ -56,8 +58,7 @@
                     <thead>
                         <tr>
                             <th>User</th>
-                            <th>UTR No.</th>
-                            <th>Message</th>
+                            <th>Wallet Balance</th>
                             <th>Amount</th>
                             <th>Status</th>
                             <th>Actions</th>
@@ -67,12 +68,13 @@
                         @foreach($payment as $list)
                         @php
                         $userName = getUserName($list->user_id);
+                        $walletBalance = DB::table('wallets')->where('user_id', $list->user_id)->get()->first(); 
                         @endphp
+                        @if($list->deposit_amount == NULL)
                         <tr>
                             <td>{{ $userName->name }}</td>
-                            <td>{{ $list->utr_number}}</td>
-                            <td>{{ $list->remark}}</td>
-                            <td>{{ $list->deposit_amount}}</td>
+                            <td>{{ $walletBalance->balance }}</td>
+                            <td>{{ $list->withdraw_amount}}</td>
                             <td>
                                 @if($list->request_status === 'pending')
                                 <span class="badge bg-label-success me-1">Pending</span>
@@ -84,6 +86,7 @@
 
                             </td>
                         </tr>
+                        @endif
                         @endforeach
                     </tbody>
                 </table>

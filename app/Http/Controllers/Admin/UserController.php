@@ -272,4 +272,24 @@ class UserController extends Controller
 
         return redirect()->back()->with('success', 'Payment successfully confirmed.');
     }
+
+    public function gameOptions(Request $request)
+    {
+        {
+            $game = getPostsByPostType('optiongame', 0, 'new', true)->where('post_id', $request->game_id);
+            
+            foreach($game as $currentGame){
+                if ($currentGame) {
+                    return response()->json([
+                        'answers' => [
+                            $currentGame['extraFields']['answer_one'],
+                            $currentGame['extraFields']['answer_two']
+                        ]
+                    ]);
+                }
+                return response()->json(['answers' => []]);
+            }
+            
+        }
+    }
 }

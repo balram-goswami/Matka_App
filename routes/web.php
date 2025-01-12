@@ -29,6 +29,7 @@ Route::post('withdrawMoney', [HomeController::class, 'withdrawMoney'])->name('wi
 Route::get('profile', [HomeController::class, 'profile'])->name('profile');
 Route::get('myBids', [HomeController::class, 'myBids'])->name('myBids');
 Route::get('transaction', [HomeController::class, 'transaction'])->name('transaction');
+Route::get('resultPage', [HomeController::class, 'resultPage'])->name('resultPage');
 
 Route::post('optionGameEntry', [HomeController::class, 'optionGameEntry'])->name('optionGameEntry');
 Route::post('deleteBid/{id}', [HomeController::class, 'deleteBid'])->name('deleteBid');

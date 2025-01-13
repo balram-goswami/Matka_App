@@ -34,9 +34,12 @@
                         </thead>
                         <tbody>
                             @foreach ($bids as $bid)
+                            @php 
+                            $gameName = postName($bid->game_id);
+                            @endphp
                                 <tr>
                                     <td>{{ $bid->updated_at }}</td>
-                                    <td>{{ $bid->game_id }}</td>
+                                    <td>{{ $gameName->post_title }}</td>
                                     <td>{{ $bid->bid_amount }}</td>
                                     @if($bid->answer === $bid->bid_result)
                                         <td style="color: green">

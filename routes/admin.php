@@ -39,6 +39,8 @@ Route::post('gameResult', [UserController::class, 'gameResult'])->name('gameResu
 Route::get('paymentRequest', [UserController::class, 'paymentRequest'])->name('paymentRequest');
 Route::get('confermPayment/{id}', [UserController::class, 'confermPayment'])->name('confermPayment');
 Route::post('/gameOptions', [UserController::class, 'gameOptions'])->name('gameOptions');
+Route::get('viewPayment/{id}',[UserController::class, 'viewPayment'])->name('viewPayment');
+Route::post('withdralRequest', [UserController::class, 'withdralRequest'])->name('withdralRequest');
 
 
 // Media

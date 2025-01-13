@@ -35,6 +35,6 @@ class UserDetailsController extends Controller
         }
         $this->userDetailsService->update($request, $user);
         Session::flash('success', "User Details update successfully.");
-        return redirect()->route('users.index');
+        return redirect()->back();
     }
 }

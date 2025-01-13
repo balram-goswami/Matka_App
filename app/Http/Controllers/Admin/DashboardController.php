@@ -17,10 +17,8 @@ class DashboardController extends Controller
     public function index() {
         $view = 'Admin.Dashboard.Index';
         $userCount = $this->dashboardService->userCount();
-        $enquiryCount = $this->dashboardService->enquiryCount();
-        $subscribersCount = $this->dashboardService->subscribersCount();
         $postCounts = $this->dashboardService->postsCount();
-        return view('Admin', compact('view','userCount','postCounts','subscribersCount','enquiryCount'));
+        return view('Admin', compact('view','userCount','postCounts'));
     }
 
 }

@@ -66,15 +66,15 @@
                                 <input class="form-control" id="phone" name="phone" type="tel"
                                     placeholder="Phone Number" value="{{ old('phone') }}" style="border-color: white;">
                             </div>
-                            <div class="form-group text-start mb-4"><span>Password</span>
-                                <label for="email"><i class="ti ti-lock"></i></label>
-                                <input class="form-control" id="password" name="password" type="password"
-                                    placeholder="Enter Password" style="border-color: white;">
+                            <div class="form-group text-start mb-4">
+                                <span>Password</span>
+                                <label for="password"><i class="ti ti-lock"></i></label>
+                                <input class="form-control" id="password" name="password" type="password" placeholder="Enter Password" style="border-color: white;">
                             </div>
-                            <div class="form-group text-start mb-4"><span>Conform Password</span>
-                                <label for="email"><i class="ti ti-lock"></i></label>
-                                <input class="form-control" id="password_confirmation" name="password_confirmation"
-                                    type="password" placeholder="Confirm Password" style="border-color: white;">
+                            <div class="form-group text-start mb-4">
+                                <span>Confirm Password</span>
+                                <label for="password_confirmation"><i class="ti ti-lock"></i></label>
+                                <input class="form-control" id="password_confirmation" name="password_confirmation" type="password" placeholder="Confirm Password" style="border-color: white;">
                             </div>
                             <button class="btn btn-warning btn-lg w-100" type="submit">Register</button>
                         </form>
@@ -91,22 +91,22 @@
     </div>
     <script>
         function validateForm() {
-            const phone = document.getElementById('phone').value;
+            const phone = document.getElementById('phone')?.value; // Optional chaining for safety
             const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('conform_password').value;
-
-            // Check if the phone number is more than 10 digits
-            if (phone.length > 10 || !/^\d{10}$/.test(phone)) {
+            const confirmPassword = document.getElementById('password_confirmation').value;
+    
+            // Check if the phone number is valid
+            if (phone && (phone.length !== 10 || !/^\d{10}$/.test(phone))) {
                 alert("Phone number must be exactly 10 digits.");
                 return false;
             }
-
-            // Check if both passwords are the same
+    
+            // Check if both passwords match
             if (password !== confirmPassword) {
                 alert("Passwords do not match.");
                 return false;
             }
-
+    
             return true; // Allow form submission
         }
     </script>

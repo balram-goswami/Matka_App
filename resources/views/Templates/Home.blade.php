@@ -1,5 +1,17 @@
 @include('Include.HeaderMenu')
 
+<!-- PWA Install Alert -->
+<div class="toast pwa-install-alert shadow bg-white" role="alert" aria-live="assertive" aria-atomic="true"
+    data-bs-delay="5000" data-bs-autohide="true">
+    <div class="toast-body">
+        <div class="content d-flex align-items-center mb-2"><img src="../themeAssets/img/icons/icon-72x72.png" alt="">
+            <h6 class="mb-0">Add to Home Screen</h6>
+            <button class="btn-close ms-auto" type="button" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div><span class="mb-0 d-block">Click the<strong class="mx-1">Add to Home Screen</strong>button &amp;
+            enjoy
+            it like a regular app.</span>
+    </div>
+</div>
 <div class="page-content-wrapper">
 
     <!-- Hero Wrapper -->
@@ -103,10 +115,17 @@
                                     <div class="sale-price"><i class="ti ti-arrow-right"></i><a
                                             href="{{ route('single.post', ['post_type' => $quizgame->post_type, 'slug' => $quizgame->post_name]) }}">Play</a>
                                     </div>
+                                    
                                     @else
                                     <div class="product-rating"><i class="ti ti-star-filled"></i>Market <span
                                             class="ms-1">( Closed )</span></div>
+                                            @php
+                                            $result = DB::table('game_results')->where('game_id', $quizgame->post_id)->get()->first();
+                                            @endphp
+                                    <div class="product-rating"><i class="ti ti-star-filled"></i>Result <span
+                                            class="ms-1">:- {{ $result->result }}</span></div>
                                     @endif
+                                    
                                 </div>
                             </div>
                         </div>

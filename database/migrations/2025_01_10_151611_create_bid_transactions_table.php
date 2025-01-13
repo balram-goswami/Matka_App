@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('game_id');
             $table->string('answer')->nullable();
             $table->string('bid_result')->nullable();
-            $table->integer('bid_amount');
-            $table->integer('winning_amount')->nullable();
+            $table->string('bid_amount')->nullable();
+            $table->string('winning_amount')->nullable();
             $table->string('status')->default('pending');
             $table->timestamps();
         });

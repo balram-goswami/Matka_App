@@ -68,8 +68,9 @@
                         @foreach($payment as $list)
                         @php
                         $userName = getUserName($list->user_id);
-                        $walletBalance = DB::table('wallets')->where('user_id', $list->user_id)->get()->first(); 
+                        $walletBalance = DB::table('wallets')->where('user_id', $list->user_id)->get()->first();
                         @endphp
+
                         @if($list->deposit_amount == NULL)
                         <tr>
                             <td>{{ $userName->name }}</td>
@@ -83,7 +84,11 @@
                                 @endif
                             </td>
                             <td>
-
+                                @if($list->request_status === 'pending')
+                                <a href="{{ route('viewPayment', $list->id)}}"> View </a>
+                                @else
+                                <span class="badge bg-label-primary me-1">Payment Done</span>
+                                @endif
                             </td>
                         </tr>
                         @endif

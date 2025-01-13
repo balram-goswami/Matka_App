@@ -302,6 +302,18 @@ class HomeController extends Controller
     return view('Front', compact('view', 'user', 'wallet'));
   }
 
+  public function profileUpdate()
+  {
+    $user = getCurrentUser();
+    if ($user->user_id == NULL) {
+      $view = "Templates.Welcome";
+      return view('Front', compact('view'));
+    }
+    $wallet = Wallet::where('user_id', $user->user_id)->first();
+    $view = 'Templates.UpdateDetails';
+    return view('Front', compact('view', 'user', 'wallet'));
+  }
+
   public function myBids()
   {
     $user = getCurrentUser();
@@ -363,7 +375,7 @@ class HomeController extends Controller
     $wallet->balance = $wallet->balance - $bids->sum('bid_amount');
     $wallet->save();
 
-    return redirect()->back()->with('success', 'All Bids Submitted Successfully');
+    return redirect()->route('myBids')->with('success', 'All Bids Submitted Successfully');
   }
 
   public function cancelAllBid($game_id)

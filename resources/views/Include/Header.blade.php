@@ -34,7 +34,7 @@ $homePage = getThemeOptions('homePage');
     <link rel="apple-touch-icon" sizes="180x180" href="../themeAssets/img/icons/icon-180x180.png">
 
     @include('Include.Style')
-    
+    @laravelPWA
     
 </head>
 

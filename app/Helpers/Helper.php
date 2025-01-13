@@ -677,21 +677,21 @@ function getMenus()
 function postTypes()
 {
 	return [
-		'page' => [
-			'area' => 'Admin',
-			'title' => 'Page',
-			'icon' => 'tf-icons bx bx-book-content',
-			'slug' => 'page',
-			'role' => [User::ADMIN],
-			'showMenu' => true,
-			'multilng' => false,
-			'support' => ['content', 'excerpt', 'seo', 'featured'],
-			'templateOption' => [
-				'PostDefault' => 'Default Template',
-				'Home' => 'Home Template',
-			],
-			'taxonomy' => []
-		],
+		// 'page' => [
+		// 	'area' => 'Admin',
+		// 	'title' => 'Page',
+		// 	'icon' => 'tf-icons bx bx-book-content',
+		// 	'slug' => 'page',
+		// 	'role' => [User::ADMIN],
+		// 	'showMenu' => true,
+		// 	'multilng' => false,
+		// 	'support' => ['content', 'excerpt', 'seo', 'featured'],
+		// 	'templateOption' => [
+		// 		'PostDefault' => 'Default Template',
+		// 		'Home' => 'Home Template',
+		// 	],
+		// 	'taxonomy' => []
+		// ],
 		
 		'optiongame' => [
 			'area' => 'Admin',

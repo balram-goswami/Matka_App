@@ -119,7 +119,7 @@ class UserController extends Controller
     {
         $this->service->store($request);
         Session::flash('success', "New User saves successfully.");
-        return redirect()->route('users.index');
+        return redirect()->back();
     }
 
     /**
@@ -160,11 +160,11 @@ class UserController extends Controller
     {
         if (!$user = $this->service->get($id)) {
             Session::flash('success', "User not found in our system.");
-            return redirect()->route('users.index');
+            return redirect()->back();
         }
         $this->service->update($request, $user);
         Session::flash('success', "User Details update successfully.");
-        return redirect()->route('users.index');
+        return redirect()->back();
     }
 
     /**
@@ -252,7 +252,7 @@ class UserController extends Controller
 
         // Check if the transaction exists and is pending
         if (!$pay) {
-            return redirect()->back()->with('error', 'Transaction not found or already processed.');
+            return redirect()->back()->with('danger', 'Transaction not found or already processed.');
         }
 
         // Update the transaction status
@@ -263,7 +263,7 @@ class UserController extends Controller
         $wallet = Wallet::find($pay->wallet_id);
 
         if (!$wallet) {
-            return redirect()->back()->with('error', 'Wallet not found.');
+            return redirect()->back()->with('danger', 'Wallet not found.');
         }
 
         // Update the wallet balance
@@ -274,11 +274,10 @@ class UserController extends Controller
     }
 
     public function gameOptions(Request $request)
-    {
-        {
+    { {
             $game = getPostsByPostType('optiongame', 0, 'new', true)->where('post_id', $request->game_id);
-            
-            foreach($game as $currentGame){
+
+            foreach ($game as $currentGame) {
                 if ($currentGame) {
                     return response()->json([
                         'answers' => [
@@ -289,7 +288,59 @@ class UserController extends Controller
                 }
                 return response()->json(['answers' => []]);
             }
-            
         }
+    }
+
+    public function viewPayment($id)
+    {
+        $payment = WalletTransactions::where('id', $id)->get()->first();
+        $user = getUser($payment->user_id);
+        $view = 'Admin.Results.ViewPaymentRequest';
+        return view('Admin', compact('view', 'user', 'payment'));
+    }
+
+    public function withdralRequest(Request $request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'id' => 'required',
+                'wallet_id' => 'required',
+                'transaction_type' => 'required',
+                'utr_number' => 'required',
+            ]
+        );
+        
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $pay = WalletTransactions::where('id', $request->id)
+            ->where('request_status', 'pending')
+            ->first();
+
+        // Check if the transaction exists and is pending
+        if (!$pay) {
+            return redirect()->back()->with('danger', 'Transaction not found or already processed.');
+        }
+      
+        // Update the transaction status
+        $pay->request_status = 'complete';
+        $pay->transaction_type = $request->transaction_type;
+        $pay->utr_number = $request->utr_number;
+        $pay->save();
+
+        // Find the associated wallet
+        $wallet = Wallet::find($request->wallet_id);
+
+        if (!$wallet) {
+            return redirect()->back()->with('danger', 'Wallet not found.');
+        }
+
+        // Update the wallet balance
+        $wallet->balance -= $pay->withdraw_amount; // Increment the balance
+        $wallet->save();
+
+        return redirect()->route('paymentRequest')->with('success', 'Payment successfully confirmed.');
     }
 }

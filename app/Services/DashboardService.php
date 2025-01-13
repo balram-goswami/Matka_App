@@ -14,12 +14,7 @@ class DashboardService
     public function userCount(){
         return User::count();
     }
-    public function enquiryCount(){
-        return Enquiry::count();
-    }
-    public function subscribersCount(){
-        return Subscibers::count();
-    }
+    
     public function postsCount(){
         $postCounts = [];
         foreach (postTypes() as $postKey => $postValue) {

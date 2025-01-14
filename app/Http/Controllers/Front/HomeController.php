@@ -115,11 +115,7 @@ class HomeController extends Controller
       $view = 'Templates.NotFound';
       return view('NotFound', compact('view', 'post'));
     }
-    $astrologer = User::with('userDetails')->where('role', 'astrologer')->get();
-    $homePage = getThemeOptions('homePage');
-
-    $allProduct = getPostsByPostType('products', 0, 'new', true);
-    return view('Front', compact('view', 'post', 'homePage', 'astrologer', 'allProduct'));
+    return view('Front', compact('view', 'post', 'homePage'));
   }
 
   public function singlePost($post_type, $page, Request $request)
@@ -178,6 +174,7 @@ class HomeController extends Controller
     $bids = BidTransaction::where('game_id', $post->post_id)
       ->where('user_id', $user->user_id)
       ->where('status', 'pending')
+      ->orderBy('created_at', 'DESC')
       ->get();
     $wallet = Wallet::where('user_id', $user->user_id)->first();
 
@@ -309,12 +306,13 @@ class HomeController extends Controller
     $user = getCurrentUser();
     $bids = BidTransaction::where('user_id', $user->user_id)
       ->where('status', 'submitted')
+      ->orderBy('created_at', 'DESC')
       ->get();
     $wallet = Wallet::where('user_id', $user->user_id)->first();
 
     $view = 'Templates.MyBids';
     return view('Front', compact('view', 'bids', 'user', 'wallet'));
-  }
+  } 
 
   public function optionGameEntry(Request $request)
   {
@@ -354,6 +352,7 @@ class HomeController extends Controller
     $bids = BidTransaction::where('user_id', $request->user_id)
       ->where('game_id', $request->game_id)
       ->where('status', 'pending')
+      ->orderBy('created_at', 'DESC')
       ->get();
 
     foreach ($bids as $bid) {

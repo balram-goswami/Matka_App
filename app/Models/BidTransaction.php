@@ -17,5 +17,6 @@ class BidTransaction extends Model
         'status',
         'bid_result',
         'winning_amount',
+        'harf_digit'
     ];
 }

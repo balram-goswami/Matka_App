@@ -25,6 +25,14 @@
                     </div> -->
 
                     <div class="form-group text-start mb-4">
+                        <span>Name</span>
+                        <label for="name"><i class="ti ti-user"></i></label>
+                        <input class="form-control" id="name" name="name" type="name"
+                            placeholder="Enter Name" value="{{ $user->name ?? old('name') }}"
+                            style="border-color: white;">
+                    </div>
+
+                    <div class="form-group text-start mb-4">
                         <span>Email Id</span>
                         <label for="email"><i class="ti ti-mail"></i></label>
                         <input class="form-control" id="email" name="email" type="email"

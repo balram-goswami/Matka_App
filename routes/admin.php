@@ -36,6 +36,7 @@ Route::get('/clear-cache', function () {
 Route::resource('themes', ThemeController::class);
 Route::get('resultDashboard', [UserController::class, 'resultDashboard'])->name('resultDashboard');
 Route::post('gameResult', [UserController::class, 'gameResult'])->name('gameResult');
+Route::post('sattaResult', [UserController::class, 'sattaResult'])->name('sattaResult');
 Route::get('paymentRequest', [UserController::class, 'paymentRequest'])->name('paymentRequest');
 Route::get('confermPayment/{id}', [UserController::class, 'confermPayment'])->name('confermPayment');
 Route::post('/gameOptions', [UserController::class, 'gameOptions'])->name('gameOptions');

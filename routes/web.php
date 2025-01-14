@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Front\HomeController;
+use App\Http\Controllers\Front\{HomeController, SattaGameController};
 use App\Http\Controllers\Auth\LoginController;
 
 // Home Page Route
@@ -39,6 +39,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('submitAllBid', [HomeController::class, 'submitAllBid'])->name('submitAllBid');
     Route::post('cancelAllBid/{game_id}', [HomeController::class, 'cancelAllBid'])->name('cancelAllBid');
     Route::post('claimAmount/{bid_id}', [HomeController::class, 'claimAmount'])->name('claimAmount');
+
+    Route::get('jodiSatta', [SattaGameController::class, 'jodiSatta'])->name('jodiSatta');
+    Route::get('oddEvenSatta', [SattaGameController::class, 'oddEvenSatta'])->name('oddEvenSatta');
+    Route::get('harfSatta', [SattaGameController::class, 'harfSatta'])->name('harfSatta');
+    Route::get('crossingSatta', [SattaGameController::class, 'crossingSatta'])->name('crossingSatta');
+    Route::post('crossingGameEntry', [SattaGameController::class, 'crossingGameEntry'])->name('crossingGameEntry');
+    Route::post('harfGameEntry', [SattaGameController::class, 'harfGameEntry'])->name('harfGameEntry');
+    
 
     // Page Route
     Route::get('{slug}', 'Front\HomeController@singlePage')->name('single.page');

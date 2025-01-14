@@ -28,6 +28,7 @@
                             <tr>
                                 <th>Date</th>
                                 <th>Name</th>
+                                <th>My Bid</th>
                                 <th>Amount</th>
                                 <th>Status</th>
                             </tr>
@@ -40,6 +41,7 @@
                                 <tr>
                                     <td>{{ $bid->updated_at }}</td>
                                     <td>{{ $gameName->post_title }}</td>
+                                    <td>{{ $bid->answer }}</td>
                                     <td>{{ $bid->bid_amount }}</td>
                                     @if($bid->answer === $bid->bid_result)
                                         <td style="color: green">

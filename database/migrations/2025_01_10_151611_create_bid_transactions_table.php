@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->string('game_id');
             $table->string('answer')->nullable();
+            $table->string('harf_digit')->nullable();
             $table->string('bid_result')->nullable();
             $table->string('bid_amount')->nullable();
             $table->string('winning_amount')->nullable();

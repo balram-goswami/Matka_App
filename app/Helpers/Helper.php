@@ -710,7 +710,7 @@ function postTypes()
 
 		'numberGame' => [
 			'area' => 'Admin',
-			'title' => 'Number Games',
+			'title' => 'Satta Games',
 			'icon' => 'tf-icons bx bxl-blogger',
 			'slug' => 'numberGame',
 			'role' => [User::ADMIN],

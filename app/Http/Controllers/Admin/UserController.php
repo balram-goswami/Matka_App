@@ -189,16 +189,59 @@ class UserController extends Controller
     {
         $user = $this->service->select();
         $numberGame = getPostsByPostType('optiongame', 0, 'new', true);
+        $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
         $view = 'Admin.Results.ResultDashboard';
-        return view('Admin', compact('view', 'user', 'numberGame'));
+        return view('Admin', compact('view', 'user', 'numberGame', 'sattaGame'));
     }
-
+    
     public function paymentRequest()
     {
         $user = $this->service->select();
         $view = 'Admin.Results.PaymentPage';
         $payment = WalletTransactions::all();
         return view('Admin', compact('view', 'user', 'payment'));
+    }
+
+    public function sattaResult(Request $request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'game_id' => 'required',
+                'result' => 'required',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        // Check if result already declared for the game
+        $games = GameResult::where('game_id', $request->game_id)
+        ->where('created_at', '!=', now())
+        ->get();
+
+        if ($games->isNotEmpty()) {
+            return redirect()->back()->with('danger', 'Result Already Declared');
+        }
+
+        try {
+            $results = new GameResult;
+            $results->game_id = $request->game_id;
+            $results->result = $request->result;
+            $results->save();
+
+            BidTransaction::where('game_id', $request->game_id)
+                ->where('bid_result', NULL)
+                ->update([
+                    'bid_result' => $request->result,
+                    'winning_amount' => 'pending'
+                ]);
+
+            return redirect()->back()->with('success', 'Result Saved');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('danger', 'An error occurred while saving the result');
+        }
     }
 
     public function gameResult(Request $request)
@@ -274,20 +317,19 @@ class UserController extends Controller
     }
 
     public function gameOptions(Request $request)
-    { {
-            $game = getPostsByPostType('optiongame', 0, 'new', true)->where('post_id', $request->game_id);
+    {
+        $game = getPostsByPostType('optiongame', 0, 'new', true)->where('post_id', $request->game_id);
 
-            foreach ($game as $currentGame) {
-                if ($currentGame) {
-                    return response()->json([
-                        'answers' => [
-                            $currentGame['extraFields']['answer_one'],
-                            $currentGame['extraFields']['answer_two']
-                        ]
-                    ]);
-                }
-                return response()->json(['answers' => []]);
+        foreach ($game as $currentGame) {
+            if ($currentGame) {
+                return response()->json([
+                    'answers' => [
+                        $currentGame['extraFields']['answer_one'],
+                        $currentGame['extraFields']['answer_two']
+                    ]
+                ]);
             }
+            return response()->json(['answers' => []]);
         }
     }
 
@@ -310,7 +352,7 @@ class UserController extends Controller
                 'utr_number' => 'required',
             ]
         );
-        
+
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
@@ -323,7 +365,7 @@ class UserController extends Controller
         if (!$pay) {
             return redirect()->back()->with('danger', 'Transaction not found or already processed.');
         }
-      
+
         // Update the transaction status
         $pay->request_status = 'complete';
         $pay->transaction_type = $request->transaction_type;

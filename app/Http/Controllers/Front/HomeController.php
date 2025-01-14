@@ -4,9 +4,6 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Services\{
-  communicationService
-};
 use GuzzleHttp\Client;
 use Carbon\Carbon;
 
@@ -14,8 +11,6 @@ use App\Models\{
   Posts,
   Wallet,
   User,
-  UserDetails,
-  Cart,
   WalletTransactions,
   BidTransaction,
   GameResult
@@ -26,11 +21,6 @@ use Validator, DateTime, Config, Helpers, Hash, DB, Session, Auth, Redirect;
 
 class HomeController extends Controller
 {
-  protected $communicationService;
-  public function __construct(CommunicationService $communicationService)
-  {
-    $this->communicationService = $communicationService;
-  }
 
   public function welcome()
   {

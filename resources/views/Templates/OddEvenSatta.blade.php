@@ -7,7 +7,7 @@
         </div>
         <!-- Page Title -->
         <div class="page-heading">
-            <h6 class="mb-0">Jodi Game</h6>
+            <h6 class="mb-0">{{ $post->post_title}} Odd/Even Game</h6>
         </div>
         <!-- Navbar Toggler -->
         <div class="suha-navbar-toggler ms-2" data-bs-toggle="offcanvas" data-bs-target="#suhaOffcanvas"
@@ -39,6 +39,7 @@
                             <div class="col-md-6 col-6">
                                 <input type="text" name="user_id" value="{{ $user->user_id }}" hidden>
                                 <input type="text" name="game_id" value="{{ $post->post_id }}" hidden>
+                                <input type="text" name="harf_digit" value="oddEven" hidden>
                                 <select class="form-control border mb-1" id="answer" name="answer" required>
                                     <option value="">Select Your Answer</option>
                                     <option value="ODD">ODD</option>
@@ -55,7 +56,7 @@
                                     placeholder="Bid Amount" min="10" max="{{ $availableBalance }}" step="0.01" required>
                             </div>
                             <!-- Submit Button -->
-                            <div class="col-md-6 col-6">
+                            <div class="col-md-6 col-12">
                                 <button type="submit" class="btn btn-primary btn-lg w-100">Place Bid</button>
                             </div>
                         </div>

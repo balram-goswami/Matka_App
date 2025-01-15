@@ -36,7 +36,7 @@
                         @csrf
                         <div class="input-group row">
                             <!-- Answer Input -->
-                            <div class="col-md-6 col-3">
+                            <div class="col-md-6 col-6">
                                 <input type="text" name="user_id" value="{{ $user->user_id }}" hidden>
                                 <input type="text" name="game_id" value="{{ $post->post_id }}" hidden>
                                 <select class="form-control border mb-1" id="harf_digit" name="harf_digit" required>
@@ -45,12 +45,12 @@
                                     <option value="close">Close</option>
                                 </select>
                             </div>
-                            <div class="col-md-6 col-3">
+                            <div class="col-md-6 col-6">
                                 <input class="form-control border mb-1" id="answer" name="answer" type="number"
                                     placeholder="Enter Number" min="0" max="9" required>
                             </div>
                             <!-- Bid Amount Input -->
-                            <div class="col-md-6 col-3">
+                            <div class="col-md-6 col-6">
                                 @php
                                 $balance = $wallet->balance;
                                 $availableBalance = $balance - $totalAmount;
@@ -59,7 +59,7 @@
                                     placeholder="Bid Amount" min="10" max="{{ $availableBalance }}" step="0.01" required>
                             </div>
                             <!-- Submit Button -->
-                            <div class="col-md-6 col-6">
+                            <div class="col-md-6 col-12">
                                 <button type="submit" class="btn btn-primary btn-lg w-100">Place Bid</button>
                             </div>
                         </div>

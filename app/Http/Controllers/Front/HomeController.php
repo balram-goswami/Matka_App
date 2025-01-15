@@ -122,7 +122,7 @@ class HomeController extends Controller
   {
     if ($post_type == 'claimAmount') {
       $bid = BidTransaction::find($page);
-      $bid->winning_amount = 'claimed';
+      $bid->result_status = 'claimed';
       $bid->save();
 
       $winning_amount = $bid->bid_amount * 90;
@@ -323,6 +323,7 @@ class HomeController extends Controller
         'game_id' => 'required',
         'answer' => 'required',
         'bid_amount' => 'required',
+        'harf_digit' => 'nullable',
       ]
     );
 
@@ -334,6 +335,7 @@ class HomeController extends Controller
     $bid->user_id = $request->user_id;
     $bid->game_id = $request->game_id;
     $bid->answer = $request->answer;
+    $bid->harf_digit = $request->harf_digit ?? NULL;
     $bid->bid_amount = $request->bid_amount;
     $bid->save();
 

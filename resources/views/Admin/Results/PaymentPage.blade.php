@@ -36,7 +36,7 @@
                                 @if($list->request_status === 'pending')
                                 <a href="{{ route('confermPayment', $list->id) }}">Conferm</a>
                                 @else
-                                <span class="badge bg-label-primary me-1">No Action </span>
+                                <span class="badge bg-label-primary me-1">No Action Needed</span>
                                 @endif
                             </td>
                         </tr>

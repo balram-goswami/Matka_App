@@ -43,14 +43,14 @@
                                     <td>{{ $gameName->post_title }}</td>
                                     <td>{{ $bid->answer }}</td>
                                     <td>{{ $bid->bid_amount }}</td>
-                                    @if($bid->answer === $bid->bid_result)
-                                        <td style="color: green">
-                                            @if($bid->winning_amount == 'pending')
+                                    @if($bid->result_status == 'win')
+                                        <td>
+                                            @if($bid->result_status == 'win')
                                             <a href="{{ route('claimAmount', ['bid_id' => $bid->id]) }}">Get Amount</a>
-                                            @else
-                                            <b>Win</b>
                                             @endif
                                         </td>
+                                    @elseif($bid->result_status === 'claimed')
+                                        <td style="color: green">Win</td>
                                     @elseif($bid->bid_result == NULL)
                                         <td style="color: yellow">Wait For Result</td>
                                     @else

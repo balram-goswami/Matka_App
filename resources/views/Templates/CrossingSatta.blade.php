@@ -43,8 +43,9 @@
                                 <input type="text" name="numbers" id="numbers" value="{{ old('numbers') }}" required>
                             </div>
                             <!-- Submit Button -->
-                            <div class="col-md-6 col-6">
-                            <label for="numbers">Please review your bids carefully before submitting</label>
+                            
+                            <label for="numbers" style="color: red">Please review your bids carefully before submitting</label>
+                            <div class="col-md-6 col-12">
                                 <button type="submit" class="btn btn-primary btn-lg w-100">Place Bid</button>
                             </div>
                         </div>

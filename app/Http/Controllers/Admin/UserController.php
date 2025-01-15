@@ -193,7 +193,7 @@ class UserController extends Controller
         $view = 'Admin.Results.ResultDashboard';
         return view('Admin', compact('view', 'user', 'numberGame', 'sattaGame'));
     }
-    
+
     public function paymentRequest()
     {
         $user = $this->service->select();
@@ -208,7 +208,7 @@ class UserController extends Controller
             $request->all(),
             [
                 'game_id' => 'required',
-                'result' => 'required',
+                'result' => 'required|string|max:255',
             ]
         );
 
@@ -216,31 +216,62 @@ class UserController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        // Check if result already declared for the game
-        $games = GameResult::where('game_id', $request->game_id)
-        ->where('created_at', '!=', now())
-        ->get();
-
+        // Check if result is already declared
+        $games = GameResult::where('game_id', $request->game_id)->get();
         if ($games->isNotEmpty()) {
             return redirect()->back()->with('danger', 'Result Already Declared');
         }
 
         try {
-            $results = new GameResult;
-            $results->game_id = $request->game_id;
-            $results->result = $request->result;
-            $results->save();
+            // Save the game result
+            GameResult::create([
+                'game_id' => $request->game_id,
+                'result' => $request->result,
+            ]);
 
-            BidTransaction::where('game_id', $request->game_id)
+            $bidTable = BidTransaction::where('game_id', $request->game_id)
                 ->where('bid_result', NULL)
+                ->get();
+            foreach($bidTable as $table){
+            if ($table->harf_digit === 'oddEven') {
+
+                $bidResult = ($request->result % 2 === 0) ? 'EVEN' : 'ODD';
+
+                BidTransaction::where('game_id', $request->game_id)
+                    ->update(['bid_result' => $bidResult]);
+
+                return redirect()->back()->with('success', 'Bid result updated successfully');
+            } elseif ($table->harf_digit === 'open') {
+                $firstDigit = intval(substr($request->result, 0, 1)); // Convert to integer for strict comparison
+
+                // Update bid_result based on the answer
+                BidTransaction::where('game_id', $request->game_id)
+                    ->update([
+                        'bid_result' => DB::raw("CASE WHEN answer = {$firstDigit} THEN 'win' ELSE 'loss' END"),
+                    ]);
+            } elseif ($table->harf_digit === 'close') {
+                $secondDigit = intval(substr($request->result, 1, 1)); // Convert to integer for strict comparison
+
+                // Update bid_result based on the second digit
+                BidTransaction::where('game_id', $request->game_id)
+                    ->update([
+                        'bid_result' => DB::raw("CASE WHEN answer = {$secondDigit} THEN 'win' ELSE 'loss' END"),
+                    ]);
+
+                return redirect()->back()->with('success', 'Bid results updated successfully');
+            } else{
+                BidTransaction::where('game_id', $request->game_id)
                 ->update([
                     'bid_result' => $request->result,
-                    'winning_amount' => 'pending'
+                    'result_status' => DB::raw("CASE WHEN answer = '$request->result' THEN 'win' ELSE 'loss' END"),
                 ]);
 
             return redirect()->back()->with('success', 'Result Saved');
+            }
+            return redirect()->back()->with('success', 'Result Saved');}
         } catch (\Exception $e) {
-            return redirect()->back()->with('danger', 'An error occurred while saving the result');
+            \Log::error('Error saving game result: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'An error occurred while saving the result');
         }
     }
 
@@ -250,7 +281,7 @@ class UserController extends Controller
             $request->all(),
             [
                 'game_id' => 'required',
-                'result' => 'required',
+                'result' => 'required|string|max:255',
             ]
         );
 
@@ -258,33 +289,32 @@ class UserController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        // Check if result already declared for the game
+        // Check if result is already declared
         $games = GameResult::where('game_id', $request->game_id)->get();
         if ($games->isNotEmpty()) {
             return redirect()->back()->with('danger', 'Result Already Declared');
         }
 
-        // Save the game result
         try {
-            $results = new GameResult;
-            $results->game_id = $request->game_id;
-            $results->result = $request->result;
-            $results->save();
+            // Save the game result
+            GameResult::create([
+                'game_id' => $request->game_id,
+                'result' => $request->result,
+            ]);
 
-            // Update the bid transactions
+            // Update bid transactions
             BidTransaction::where('game_id', $request->game_id)
-                ->where('bid_result', NULL)
                 ->update([
                     'bid_result' => $request->result,
-                    'winning_amount' => 'pending'
+                    'result_status' => DB::raw("CASE WHEN answer = '$request->result' THEN 'win' ELSE 'loss' END"),
                 ]);
 
             return redirect()->back()->with('success', 'Result Saved');
         } catch (\Exception $e) {
-            return redirect()->back()->with('danger', 'An error occurred while saving the result');
+            \Log::error('Error saving game result: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'An error occurred while saving the result');
         }
     }
-
 
     public function confermPayment($id)
     {

@@ -14,9 +14,9 @@
                     </div>
                     <div class="col-sm-5 text-center text-sm-left">
                         <div class="card-body pb-0 px-0 px-md-4" style="margin-bottom: 10px;">
-                            <img src="../assets/img/illustrations/vdk_kndl.png" height="140" alt="View Badge User"
-                                data-app-dark-img="illustrations/vdk_kndl.png"
-                                data-app-light-img="illustrations/vdk_kndl.png" />
+                            <img src="..\themeAssets\img\matka\matka.png" height="140" alt="View Badge User"
+                                data-app-dark-img="..\themeAssets\img\matka\matka.png"
+                                data-app-light-img="..\themeAssets\img\matka\matka.png" />
                         </div>
                     </div>
                 </div>

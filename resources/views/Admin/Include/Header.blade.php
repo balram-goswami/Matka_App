@@ -126,7 +126,7 @@
                                         @if ($currentUser->photo)
                                             <img src="<?php echo asset($currentUser->photo); ?>" alt class="w-px-40 h-auto rounded-circle" />
                                         @else
-                                            <img src="<?php echo assetPath('img/avatars/1.png'); ?>" alt class="w-px-40 h-auto rounded-circle" />
+                                            <img src="<?php echo assetPath('..\themeAssets\img\matka\matka.png'); ?>" alt class="w-px-40 h-auto rounded-circle" />
                                         @endif
                                     </div>
                                 </a>

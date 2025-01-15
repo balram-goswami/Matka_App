@@ -45,11 +45,11 @@
     <!-- Basic Bootstrap Table -->
     <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h4 class="fw-bold py-3 mb-0 pull-left">Voting Game Result </h4>
+            <h4 class="fw-bold py-3 mb-0 pull-left">Satta Result </h4>
         </div>
         <div class="card-body">
             <div class="table-responsive text-nowrap">
-                <form method="POST" action="{{ route('sattaResult') }}" id="game_result">
+                <form method="POST" action="{{ route('sattaResult') }}" id="satta_result">
                     @csrf
                     <div class="row mb-3">
                         <div class="col-sm-4">
@@ -73,7 +73,6 @@
                     </div>
                     <br>
                 </form>
-
             </div>
         </div>
     </div>

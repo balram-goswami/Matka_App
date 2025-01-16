@@ -4,7 +4,8 @@
 <div class="toast pwa-install-alert shadow bg-white" role="alert" aria-live="assertive" aria-atomic="true"
     data-bs-delay="5000" data-bs-autohide="true">
     <div class="toast-body">
-        <div class="content d-flex align-items-center mb-2"><img src="../themeAssets/img/icons/icon-72x72.png" alt="">
+        <div class="content d-flex align-items-center mb-2">
+            <img src="../themeAssets/img/icons/icon-72x72.png" alt="">
             <h6 class="mb-0">Add to Home Screen</h6>
             <button class="btn-close ms-auto" type="button" data-bs-dismiss="toast" aria-label="Close"></button>
         </div><span class="mb-0 d-block">Click the<strong class="mx-1">Add to Home Screen</strong>button &amp;
@@ -29,9 +30,9 @@
                             <div class="slide-content h-100 d-flex align-items-center">
                                 <div class="slide-text">
                                     <h4 class="text-white mb-0" data-animation="fadeInUp" data-delay="100ms"
-                                        data-duration="1000ms">Matka App</h4>
+                                        data-duration="1000ms">{{$homePage['bannerText'] ?? 'Matka App'}}</h4>
                                     <p class="text-white" data-animation="fadeInUp" data-delay="400ms"
-                                        data-duration="1000ms">Play Unlimited</p>
+                                        data-duration="1000ms">{{$homePage['buttonText'] ?? 'Play Unlimited'}}</p>
                                     <!-- <a class="btn btn-primary"
                                     href="#" data-animation="fadeInUp" data-delay="800ms"
                                     data-duration="1000ms">Buy Now</a> -->

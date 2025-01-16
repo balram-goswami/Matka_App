@@ -1,3 +1,7 @@
+@php
+$payment = getThemeOptions('payment');
+@endphp
+
 <!-- Header Area-->
 <div class="header-area" id="headerArea">
     <div class="container h-100 d-flex align-items-center justify-content-between rtl-flex-d-row-r">
@@ -14,6 +18,7 @@
         </div>
     </div>
 </div>
+
 @include('Include.SideMenuOptions')
 <br>
 
@@ -26,6 +31,13 @@
                     <h5 class="mb-1">Add Money</h5>
                     <p class="mb-4">Scan the provided QR code to make a payment, and fill in the required details to
                         add money to your account. (Note: Please review all fields before saving.)</p>
+                    @if(isset($payment['qrpic']))
+                    <img src="{{ publicPath($payment['qrpic'])}}">
+                    @endif
+
+                    @if(isset($payment['upiId']))
+                    <h5 class="mb-1">UPI ID:- {{ $payment['upiId'] }}</h5>
+                    @endif
                 </div>
             </div>
         </div>
@@ -41,8 +53,9 @@
                         <input type="text" name="wallet_id" value="{{ $wallet->id }}" hidden>
                         <input class="form-control border mb-3" id="utr_number" name="utr_number" type="text"
                             placeholder="Payment UTR Number">
-                        <input class="form-control border mb-3" id="img" type="text" name="diposit_image"
-                            placeholder="Enter ScreenShoot">
+                        <!-- <input class="form-control border mb-3" id="img" type="text" name="diposit_image"
+                            placeholder="Enter ScreenShoot"> -->
+                            
                         <input class="form-control border mb-3" id="username" type="text" name="remark"
                             placeholder="Remark">
                         <input class="form-control border mb-3" id="deposit_amount" name="deposit_amount"

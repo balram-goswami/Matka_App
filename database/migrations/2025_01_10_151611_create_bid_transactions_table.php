@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('harf_digit')->nullable();
             $table->string('bid_result')->nullable();
             $table->string('bid_amount')->nullable();
-            $table->string('winning_amount')->nullable();
+            $table->string('result_status')->nullable();
             $table->string('status')->default('pending');
             $table->timestamps();
         });

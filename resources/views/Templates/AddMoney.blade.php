@@ -18,6 +18,7 @@ $payment = getThemeOptions('payment');
         </div>
     </div>
 </div>
+
 @include('Include.SideMenuOptions')
 <br>
 
@@ -52,8 +53,8 @@ $payment = getThemeOptions('payment');
                         <input type="text" name="wallet_id" value="{{ $wallet->id }}" hidden>
                         <input class="form-control border mb-3" id="utr_number" name="utr_number" type="text"
                             placeholder="Payment UTR Number">
-                        <input class="form-control border mb-3" id="img" type="text" name="diposit_image"
-                            placeholder="Enter ScreenShoot">
+                        <!-- <input class="form-control border mb-3" id="img" type="text" name="diposit_image"
+                            placeholder="Enter ScreenShoot"> -->
                             
                         <input class="form-control border mb-3" id="username" type="text" name="remark"
                             placeholder="Remark">

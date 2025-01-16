@@ -3,28 +3,13 @@
         Options -MultiViews -Indexes
     </IfModule>
 
-    <IfModule mod_deflate.c>
-        AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
-    </IfModule>
-
     RewriteEngine On
-    RewriteCond %{HTTP_HOST} !^www.turningpoint.in$
-    RewriteRule ^(.*)$ https://www.turningpoint.in/$1 [R=301,L]
-    RewriteRule ^index.php/(.+) / [R=301,L]
-
-    # Handle Authorization Header
-    RewriteCond %{HTTP:Authorization} .
-    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-
-    # Redirect Trailing Slashes If Not A Folder...
+    # Redirect Trailing Slashes...
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} (.+)/$
-    RewriteRule ^ %1 [L,R=301]
+    RewriteRule ^(.*)/$ /$1 [L,R=301]
 
-    # Send Requests To Front Controller...
+    # Handle Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
-
-    
 </IfModule>

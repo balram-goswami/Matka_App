@@ -88,6 +88,29 @@ function themeFieldArray()
             ]
         ],
         [
+            'key' => 'payment',
+            'title' => 'Payment Options',
+            'icon' => '<i class="fa fa-cog" aria-hidden="true"></i>',
+            'fields' =>
+            [
+                [
+                    'title' =>'QR Pay',
+                    'id' => 'qrpic',
+                    'type' => 'FilesUpload',
+                    'slug'=>'bannerLogo',
+                    'placeholder' => 'QR for Payment',
+                    'default' => '',
+                ],
+                [
+                    'title' =>'UPI Id',
+                    'id' => 'upiId',
+                    'type' => 'text',
+                    'placeholder' =>'UPI Id',
+                    'default' => '',
+                ],
+            ]
+        ],
+        [
             'key' => 'homePage',
             'title' => 'Home Page',
             'icon' => '<i class="fa fa-cog" aria-hidden="true"></i>',

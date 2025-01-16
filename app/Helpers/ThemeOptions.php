@@ -101,15 +101,7 @@ function themeFieldArray()
                     'slug'=>'bannerLogo',
                     'placeholder' => 'Banner Logo',
                     'default' => '',
-                ], 
-                [
-                    'title' =>'Banner Logo',
-                    'id' => 'bannerLogo1',
-                    'type' => 'FilesUpload',
-                    'slug'=>'bannerLogo1',
-                    'placeholder' => 'Banner Logo',
-                    'default' => '',
-                ], 
+                ],
                 [
                     'title' =>'Banner Text',
                     'id' => 'bannerText',
@@ -124,14 +116,50 @@ function themeFieldArray()
                     'placeholder' =>'Button Text',
                     'default' => '',
                 ], 
+            ]
+        ],
+        [
+            'key' => 'betSetting',
+            'title' => 'Betting Min Price',
+            'icon' => '<i class="fa fa-cog" aria-hidden="true"></i>',
+            'fields' =>
+            [
                 [
-                    'title' =>'Button URL',
-                    'id' => 'buttonURL',
+                    'title' =>'Choice Game',
+                    'id' => 'choiceGame',
                     'type' => 'text',
-                    'placeholder' =>'Button URL',
+                    'placeholder' =>'Enter Amount',
+                    'default' => '',
+                ], 
+                [
+                    'title' =>'Jodi Game',
+                    'id' => 'jodiGame',
+                    'type' => 'text',
+                    'placeholder' =>'Enter Amount',
                     'default' => '',
                 ],
-
+                [
+                    'title' =>'HARF Game',
+                    'id' => 'harfGame',
+                    'type' => 'text',
+                    'placeholder' =>'Enter Amount',
+                    'default' => '',
+                ],
+                [
+                    'title' =>'Crossing Game',
+                    'id' => 'crossingGame',
+                    'type' => 'text',
+                    'placeholder' =>'Enter Amount',
+                    'default' => '',
+                ],
+                [
+                    'title' =>'ODD Even Game',
+                    'id' => 'oddevenGame',
+                    'type' => 'text',
+                    'placeholder' =>'Enter Amount',
+                    'default' => '',
+                ],
+                 
             ]
         ],
     ];

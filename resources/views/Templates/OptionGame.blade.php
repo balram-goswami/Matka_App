@@ -1,3 +1,7 @@
+@php
+$betPrice = getThemeOptions('betSetting');
+@endphp
+
 <!-- Header Area-->
 <div class="header-area" id="headerArea">
     <div class="container h-100 d-flex align-items-center justify-content-between rtl-flex-d-row-r">
@@ -50,7 +54,7 @@
                                 $availableBalance = $balance - $totalAmount;
                                 @endphp
                                 <input class="form-control border mb-1" id="bid_amount" name="bid_amount" type="number"
-                                    placeholder="Bid Amount" min="10" max="{{$availableBalance}}" step="0.01" required>
+                                    placeholder="Bid Amount" min="{{$betPrice->choiceGame ?? '10'}}" max="{{$availableBalance}}" step="0.01" required>
                             </div>
                             <br>
                             <div class="col-md-6">

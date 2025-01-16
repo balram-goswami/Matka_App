@@ -217,9 +217,16 @@ class UserController extends Controller
         }
 
         // Check if result is already declared
-        $games = GameResult::where('game_id', $request->game_id)->get();
-        if ($games->isNotEmpty()) {
-            return redirect()->back()->with('danger', 'Result Already Declared');
+        $gameResult = GameResult::where('game_id', $request->game_id)->latest()->first();
+
+        if ($gameResult) {
+            $currentTime = now(); // Current timestamp
+            $resultTime = $gameResult->created_at; // Timestamp when the result was declared
+
+            // Check if the result was declared within the last 2 hours
+            if ($resultTime->diffInHours($currentTime) < 2) {
+                return redirect()->back()->with('danger', 'Result Already Declared Within the Last 2 Hours');
+            }
         }
 
         try {
@@ -232,43 +239,47 @@ class UserController extends Controller
             $bidTable = BidTransaction::where('game_id', $request->game_id)
                 ->where('bid_result', NULL)
                 ->get();
-            foreach($bidTable as $table){
-            if ($table->harf_digit === 'oddEven') {
+            foreach ($bidTable as $table) {
+                if ($table->harf_digit === 'oddEven') {
 
-                $bidResult = ($request->result % 2 === 0) ? 'EVEN' : 'ODD';
+                    $bidResult = ($request->result % 2 === 0) ? 'EVEN' : 'ODD';
 
-                BidTransaction::where('game_id', $request->game_id)
-                    ->update(['bid_result' => $bidResult]);
+                    BidTransaction::where('game_id', $request->game_id)
+                        ->update([
+                            'bid_result' => $request->result,
+                            'result_status' => DB::raw("CASE WHEN answer = '$bidResult' THEN 'win' ELSE 'loss' END"),
+                        ]);
 
-                return redirect()->back()->with('success', 'Bid result updated successfully');
-            } elseif ($table->harf_digit === 'open') {
-                $firstDigit = intval(substr($request->result, 0, 1)); // Convert to integer for strict comparison
+                    return redirect()->back()->with('success', 'Bid result updated successfully');
+                } elseif ($table->harf_digit === 'open') {
+                    $firstDigit = intval(substr($request->result, 0, 1));
 
-                // Update bid_result based on the answer
-                BidTransaction::where('game_id', $request->game_id)
-                    ->update([
-                        'bid_result' => DB::raw("CASE WHEN answer = {$firstDigit} THEN 'win' ELSE 'loss' END"),
-                    ]);
-            } elseif ($table->harf_digit === 'close') {
-                $secondDigit = intval(substr($request->result, 1, 1)); // Convert to integer for strict comparison
+                    BidTransaction::where('game_id', $request->game_id)
+                        ->update([
+                            'bid_result' => $request->result,
+                            'bid_result' => DB::raw("CASE WHEN answer = '$firstDigit' THEN 'win' ELSE 'loss' END"),
+                        ]);
+                } elseif ($table->harf_digit === 'close') {
+                    $secondDigit = intval(substr($request->result, 1, 1));
 
-                // Update bid_result based on the second digit
-                BidTransaction::where('game_id', $request->game_id)
-                    ->update([
-                        'bid_result' => DB::raw("CASE WHEN answer = {$secondDigit} THEN 'win' ELSE 'loss' END"),
-                    ]);
+                    BidTransaction::where('game_id', $request->game_id)
+                        ->update([
+                            'bid_result' => $request->result,
+                            'bid_result' => DB::raw("CASE WHEN answer = '$secondDigit' THEN 'win' ELSE 'loss' END"),
+                        ]);
 
-                return redirect()->back()->with('success', 'Bid results updated successfully');
-            } else{
-                BidTransaction::where('game_id', $request->game_id)
-                ->update([
-                    'bid_result' => $request->result,
-                    'result_status' => DB::raw("CASE WHEN answer = '$request->result' THEN 'win' ELSE 'loss' END"),
-                ]);
+                    return redirect()->back()->with('success', 'Bid results updated successfully');
+                } else {
+                    BidTransaction::where('game_id', $request->game_id)
+                        ->update([
+                            'bid_result' => $request->result,
+                            'result_status' => DB::raw("CASE WHEN answer = '$request->result' THEN 'win' ELSE 'loss' END"),
+                        ]);
 
-            return redirect()->back()->with('success', 'Result Saved');
+                    return redirect()->back()->with('success', 'Result Saved');
+                }
+                return redirect()->back()->with('success', 'Result Saved');
             }
-            return redirect()->back()->with('success', 'Result Saved');}
         } catch (\Exception $e) {
             \Log::error('Error saving game result: ' . $e->getMessage());
             return redirect()->back()->with('error', 'An error occurred while saving the result');

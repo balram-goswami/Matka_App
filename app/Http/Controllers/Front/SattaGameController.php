@@ -115,12 +115,14 @@ class SattaGameController extends Controller
             }
         }
 
+        $bidAmount = getThemeOptions('betSetting');
+        
         foreach ($combinations as $combination) {
             $bid = new BidTransaction;
             $bid->user_id = $request->user_id;
             $bid->game_id = $request->game_id;
             $bid->answer = $combination;
-            $bid->bid_amount = 100;
+            $bid->bid_amount = $bidAmount['crossingGame'] ?? '100';
             $bid->save();
         }
 

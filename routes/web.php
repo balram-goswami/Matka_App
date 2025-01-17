@@ -7,8 +7,6 @@ use App\Http\Controllers\Auth\LoginController;
 // Home Page Route
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 
-
-
 // Auth Route
 Route::get('login', [LoginController::class, 'index'])->name('login.index');
 Route::get('registerpage', [LoginController::class, 'registerPage'])->name('registerpage');

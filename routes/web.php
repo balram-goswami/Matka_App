@@ -5,7 +5,11 @@ use App\Http\Controllers\Front\{HomeController, SattaGameController};
 use App\Http\Controllers\Auth\LoginController;
 
 // Home Page Route
-Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
+// Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
+
+Route::get('/', function () {
+    return redirect()->route('login.index');
+})->name('welcome');
 
 // Auth Route
 Route::get('login', [LoginController::class, 'index'])->name('login.index');

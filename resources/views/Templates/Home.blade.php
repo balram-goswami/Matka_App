@@ -111,7 +111,7 @@
                                             $result = DB::table('game_results')->where('game_id', $quizgame->post_id)->get()->first();
                                             @endphp
                                     <div class="product-rating"><i class="ti ti-star-filled"></i>Result <span
-                                            class="ms-1">:- {{ $result->result }}</span></div>
+                                            class="ms-1">:- {{ $result->result ?? 'Waiting for Result' }}</span></div>
                                     @endif
                                     
                                 </div>

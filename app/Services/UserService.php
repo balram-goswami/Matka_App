@@ -8,16 +8,14 @@ use App\Models\{
     Wallet
 };
 
-use App\Services\CommunicationService;
 
 class UserService
 {
     protected $service;
     protected $communicationService;
-    public function __construct(User $user, CommunicationService $communicationService)
+    public function __construct(User $user)
     {
         $this->service = $user;
-        $this->communicationService = $communicationService;
     }
     public function table($type = null)
     {
@@ -71,10 +69,6 @@ class UserService
             $wallet->save();
         }
 
-        // $name = $request->input('name');
-        // $emailSubject = 'Login details at '.appName();
-        // $emailBody = view('Email.RegisterVerifyEmailLink', compact('name', 'password', 'email'));
-        // $this->communicationService->mail($email, $emailSubject, $emailBody);
         return $service;
     }
     public function get($id = null)
@@ -106,6 +100,12 @@ class UserService
         $service->upi_one = $request->input('upi_one');
         $service->upi_two = $request->input('upi_two');
         $service->upi_three = $request->input('upi_three');
+        $service->parent = $request->input('parent');
+        $service->toss_game = $request->input('toss_game');
+        $service->crossing = $request->input('crossing');
+        $service->harf = $request->input('harf');
+        $service->odd_even = $request->input('odd_even');
+        $service->jodi = $request->input('jodi');
         if ($password) {
             $service->password = bcrypt($password);
         }

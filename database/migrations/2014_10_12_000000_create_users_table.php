@@ -20,7 +20,13 @@ class CreateUsersTable extends Migration
             $table->string('phone')->nullable();
             $table->string('photo')->nullable();
             $table->string('password'); 
-            $table->string("role");
+            $table->string('role');
+            $table->string('parent')->nullable();
+            $table->string('toss_game')->nullable();
+            $table->string('crossing')->nullable();
+            $table->string('harf')->nullable();
+            $table->string('odd_even')->nullable();
+            $table->string('jodi')->nullable();
             $table->string('bank_name')->nullable();
             $table->string('ac_holder_name')->nullable();
             $table->string('ac_number')->nullable();

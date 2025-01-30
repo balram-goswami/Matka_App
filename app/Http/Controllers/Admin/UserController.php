@@ -12,7 +12,8 @@ use App\Models\{
     GameResult,
     BidTransaction,
     Wallet,
-    WalletTransactions
+    WalletTransactions,
+    Posts
 };
 
 
@@ -190,9 +191,16 @@ class UserController extends Controller
         $user = $this->service->select();
         $numberGame = getPostsByPostType('optiongame', 0, 'new', true);
         $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
+        $results = GameResult::all();
+
+        // Optimize game name retrieval
+        $gameNames = Posts::whereIn('post_id', $results->pluck('id'))->pluck('post_title', 'post_id');
+
         $view = 'Admin.Results.ResultDashboard';
-        return view('Admin', compact('view', 'user', 'numberGame', 'sattaGame'));
+
+        return view('Admin', compact('view', 'user', 'numberGame', 'sattaGame', 'results', 'gameNames'));
     }
+
 
     public function paymentRequest()
     {
@@ -239,6 +247,7 @@ class UserController extends Controller
             $bidTable = BidTransaction::where('game_id', $request->game_id)
                 ->where('bid_result', NULL)
                 ->get();
+
             foreach ($bidTable as $table) {
                 if ($table->harf_digit === 'oddEven') {
 
@@ -261,7 +270,7 @@ class UserController extends Controller
                         ]);
                 } elseif ($table->harf_digit === 'close') {
                     $secondDigit = intval(substr($request->result, 1, 1));
-
+                    dd($secondDigit);
                     BidTransaction::where('game_id', $request->game_id)
                         ->update([
                             'bid_result' => $request->result,
@@ -425,5 +434,28 @@ class UserController extends Controller
         $wallet->save();
 
         return redirect()->route('paymentRequest')->with('success', 'Payment successfully confirmed.');
+    }
+
+    public function jantriTable()
+    {
+        $numberGame = getPostsByPostType('optiongame', 0, 'new', true);
+        $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
+        $games = $numberGame->merge($sattaGame);
+        $view = 'Admin.Jantri.JantriView';
+        return view('Admin', compact('view', 'games'));
+    }
+
+    public function getJantri(Request $request)
+    {
+        $gameId = $request->input('game_id');
+
+
+        // Fetch and group bid transactions by answer for the selected game
+        $jantriData = BidTransaction::where('game_id', $gameId)
+            ->select('answer', \DB::raw('SUM(bid_amount) as total_bid'))
+            ->groupBy('answer')
+            ->get();
+
+        return response()->json($jantriData);
     }
 }

@@ -79,6 +79,38 @@
     <!--/ Basic Bootstrap Table -->
 </div>
 
+<div class="container-xxl flex-grow-1 container-p-y">
+    <!-- Basic Bootstrap Table -->
+    <div class="card mb-4">
+        <div class="card">
+            <h5 class="card-header">Game Results</h5>
+            <div class="table-responsive text-nowrap">
+                <table class="table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>S.no</th>
+                            <th>Game Name</th>
+                            <th>Result</th>
+                            <th>Time of Result</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                        @foreach($results as $result)
+                        <tr>
+                            <td>{{ $result->id }}</td>
+                            <td>{{ $gameNames[$result->id] ?? 'Unknown Game'  }}</td>
+                            <td>{{ $result->result }}</td>
+                            <td>{{ $result->created_at }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--/ Basic Bootstrap Table -->
+</div>
+
 <script>
     $(document).ready(function() {
         $('#gameid').change(function() {

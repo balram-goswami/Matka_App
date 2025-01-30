@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\{
 };
 use App\Http\Controllers\Admin\{
     DashboardController,
-    AstrologerController,
+    SubAdminController,
     ThemeController,
     MediaController,
     UserController,
@@ -20,9 +20,10 @@ use App\Http\Controllers\Admin\{
 // Dashboard
 Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
-// Astrologer
-Route::get('astrologerdashboard', [AstrologerController::class, 'index'])->name('astrologer.index');
-Route::get('profile', [AstrologerController::class, 'profile'])->name('astrologer.profile');
+
+// Sub Admin
+Route::get('subadminDashboard', [SubAdminController::class, 'subadminDashboard'])->name('subadminDashboard');
+Route::get('subadminAddUsers', [SubAdminController::class, 'subadminAddUsers'])->name('subadminAddUsers');
 
 // Clear Cache
 Route::get('/clear-cache', function () {
@@ -42,7 +43,8 @@ Route::get('confermPayment/{id}', [UserController::class, 'confermPayment'])->na
 Route::post('/gameOptions', [UserController::class, 'gameOptions'])->name('gameOptions');
 Route::get('viewPayment/{id}',[UserController::class, 'viewPayment'])->name('viewPayment');
 Route::post('withdralRequest', [UserController::class, 'withdralRequest'])->name('withdralRequest');
-
+Route::get('jantriTable', [UserController::class, 'jantriTable'])->name('jantriTable');
+Route::get('/jantri', [UserController::class, 'getJantri'])->name('jantri.get');
 
 // Media
 Route::resource('/media', MediaController::class, ['names' => 'media']);

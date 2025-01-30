@@ -52,7 +52,7 @@
                                     @elseif($bid->result_status === 'claimed')
                                         <td style="color: green">Win</td>
                                     @elseif($bid->bid_result == NULL)
-                                        <td style="color: yellow">Wait For Result</td>
+                                        <td style="color: Red">Wait For Result</td>
                                     @else
                                         <td style="color: red">Loss</td>
                                     @endif

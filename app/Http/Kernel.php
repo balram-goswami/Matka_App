@@ -67,6 +67,6 @@ class Kernel extends HttpKernel
         'authToken' => \App\Http\Middleware\AuthToken::class,
         'userToken' => \App\Http\Middleware\UserToken::class,
         'visitorTracking' => \App\Http\Middleware\VisitorTracking::class,
-        'AstrologerToken' => \App\Http\Middleware\AstrologerToken::class
+        'SubAdminToken' => \App\Http\Middleware\SubAdminToken::class
     ];
 }

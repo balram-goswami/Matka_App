@@ -17,6 +17,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->integer('user_id');
             $table->integer('wallet_id');
+            $table->integer('parent_id')->nullable();
             $table->string('transaction_type')->nullable();
             $table->string('utr_number')->nullable();
             $table->string('diposit_image')->nullable();

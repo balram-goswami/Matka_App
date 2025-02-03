@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Session, DataTables, Redirect, DB, Validator, Form;
+use Session, DataTables, Redirect, Validator, Form;
 use App\Services\{
     UserService
 };
+use Illuminate\Support\Facades\DB;
 use App\Models\{
     GameResult,
     BidTransaction,
@@ -63,6 +64,7 @@ class UserController extends Controller
         $view = 'Admin.Users.Index';
         return view('Admin', compact('view'));
     }
+
     public function customers(Request $request)
     {
         if ($request->ajax()) {
@@ -354,6 +356,14 @@ class UserController extends Controller
 
         // Find the associated wallet
         $wallet = Wallet::find($pay->wallet_id);
+        $pUser = getcurrentUser();
+        $pWallet = Wallet::find($pUser->user_id);
+
+        if (!$pWallet) {
+            return redirect()->back()->with('danger', 'Wallet not found.');
+        }
+        $pWallet->balance -= $pay->deposit_amount; // Increment the balance
+        $pWallet->save();
 
         if (!$wallet) {
             return redirect()->back()->with('danger', 'Wallet not found.');
@@ -393,47 +403,59 @@ class UserController extends Controller
 
     public function withdralRequest(Request $request)
     {
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'id' => 'required',
-                'wallet_id' => 'required',
-                'transaction_type' => 'required',
-                'utr_number' => 'required',
-            ]
-        );
+        // **Validate incoming request**
+        $request->validate([
+            'id'                => 'required|exists:wallet_transactions,id',
+            'wallet_id'         => 'required|exists:wallets,id',
+            'parent_id'         => 'nullable|exists:wallets,user_id',
+            'transaction_type'  => 'required|string',
+            'utr_number'        => 'required|string|unique:wallet_transactions,utr_number',
+        ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
+        // Fetch the pending transaction
         $pay = WalletTransactions::where('id', $request->id)
             ->where('request_status', 'pending')
             ->first();
 
-        // Check if the transaction exists and is pending
         if (!$pay) {
             return redirect()->back()->with('danger', 'Transaction not found or already processed.');
         }
 
-        // Update the transaction status
-        $pay->request_status = 'complete';
-        $pay->transaction_type = $request->transaction_type;
-        $pay->utr_number = $request->utr_number;
-        $pay->save();
+        // Find the associated wallet (user's wallet)
+        $wallet = Wallet::findOrFail($request->wallet_id);
 
-        // Find the associated wallet
-        $wallet = Wallet::find($request->wallet_id);
-
-        if (!$wallet) {
-            return redirect()->back()->with('danger', 'Wallet not found.');
+        // Check if the user has enough balance
+        if ($wallet->balance < $pay->withdraw_amount) {
+            return redirect()->back()->withErrors(['error' => 'Insufficient balance in user wallet.'])->withInput();
         }
 
-        // Update the wallet balance
-        $wallet->balance -= $pay->withdraw_amount; // Increment the balance
-        $wallet->save();
+        // If parent_id is provided, fetch the parent wallet
+        $parent = $request->parent_id ? Wallet::where('user_id', $request->parent_id)->first() : null;
 
-        return redirect()->route('paymentRequest')->with('success', 'Payment successfully confirmed.');
+        // **Ensure sufficient balance in parent account (if applicable)**
+        if ($parent && $parent->balance < $pay->withdraw_amount) {
+            return redirect()->back()->withErrors(['error' => 'Insufficient balance in parent wallet.'])->withInput();
+        }
+
+        // **Begin Transaction**
+        DB::transaction(function () use ($pay, $wallet, $parent, $request) {
+            // Deduct from user's wallet
+            $wallet->decrement('balance', $pay->withdraw_amount);
+
+            // Deduct from parent wallet (if applicable)
+            if ($parent) {
+                $parent->increment('balance', $pay->withdraw_amount);
+            }
+
+            // Update the transaction status and details
+            $pay->update([
+                'request_status'    => 'complete',
+                'transaction_type'  => $request->transaction_type,
+                'utr_number'        => $request->utr_number,
+            ]);
+        });
+
+        return redirect()->back()->with('success', 'Withdrawal request processed successfully.');
     }
 
     public function jantriTable()
@@ -441,21 +463,46 @@ class UserController extends Controller
         $numberGame = getPostsByPostType('optiongame', 0, 'new', true);
         $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
         $games = $numberGame->merge($sattaGame);
+        $gameIds = BidTransaction::select('game_id')->distinct()->pluck('game_id');
+
+        $game_id = 1;
+
+        // Fetch Jantri data for the selected game
+        $jantriData = BidTransaction::where('game_id', $game_id)
+            ->where('bid_result', NULL)
+            ->selectRaw('answer as number, SUM(bid_amount) as total_amount')
+            ->groupBy('answer')
+            ->orderBy('answer', 'asc')
+            ->get()
+            ->keyBy('number');
+
         $view = 'Admin.Jantri.JantriView';
-        return view('Admin', compact('view', 'games'));
+        return view('Admin', compact('view', 'games', 'jantriData'));
     }
 
-    public function getJantri(Request $request)
+    public function jantri(Request $request)
     {
-        $gameId = $request->input('game_id');
+        $game_id = $request->query('game_id', 1);
 
-
-        // Fetch and group bid transactions by answer for the selected game
-        $jantriData = BidTransaction::where('game_id', $gameId)
-            ->select('answer', \DB::raw('SUM(bid_amount) as total_bid'))
+        // Fetch Jantri data for the selected game
+        $jantriData = BidTransaction::where('game_id', $game_id)
+            ->where('bid_result', NULL)
+            ->selectRaw('answer as number, SUM(bid_amount) as total_amount')
             ->groupBy('answer')
-            ->get();
+            ->orderBy('answer', 'asc')
+            ->get()
+            ->keyBy('number'); // Key by answer (number) for lookup
 
-        return response()->json($jantriData);
+        // Get unique game IDs for dropdown selection
+        $numberGame = getPostsByPostType('optiongame', 0, 'new', true);
+        $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
+        $games = $numberGame->merge($sattaGame);
+
+        $user = getCurrentUser();
+        $subAdminWallet = Wallet::where('user_id', $user->user_id)->get()->first();
+        
+
+        $view = 'Admin.Jantri.JantriView';
+        return view('Admin', compact('view', 'jantriData', 'games', 'game_id'));
     }
 }

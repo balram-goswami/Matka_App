@@ -5,7 +5,9 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="fw-bold py-3 mb-0 pull-left">Payment Requests of RS {{ $payment['withdraw_amount']}}</h4>
         </div>
-        
+        @php 
+           $pUser = getCurrentUser();
+        @endphp
         <div class="card-body">
             <div class="table-responsive text-nowrap">
                 <form method="POST" action="{{ route('withdralRequest') }}" id="withdralRequest">
@@ -13,6 +15,7 @@
                     <div class="row mb-3">
                         <input hidden name="id" value="{{ $payment->id }}">
                         <input hidden name="wallet_id" value="{{ $payment->wallet_id }}">
+                        <input hidden name="parent_id" value="{{ $pUser->user_id }}">
                         <div class="col-sm-4">
                             <div class="input-group input-group-merge">
                                 <select name="transaction_type" id="transaction_type" class="form-control" required>

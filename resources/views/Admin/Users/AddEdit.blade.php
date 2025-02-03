@@ -3,7 +3,7 @@
    <div class="card mb-4">
    		<div class="card-header d-flex justify-content-between align-items-center">
 		   <h4 class="fw-bold py-3 mb-0 pull-left">{{ $user->user_id?'Edit':'Add'}} User </h4>
-		   <a class="text-muted float-end" href="{{ route('users.index') }}"><button type="button" class="btn btn-primary">Cancel</button></a>
+		   <!-- <a class="text-muted float-end" href="{{ route('users.index') }}"><button type="button" class="btn btn-primary">Cancel</button></a> -->
 		</div>
 		<div class="card-body">
 			<div class="table-responsive text-nowrap">
@@ -13,9 +13,8 @@
             {{Form::open(array('route' => 'users.store', 'method' => 'POST'))}}
           @endif
           
-          
 
-          <div class="row mb-3">
+          <div class="row mb-3" hidden>
             <label class="col-sm-2 col-form-label" for="photo">Photo</label>
             <div class="col-md-10 imageUploadGroup">
               <img src="{{asset($user->photo)}}" class="file-upload" id="photo-img" style="width: 100px; height: 100px;">
@@ -78,6 +77,19 @@
               </div>
             </div>
           </div>
+          @php 
+          $user = getCurrentUser();
+          @endphp
+          @if($user->role === 'subadmin')
+          <div class="row mb-3" hidden>
+            <label class="col-sm-2 col-form-label" for="basic-default-email">Role</label>
+            <div class="col-sm-10">
+              <div class="input-group input-group-merge">
+                <input name="role" value="user">
+              </div>
+            </div>
+          </div>
+          @else
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label" for="basic-default-email">Role</label>
             <div class="col-sm-10">
@@ -88,6 +100,83 @@
                     <option value="{{$roleKey}}" {{$roleKey == $user->role?'selected':''}}>{{$roleValue}}</option>
                   @endforeach
                 </select>
+              </div>
+            </div>
+          </div>
+          @endif
+          <div class="row mb-3" hidden>
+            <label class="col-sm-2 col-form-label" for="basic-default-email">parent</label>
+            <div class="col-sm-10">
+              <div class="input-group input-group-merge">
+                <input name="parent" value="{{ $user->user_id}}">
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <label class="col-sm-2 col-form-label" for="basic-default-email">Add Points</label>
+            <div class="col-sm-10">
+              <div class="input-group input-group-merge">
+                <input
+                  type="text"
+                  name="balance"
+                  class="form-control">
+              </div>
+            </div>
+          </div>
+          <label class="col-sm-2 col-form-label">Game Ratio</label>
+          <div class="row mb-3">
+            <label class="col-sm-2 col-form-label" for="basic-default-email">Toss Game win ratio</label>
+            <div class="col-sm-10">
+              <div class="input-group input-group-merge">
+                <input
+                  type="text"
+                  name="toss_game"
+                  class="form-control">
+              </div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label class="col-sm-2 col-form-label" for="basic-default-email">crossing Game win ratio</label>
+            <div class="col-sm-10">
+              <div class="input-group input-group-merge">
+                <input
+                  type="text"
+                  name="crossing"
+                  class="form-control">
+              </div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label class="col-sm-2 col-form-label" for="basic-default-email">harf Game win ratio</label>
+            <div class="col-sm-10">
+              <div class="input-group input-group-merge">
+                <input
+                  type="text"
+                  name="harf"
+                  class="form-control">
+              </div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label class="col-sm-2 col-form-label" for="basic-default-email">ODD EVEN Game win ratio</label>
+            <div class="col-sm-10">
+              <div class="input-group input-group-merge">
+                <input
+                  type="text"
+                  name="odd_even"
+                  class="form-control">
+              </div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label class="col-sm-2 col-form-label" for="basic-default-email">Jodi Game win ratio</label>
+            <div class="col-sm-10">
+              <div class="input-group input-group-merge">
+                <input
+                  type="text"
+                  name="jodi"
+                  class="form-control">
               </div>
             </div>
           </div>

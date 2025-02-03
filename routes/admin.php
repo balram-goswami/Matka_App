@@ -23,7 +23,13 @@ Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard.
 
 // Sub Admin
 Route::get('subadminDashboard', [SubAdminController::class, 'subadminDashboard'])->name('subadminDashboard');
-Route::get('subadminAddUsers', [SubAdminController::class, 'subadminAddUsers'])->name('subadminAddUsers');
+Route::get('viewPlayers', [SubAdminController::class, 'viewPlayers'])->name('viewPlayers');
+Route::get('subadminplayers', [SubAdminController::class, 'subadminplayers'])->name('subadmin.players');
+Route::get('subadminAddUsers/{id}', [SubAdminController::class, 'subadminAddUsers'])->name('subadminAddUsers');
+Route::post('addbalance', [SubAdminController::class, 'addbalance'])->name('addbalance');
+Route::post('deletebalance', [SubAdminController::class, 'deletebalance'])->name('deletebalance');
+Route::get('userPayment', [SubAdminController::class, 'userPayment'])->name('userPayment');
+Route::get('profileUpdatepage', [SubAdminController::class, 'profileUpdatepage'])->name('profileUpdatepage');
 
 // Clear Cache
 Route::get('/clear-cache', function () {
@@ -44,7 +50,7 @@ Route::post('/gameOptions', [UserController::class, 'gameOptions'])->name('gameO
 Route::get('viewPayment/{id}',[UserController::class, 'viewPayment'])->name('viewPayment');
 Route::post('withdralRequest', [UserController::class, 'withdralRequest'])->name('withdralRequest');
 Route::get('jantriTable', [UserController::class, 'jantriTable'])->name('jantriTable');
-Route::get('/jantri', [UserController::class, 'getJantri'])->name('jantri.get');
+Route::get('/jantri', [UserController::class, 'jantri'])->name('jantri.view');
 
 // Media
 Route::resource('/media', MediaController::class, ['names' => 'media']);

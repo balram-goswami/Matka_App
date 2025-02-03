@@ -1,51 +1,75 @@
-<div class="container">
-    <h1>Jantri Table</h1>
-
-    <!-- Game Selection -->
-    <div class="mb-4">
-        <label for="game_id">Select Game:</label>
-        <select id="game_id" class="form-select">
-            <option value="">-- Select a Game --</option>
-            @foreach($games as $game)
-            <option value="{{ $game->post_id }}">{{ $game->post_title }}</option>
-            @endforeach
-        </select>
-    </div>
-
-    <!-- Jantri Table -->
-    <table class="table table-bordered" id="jantri-table">
-        <thead>
-            <tr>
-                <th>Answer</th>
-                <th>Total Bid Amount</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Data will be loaded here -->
-        </tbody>
-    </table>
-</div>
-
-<script>
-    document.getElementById('game_id').addEventListener('change', function() {
-        const gameId = this.value;
-        const tableBody = document.querySelector('#jantri-table tbody');
-        tableBody.innerHTML = ''; // Clear table data
-
-        if (gameId) {
-            fetch(`/jantri?game_id=${gameId}`)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(row => {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td>${row.answer}</td>
-                            <td>${row.total_bid}</td>
-                        `;
-                        tableBody.appendChild(tr);
-                    });
-                })
-                .catch(error => console.error('Error fetching Jantri data:', error));
+<style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
         }
-    });
-</script>
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .highlight {
+            background-color: yellow;
+            font-weight: bold;
+        }
+        .highest-bid {
+            background-color: red;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+
+<h2 align="center">Jantri View - Satta Game</h2>
+
+<!-- Dropdown to Select Game -->
+<form method="GET" action="{{ route('jantri.view') }}" style="text-align:center; margin-bottom: 20px;">
+
+    <div class="row mb-3">
+        <label class="col-sm-2 col-form-label" for="basic-default-email">Select Game</label>
+        <div class="col-sm-10">
+            <div class="input-group input-group-merge">
+                <select name="game_id" id="game_id" onchange="this.form.submit()" class="form-control">
+                    <option value="">Select Game</option>
+                    @foreach ($games as $id)
+                    <option value="{{ $id->post_id}}">Game {{$id->post_title}} </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Jantri Table -->
+<table>
+        <tr>
+            <th>Number</th>
+            <th>Total Bid Amount</th>
+        </tr>
+
+        @php
+            $totalBidAmount = 0;
+            $maxBidAmount = $jantriData->max('total_amount') ?? 0; // Get highest bid amount
+        @endphp
+
+        @for ($i = 0; $i < 100; $i++)
+            @php
+                $amount = isset($jantriData[$i]) ? $jantriData[$i]->total_amount : 0;
+                $totalBidAmount += $amount;
+            @endphp
+            <tr class="{{ isset($jantriData[$i]) ? 'highlight' : '' }}">
+                <td>{{ $i }}</td>
+                <td class="{{ $amount == $maxBidAmount ? 'highest-bid' : '' }}">
+                    {{ $amount > 0 ? number_format($amount, 2) : '00' }}
+                </td>
+            </tr>
+        @endfor
+
+        <!-- Total Bid Amount Row -->
+        <tr>
+            <th>Total</th>
+            <th>{{ number_format($totalBidAmount, 2) }}</th>
+        </tr>
+    </table>

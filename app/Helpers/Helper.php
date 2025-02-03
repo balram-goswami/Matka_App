@@ -638,12 +638,7 @@ function getMenus()
 			'icon' => 'tf-icons bx bx-cog',
 			'role' => [User::ADMIN],
 		],
-		// [
-		// 	'title' => 'Jantra Table',
-		// 	'route' => 'jantriTable',
-		// 	'icon' => 'tf-icons bx bx-cog',
-		// 	'role' => [User::ADMIN],
-		// ],
+		
 		[
 			'title' => 'Dashboard',
 			'route' => 'subadminDashboard',
@@ -651,10 +646,22 @@ function getMenus()
 			'role' => [User::SUBADMIN],
 		], 
 		[
-			'title' => 'Add Users',
-			'route' => 'subadminAddUsers',
+			'title' => 'My Players',
+			'route' => 'viewPlayers',
 			'icon' => 'tf-icons bx bx-home-circle',
 			'role' => [User::SUBADMIN],
+		],
+		[
+			'title' => 'Payments Request',
+			'route' => 'userPayment',
+			'icon' => 'tf-icons bx bx-cog',
+			'role' => [User::SUBADMIN],
+		],
+		[
+			'title' => 'Jantri Table',
+			'route' => 'jantriTable',
+			'icon' => 'tf-icons bx bx-cog',
+			'role' => [User::ADMIN, User::SUBADMIN],
 		],
 	];
 }

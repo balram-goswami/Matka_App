@@ -54,6 +54,12 @@ class UserService
         $service->name = $request->input('name');
         $service->email = $request->input('email');
         $service->phone = $request->input('phone');
+        $service->parent = $request->input('parent');
+        $service->toss_game = $request->input('toss_game');
+        $service->crossing = $request->input('crossing');
+        $service->harf = $request->input('harf');
+        $service->odd_even = $request->input('odd_even');
+        $service->jodi = $request->input('jodi');
         if ($password) {
             $service->password = bcrypt($password);
         }
@@ -64,9 +70,18 @@ class UserService
         if (!$wallet = Wallet::where('user_id', $service->id)->get()->first()) {
             $wallet = new Wallet();
             $wallet->user_id = $service->user_id;
-            $wallet->balance = '0';
+            $wallet->balance = $request->input('balance') ?? '0';
             $wallet->created_at = dateTime();
             $wallet->save();
+
+            $pWallet = Wallet::where('user_id', $request->input('parent'))->first();
+
+            // Ensure the parent wallet exists and has sufficient balance
+            if ($pWallet && $pWallet->balance >= $request->input('balance')) {
+                $pWallet->decrement('balance', $request->input('balance'));
+            } else {
+                return redirect()->back()->withErrors(['error' => 'Insufficient balance in parent wallet.'])->withInput();
+            }
         }
 
         return $service;
@@ -114,7 +129,7 @@ class UserService
 
         return $service;
     }
-    
+
     public function delete($service = null)
     {
         if (!is_object($service)) {

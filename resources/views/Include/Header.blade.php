@@ -7,7 +7,7 @@ $homePage = getThemeOptions('homePage');
 <html lang="en">
 
 <head>
-<!-- @laravelPWA -->
+@laravelPWA
     <meta charset="utf-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, shrink-to-fit=no">

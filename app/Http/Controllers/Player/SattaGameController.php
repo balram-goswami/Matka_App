@@ -130,6 +130,8 @@ class SattaGameController extends Controller
         if (empty($numbers)) {
             return redirect()->back()->withErrors(['numbers' => 'Invalid input provided'])->withInput();
         }
+        $user = getCurrentUser();
+        $parent = User::where('user_id', $user->user_id)->get()->first();
 
         $combinations = [];
         foreach ($numbers as $i) {
@@ -168,6 +170,7 @@ class SattaGameController extends Controller
             $bid->subadmin_cut = $subadmin_admin_cut;
             $bid->subadminGet = $subadminGet;
             $bid->win_amount = $winAmount;
+            $bid->parent_id = $parent->parent;
             $bid->save();
         }
 
@@ -191,6 +194,9 @@ class SattaGameController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
+        $user = getCurrentUser();
+        $parent = User::where('user_id', $user->user_id)->get()->first();
+
 
         // Process Ander Bids (Stored as Open)
         if (!empty($request->ander)) {
@@ -225,6 +231,7 @@ class SattaGameController extends Controller
                         'subadmin_cut' => $subadmin_admin_cut,
                         'subadminGet' => $subadminGet,
                         'win_amount' => $winAmount,
+                        'parent_id' => $parent->parent,
                     ]);
                 }
             }
@@ -262,6 +269,7 @@ class SattaGameController extends Controller
                         'subadmin_cut' => $subadmin_admin_cut,
                         'subadminGet' => $subadminGet,
                         'win_amount' => $winAmount,
+                        'parent_id' => $parent->parent,
                     ]);
                 }
             }

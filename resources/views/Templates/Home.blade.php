@@ -76,7 +76,7 @@ $gameStatus = getThemeOptions('betSetting');
 </div>
 
 
-@if($gameStatus['status'] === 'on')
+@if(isset($gameStatus['status']) && $gameStatus['status'] === 'on')
 <div class="weekly-best-seller-area py-3">
     <div class="container">
         <div class="row g-2 rtl-flex-d-row-r">

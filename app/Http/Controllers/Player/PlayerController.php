@@ -352,6 +352,9 @@ class PlayerController extends Controller
     if ($validator->fails()) {
       return redirect()->back()->withErrors($validator)->withInput();
     }
+    $user = getCurrentUser();
+    $parent = User::where('user_id', $user->user_id)->get()->first();
+
     $winAmount = $request->bid_amount * $request->adminrate;
 
     // admin money convert
@@ -380,6 +383,7 @@ class PlayerController extends Controller
     $bid->subadmin_cut = $subadmin_admin_cut;
     $bid->subadminGet = $subadminGet;
     $bid->win_amount = $winAmount;
+    $bid->parent_id = $parent->parent;
     $bid->save();
 
     return redirect()->back()->with('success', 'Bid Placed Successfully');

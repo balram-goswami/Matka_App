@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text("post_title");
             $table->longtext("post_content")->nullable();
             $table->text("post_excerpt")->nullable();
-            $table->enum("post_status",['publish','draft','trash']);
+            $table->enum("post_status",['publish','draft','trash','complete']);
             $table->enum("comment_status",["open","close"]);
             $table->string("post_name");
             $table->BigInteger('post_parent');

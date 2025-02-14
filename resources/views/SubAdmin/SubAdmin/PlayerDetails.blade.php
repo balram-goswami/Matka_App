@@ -176,7 +176,7 @@
                     <h6 class="mb-0">Toss Game</h6>
                   </div>
                   <div class="user-progress">
-                    <h6 class="mb-0">{{ $user->toss_game ?? 'NA' }}</h6>
+                    <h6 class="mb-0">{{ $user->admin_cut_toss_game ?? 'NA' }}-{{ $user->user_cut_toss_game ?? 'NA' }} %</h6>
                   </div>
                 </div>
               </li>
@@ -189,7 +189,7 @@
                     <h6 class="mb-0">Crossing</h6>
                   </div>
                   <div class="user-progress">
-                    <h6 class="mb-0">{{ $user->crossing ?? 'NA' }}</h6>
+                    <h6 class="mb-0">{{ $user->admin_cut_crossing ?? 'NA' }}-{{ $user->user_cut_crossing ?? 'NA' }} %</h6>
                   </div>
                 </div>
               </li>
@@ -202,7 +202,7 @@
                     <h6 class="mb-0">Harf</h6>
                   </div>
                   <div class="user-progress">
-                    <h6 class="mb-0">{{ $user->harf ?? 'NA' }}</h6>
+                    <h6 class="mb-0">{{ $user->admin_cut_harf ?? 'NA' }}-{{ $user->user_cut_harf ?? 'NA' }} %</h6>
                   </div>
                 </div>
               </li>
@@ -215,7 +215,7 @@
                     <h6 class="mb-0">Jodi</h6>
                   </div>
                   <div class="user-progress">
-                    <h6 class="mb-0">{{ $user->jodi ?? 'NA' }}</h6>
+                    <h6 class="mb-0">{{ $user->admin_cut_jodi ?? 'NA' }}-{{ $user->user_cut_jodi ?? 'NA' }} %</h6>
                   </div>
                 </div>
               </li>
@@ -228,7 +228,7 @@
                     <h6 class="mb-0">ODD EVEN</h6>
                   </div>
                   <div class="user-progress">
-                    <h6 class="mb-0">{{ $user->odd_even ?? 'NA' }}</h6>
+                    <h6 class="mb-0">{{ $user->admin_cut_odd_even ?? 'NA' }}-{{ $user->user_cut_odd_even ?? 'NA' }} %</h6>
                   </div>
                 </div>
               </li>

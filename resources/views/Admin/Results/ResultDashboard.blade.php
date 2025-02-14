@@ -98,7 +98,7 @@
                         @foreach($results as $result)
                         <tr>
                             <td>{{ $result->id }}</td>
-                            <td>{{ $gameNames[$result->id] ?? 'Unknown Game'  }}</td>
+                            <td>{{ $gameNames[$result->game_id] ?? 'Unknown Game' }}</td>
                             <td>{{ $result->result }}</td>
                             <td>{{ $result->created_at }}</td>
                         </tr>

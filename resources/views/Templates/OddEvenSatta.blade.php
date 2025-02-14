@@ -7,7 +7,7 @@ $betPrice = getThemeOptions('betSetting');
     <div class="container h-100 d-flex align-items-center justify-content-between rtl-flex-d-row-r">
         <!-- Back Button -->
         <div class="back-button me-2">
-            <a href="{{ route('user-dashboard') }}"><i class="ti ti-arrow-left"></i></a>
+            <a href="{{ route('playerDashboard') }}"><i class="ti ti-arrow-left"></i></a>
         </div>
         <!-- Page Title -->
         <div class="page-heading">
@@ -34,6 +34,10 @@ $betPrice = getThemeOptions('betSetting');
                         00:00:00
                     </a>
                 </div>
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <h6>Win Rate:- {{$user->admin_cut_odd_even}}X </h6>
+                    <h6>Min Bet Amount:- {{$betPrice['oddevenGame']}} </h6>
+                </div>
 
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <form action="{{ route('optionGameEntry') }}" method="POST">
@@ -43,6 +47,11 @@ $betPrice = getThemeOptions('betSetting');
                             <div class="col-md-6 col-6">
                                 <input type="text" name="user_id" value="{{ $user->user_id }}" hidden>
                                 <input type="text" name="game_id" value="{{ $post->post_id }}" hidden>
+
+                                <input type="text" name="adminshare" value="{{ $parentDetails->admin_cut_odd_even }}" hidden>
+                                <input type="text" name="subadminshare" value="{{ $parentDetails->user_cut_odd_even }}" hidden>
+                                <input type="text" name="adminrate" value="{{ $user->admin_cut_odd_even }}" hidden>
+                                <input type="text" name="subadminrate" value="{{ $user->user_cut_odd_even }}" hidden>
                                 <input type="text" name="harf_digit" value="oddEven" hidden>
                                 <select class="form-control border mb-1" id="answer" name="answer" required>
                                     <option value="">Select Your Answer</option>
@@ -57,7 +66,7 @@ $betPrice = getThemeOptions('betSetting');
                                 $availableBalance = $balance - $totalAmount;
                                 @endphp
                                 <input class="form-control border mb-1" id="bid_amount" name="bid_amount" type="number"
-                                    placeholder="Bid Amount" min="{{$betPrice->oddevenGame ?? '10'}}" max="{{ $availableBalance }}" step="0.01" required>
+                                    placeholder="Bid Amount" min="{{$betPrice['oddevenGame'] ?? '10'}}" max="{{ $availableBalance }}" step="0.01" required>
                             </div>
                             <!-- Submit Button -->
                             <div class="col-md-6 col-12">
@@ -70,12 +79,13 @@ $betPrice = getThemeOptions('betSetting');
             <br>
             <!-- Bid Table -->
             <div class="cart-table card mb-3">
-                <div class="table-responsive card-body">
+                <div class="table-responsive card-body"> 
                     <table class="table mb-0">
                         <thead>
                             <tr>
                                 <th>Ans</th>
                                 <th>Amount</th>
+                                <th>Win Amount</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -84,25 +94,31 @@ $betPrice = getThemeOptions('betSetting');
                             <tr>
                                 <td>{{ $bid->answer }}</td>
                                 <td>{{ $bid->bid_amount }}</td>
-                                <td>
+                                <td>{{ $bid->bid_amount*$user->admin_cut_odd_even }}</td>
+                                <th scope="row">
                                     <form action="{{ route('deleteBid', ['id' => $bid->id]) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="remove-product"><i class="ti ti-x"></i></button>
-                                    </form>
-                                </td>
+                                        <button type="submit" class="remove-product"><i
+                                                class="ti ti-x"></i></button>
+                                        <form>
+                                </th>
                             </tr>
                             @endforeach
                             <tr>
                                 <td>Total</td>
                                 <td>{{ $totalAmount }}</td>
-                                <td></td>
+                                <td>{{ $winAmount }}</td>
+                                <th scope="row">
+
+                                </th>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <!-- Cancel All and Submit All -->
+
                 <div class="card-body d-flex align-items-center justify-content-between">
-                    <form action="{{ route('cancelAllBid', ['game_id' => $post->post_id]) }}" method="POST" id="cancelAllBid">
+                    <form action="{{ route('cancelAllBid', ['game_id' => $post->post_id]) }}" method="POST"
+                        id="cancelAllBid">
                         @csrf
                         <button type="submit" class="btn btn-primary">Cancel</button>
                     </form>
@@ -110,6 +126,9 @@ $betPrice = getThemeOptions('betSetting');
                         @csrf
                         <input type="text" name="user_id" value="{{ $user->user_id }}" hidden>
                         <input type="text" name="game_id" value="{{ $post->post_id }}" hidden>
+                        <input type="text" name="parent_id" value="{{ $user->parent }}" hidden>
+                        <input type="text" name="admin_cut" value="{{ $user->admin_cut_odd_even}}" hidden>
+                        <input type="text" name="subadmin_cut" value="{{ $user->user_cut_odd_even}}" hidden>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>

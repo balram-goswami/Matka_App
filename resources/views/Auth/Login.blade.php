@@ -45,9 +45,9 @@
                         <form action="{{ route('login.store') }}" method="POST" class="login mb-3"
                             id="formAuthentication">
                             @csrf
-                            <div class="form-group text-start mb-4"><span>Email Id</span>
-                                <label for="email"><i class="ti ti-user"></i></label>
-                                <input class="form-control" type="email" id="email" name="email" placeholder="Enter Email Id">
+                            <div class="form-group text-start mb-4"><span>User Name</span>
+                                <label for="name"><i class="ti ti-user"></i></label>
+                                <input class="form-control" type="name" id="name" name="name" placeholder="Enter User Name">
                             </div>
                             <div class="form-group text-start mb-4"><span>Password</span>
                                 <label for="password"><i class="ti ti-key"></i></label>
@@ -57,9 +57,9 @@
                         </form>
                     </div>
                     <!-- Login Meta-->
-                    <div class="login-meta-data"><a class="forgot-password d-block mt-3 mb-1" href="{{ ('forgot-password.index') }}">Forgot Password?</a>
+                    <!-- <div class="login-meta-data"><a class="forgot-password d-block mt-3 mb-1" href="{{ ('forgot-password.index') }}">Forgot Password?</a>
                         <p class="mb-0">Don’t have any account?<a class="mx-1" href="{{ route('registerpage') }}">SignUp</a></p>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>

@@ -552,7 +552,8 @@ function userTypes()
 	return [
 		User::ADMIN => 'Admin',
 		User::SUBADMIN => 'SubAdmin',
-		User::USER => 'User'
+		User::USER => 'User',
+		User::PLAYER => 'Player',
 	];
 }
 function daysName()
@@ -618,7 +619,7 @@ function getMenus()
 			'title' => 'Media',
 			'route' => 'media.index',
 			'icon' => 'menu-icon tf-icons bx bxs-file-image',
-			'role' => [User::ADMIN, User::USER],
+			'role' => [User::ADMIN],
 		],
 		[
 			'title' => 'Settings',
@@ -638,7 +639,14 @@ function getMenus()
 			'icon' => 'tf-icons bx bx-cog',
 			'role' => [User::ADMIN],
 		],
+		[
+			'title' => 'Jantri Table',
+			'route' => 'jantriTable',
+			'icon' => 'tf-icons bx bx-cog',
+			'role' => [User::ADMIN],
+		],
 		
+		// Sub Admin
 		[
 			'title' => 'Dashboard',
 			'route' => 'subadminDashboard',
@@ -659,9 +667,9 @@ function getMenus()
 		],
 		[
 			'title' => 'Jantri Table',
-			'route' => 'jantriTable',
+			'route' => 'jantriTablesa',
 			'icon' => 'tf-icons bx bx-cog',
-			'role' => [User::ADMIN, User::SUBADMIN],
+			'role' => [User::SUBADMIN],
 		],
 	];
 }
@@ -710,6 +718,20 @@ function postTypes()
 			'support' => [],
 			'templateOption' => [
 				'DailySatta' => 'Number Games',
+			],
+			'taxonomy' => []
+		],
+		'news' => [
+			'area' => 'Admin',
+			'title' => 'Game News',
+			'icon' => 'tf-icons bx bxl-blogger',
+			'slug' => 'news',
+			'role' => [User::ADMIN],
+			'showMenu' => false,
+			'multilng' => false,
+			'support' => ['excerpt'],
+			'templateOption' => [
+				'News' => 'News',
 			],
 			'taxonomy' => []
 		],
@@ -922,7 +944,7 @@ function addPostMetaBox($post_type,  $post_id)
 		case 'numberGame':
 			$postBoxHtml = postnumberGameMetaBox($post_id);
 			break;
-
+		
 		default:
 			$postBoxHtml = '';
 			break;

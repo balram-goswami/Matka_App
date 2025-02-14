@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Wallet;
 
 class UsersTableSeeder extends Seeder
 {
@@ -15,19 +16,20 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        $users = [
-            [
-                'role' => 'admin',
-                'name' => 'Admin',
-                'email' => 'admin@matka.com',
-                'phone' => '9000000000',
-                'email_verified_at' => now(),
-                'password' => Hash::make('matka'),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        ];
+        $user = User::create([
+            'role' => 'admin',
+            'name' => 'MG500005',
+            'email_verified_at' => now(),
+            'password' => Hash::make('matka'),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
-        User::insert($users);
+        Wallet::create([
+            'user_id' => 1, // Dynamically fetch user ID
+            'balance' => 100000, // Store numbers as integers, not strings
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 }

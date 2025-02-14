@@ -1,18 +1,16 @@
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h4 class="fw-bold py-3 mb-0 pull-left">Admin Users</h4>
+            <h4 class="fw-bold py-3 mb-0 pull-left">Sub Admin</h4>
             <a class="text-muted float-end" href="{{ route('users.create') }}"><button type="button"
-                    class="btn btn-primary">Add New Users</button></a>
+                    class="btn btn-primary">Add New Users/Sub Admin</button></a>
         </div>
         <div class="card-body">
             <div class="table-responsive text-nowrap">
                 <table class="table table-bordered table-striped yajra-datatable" id="userDatatable">
                     <thead>
                         <tr>
-                            <th>Photo</th>
-                            <th>name</th>
-                            <th>email</th>
+                            <th>User name</th>
                             <th>role</th>
                             <th>Actions</th>
                         </tr>
@@ -28,16 +26,14 @@
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h4 class="fw-bold py-3 mb-0 pull-left">Our Players</h4>
+            <h4 class="fw-bold py-3 mb-0 pull-left">All Player</h4>
         </div>
         <div class="card-body">
             <div class="table-responsive text-nowrap">
-                <table class="table table-bordered table-striped yajra-datatable" id="customersDatatable">
+                <table class="table table-bordered table-striped yajra-datatable" id="playerDatatable">
                     <thead>
                         <tr>
-                            <th>Photo</th>
-                            <th>name</th>
-                            <th>email</th>
+                            <th>user name</th>
                             <th>role</th>
                             <th>Actions</th>
                         </tr>
@@ -56,17 +52,10 @@
             processing: true,
             serverSide: true,
             ajax: "{{ route('users.index') }}",
-            columns: [{
-                    data: 'photo',
-                    name: 'photo'
-                },
+            columns: [
                 {
                     data: 'name',
                     name: 'name'
-                },
-                {
-                    data: 'email',
-                    name: 'email'
                 },
                 {
                     data: 'role',
@@ -85,21 +74,14 @@
 
 <script>
     jQuery(document).ready(function($) {
-        $('#customersDatatable').DataTable({
+        $('#playerDatatable').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('users.customers') }}",
-            columns: [{
-                    data: 'photo',
-                    name: 'photo'
-                },
+            ajax: "{{ route('player') }}",
+            columns: [
                 {
                     data: 'name',
                     name: 'name'
-                },
-                {
-                    data: 'email',
-                    name: 'email'
                 },
                 {
                     data: 'role',

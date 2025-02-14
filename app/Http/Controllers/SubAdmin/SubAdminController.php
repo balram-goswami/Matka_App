@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\SubAdmin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -12,8 +12,10 @@ use App\Models\{
     User,
     Wallet,
     BidTransaction,
-    WalletTransactions
+    WalletTransactions,
+    GameResult
 };
+use Carbon\Carbon;
 
 class SubAdminController extends Controller
 {
@@ -28,13 +30,14 @@ class SubAdminController extends Controller
         $user = getCurrentUser();
         $wallet = Wallet::where('user_id', $user->user_id)->get()->first();
         $players = User::where('parent', $user->user_id)->get();
-        $view = 'Admin.SubAdmin.Index';
+        $view = 'SubAdmin.SubAdmin.Index';
+        Session::flash('password_change_alert', "Hello {$user->name}, please change your password before continuing to use your account. If done Ignore");
         return view('Admin', compact('view', 'wallet', 'players'));
     }
 
     public function viewPlayers()
     {
-        $view = 'Admin.SubAdmin.AddPlayers';
+        $view = 'SubAdmin.SubAdmin.AddPlayers';
         return view('Admin', compact('view'));
     }
 
@@ -49,7 +52,7 @@ class SubAdminController extends Controller
         $withdrawwallet = WalletTransactions::where('user_id', $id)->where('deposit_amount', NULL)->get();
         $dipositwallet = WalletTransactions::where('user_id', $id)->where('withdraw_amount', NULL)->get();
 
-        $view = 'Admin.SubAdmin.PlayerDetails';
+        $view = 'SubAdmin.SubAdmin.PlayerDetails';
         return view('Admin', compact('view', 'user', 'wallet', 'bids', 'win', 'loss', 'panding', 'withdrawwallet', 'dipositwallet'));
     }
 
@@ -57,7 +60,7 @@ class SubAdminController extends Controller
     { {
             if ($request->ajax()) {
                 $parent = getCurrentUser();
-                $user = $this->service->table()->where('role', 'user')->where('parent', $parent->user_id);
+                $user = $this->service->table()->where('role', 'player')->where('parent', $parent->user_id);
                 return Datatables::of($user)
                     ->addIndexColumn()
                     ->editColumn('photo', function ($row) {
@@ -71,12 +74,15 @@ class SubAdminController extends Controller
                             <i class="bx bx-dots-vertical-rounded"></i>
                             </button>
                             <div class="dropdown-menu">
-                               <a class="dropdown-item btn btn-info" href="' . route('subadminAddUsers', $row->user_id) . '"
+                               <a class="btn btn-info" href="' . route('subadminAddUsers', $row->user_id) . '"
                                   ><i class="bx bx-edit-alt me-1"></i> Edit</a
                                   >
+                                  
                                 ' . Form::open(array('route' => array('users.destroy', $row->user_id), 'method' => 'delete')) . '
                                     <button type="submit" class="btn btn-danger"><i class="bx bx-trash me-1"></i> Delete</button>
                                 </form>
+                                <a class="btn btn-success" href="' . route('blockUser', $row->user_id) . '"
+                                  ><i class="bx bx-edit-alt me-1"></i> Change Status</a>
                             </div>';
                     })
                     ->editColumn('created_at', function ($row) {
@@ -85,9 +91,17 @@ class SubAdminController extends Controller
                     ->rawColumns(['action', 'created_at', 'photo'])
                     ->make(true);
             }
-            $view = 'Admin.SubAdmin.AddPlayers';
+            $view = 'SubAdmin.SubAdmin.AddPlayers';
             return view('Admin', compact('view'));
         }
+    }
+
+    public function addeditplayer()
+    {
+        $parentId = getCurrentUser();
+        $user = $this->service->select();
+        $view = 'SubAdmin.SubAdmin.AddEdit';
+        return view('Admin', compact('view', 'user', 'parentId'));
     }
 
     public function addbalance(Request $request)
@@ -211,7 +225,7 @@ class SubAdminController extends Controller
     {
         $user = $this->service->select();
         $puser = getCurrentUser();
-        $view = 'Admin.SubAdmin.PaymentPage';
+        $view = 'SubAdmin.SubAdmin.PaymentPage';
         $payment = WalletTransactions::where('parent_id', $puser->user_id)->get();
         return view('Admin', compact('view', 'user', 'payment'));
     }
@@ -219,7 +233,81 @@ class SubAdminController extends Controller
     public function profileUpdatepage()
     {
         $user = getCurrentUser();
-        $view = 'Admin.SubAdmin.profileUpdatepage';
+        $view = 'SubAdmin.SubAdmin.profileUpdatepage';
         return view('Admin', compact('view', 'user'));
+    }
+
+    public function blockUser($id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return redirect()->back()->withErrors(['error' => 'User not found'])->withInput();
+        }
+
+        // Toggle status
+        $user->status = ($user->status === 'active') ? 'block' : 'active';
+        $user->save();
+
+        return redirect()->back()->with('success', 'User status updated successfully');
+    }
+
+    public function jantriTablesa()
+    {
+        $tossGame = getPostsByPostType('optiongame', 0, 'new', true);
+        $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
+        $view = 'SubAdmin.Jantri.JantriView';
+        return view('Admin', compact('view', 'tossGame', 'sattaGame'));
+    }
+
+    public function jantrisa(Request $request)
+    {
+        if ($request->tossGame == !NULL) {
+            $game_id = $request->tossGame;
+            $gameType = 'option';
+            $c_user = getCurrentUser();
+
+            $gameResult = GameResult::where('game_id', $game_id)->get('result')->first();
+
+            $getgame = getPostsByPostType('optiongame', 0, 'new', true);
+            $game = $getgame->where('post_id', $game_id)->first();
+
+            $jantriData = BidTransaction::where('game_id', $game_id)
+                ->where('parent_id', $c_user->user_id)
+                ->selectRaw('answer, SUM(admin_cut) as total_bid, SUM(win_amount + subadminget) as total_win, result_status')
+                ->groupBy('answer', 'result_status')
+                ->orderBy('answer', 'asc')
+                ->get();
+
+            $view = 'SubAdmin.Jantri.Table';
+            return view('Admin', compact('view', 'jantriData', 'gameType', 'game', 'gameResult'));
+        } else {
+            $game_id = $request->sattaGame;
+            $time = $request->sattaGameTime;
+            $date = $request->date;
+
+            $gameType = 'satta';
+            $gameResult = GameResult::where('game_id', $game_id)->first(['result']); // Using first() to avoid collections
+
+            // Merge date and time into a DateTime format
+            $selectedDateTime = Carbon::parse("$date $time");
+
+            // Get the timestamp for 5 hours before the updated_at field
+            $timeLimit = Carbon::now()->subHours(5);
+            $c_user = getCurrentUser();
+            $jantriData = BidTransaction::where('game_id', $game_id)
+                ->where('parent_id', $c_user->user_id)
+                ->where('updated_at', '>=', $timeLimit) // Only results updated in the last 5 hours
+                ->where('updated_at', '<=', $selectedDateTime) // Ensure records match the selected date-time
+                ->selectRaw('answer, SUM(admin_cut) as total_bid, SUM(win_amount + subadminget) as total_win, result_status')
+                ->groupBy('answer', 'result_status')
+                ->orderBy('answer', 'asc')
+                ->get();
+
+            $view = 'SubAdmin.Jantri.Table';
+            return view('Admin', compact('view', 'jantriData', 'gameType', 'gameResult'));
+        }
+
+        return redirect()->back()->with('danger', 'No Jantri Found.');
     }
 }

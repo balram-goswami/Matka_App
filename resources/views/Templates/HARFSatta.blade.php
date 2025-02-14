@@ -7,7 +7,7 @@ $betPrice = getThemeOptions('betSetting');
     <div class="container h-100 d-flex align-items-center justify-content-between rtl-flex-d-row-r">
         <!-- Back Button -->
         <div class="back-button me-2">
-            <a href="{{ route('user-dashboard') }}"><i class="ti ti-arrow-left"></i></a>
+            <a href="{{ route('playerDashboard') }}"><i class="ti ti-arrow-left"></i></a>
         </div>
         <!-- Page Title -->
         <div class="page-heading">
@@ -34,41 +34,89 @@ $betPrice = getThemeOptions('betSetting');
                         00:00:00
                     </a>
                 </div>
-
                 <div class="card-body d-flex align-items-center justify-content-between">
+                    <h6>Win Rate:- {{$user->admin_cut_harf}}X </h6>
+                    <h6>Min Bet Amount:- {{$betPrice['harfGame']}} </h6>
+                </div>
+
+                <div class="container mt-3">
+                    <!-- Game Title & Timing -->
+                    <div class="text-center mb-2">
+                        <h5 class="fw-bold">{{ $post->post_title}}</h5>
+                        <!-- <p class="text-primary fw-bold">(10:00 am to 10:50 pm)</p> -->
+                    </div>
+
                     <form action="{{ route('harfGameEntry') }}" method="POST">
                         @csrf
-                        <div class="input-group row">
-                            <!-- Answer Input -->
-                            <div class="col-md-6 col-6">
-                                <input type="text" name="user_id" value="{{ $user->user_id }}" hidden>
-                                <input type="text" name="game_id" value="{{ $post->post_id }}" hidden>
-                                <select class="form-control border mb-1" id="harf_digit" name="harf_digit" required>
-                                    <option value="">Select Your Answer</option>
-                                    <option value="open">Open</option>
-                                    <option value="close">Close</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 col-6">
-                                <input class="form-control border mb-1" id="answer" name="answer" type="number"
-                                    placeholder="Enter Number" min="0" max="9" required>
-                            </div>
-                            <!-- Bid Amount Input -->
-                            <div class="col-md-6 col-6">
-                                @php
-                                $balance = $wallet->balance;
-                                $availableBalance = $balance - $totalAmount;
-                                @endphp
-                                <input class="form-control border mb-1" id="bid_amount" name="bid_amount" type="number"
-                                    placeholder="Bid Amount" min="{{$betPrice->harfGame ?? '10'}}" max="{{ $availableBalance }}" step="0.01" required>
-                            </div>
-                            <!-- Submit Button -->
-                            <div class="col-md-6 col-12">
-                                <button type="submit" class="btn btn-primary btn-lg w-100">Place Bid</button>
-                            </div>
+                        <input type="hidden" name="user_id" value="{{ $user->user_id }}">
+                        <input type="hidden" name="game_id" value="{{ $post->post_id }}">
+
+                        <input type="text" name="adminshare" value="{{ $parentDetails->admin_cut_harf }}" hidden>
+                        <input type="text" name="subadminshare" value="{{ $parentDetails->user_cut_harf }}" hidden>
+                        <input type="text" name="adminrate" value="{{ $user->admin_cut_harf }}" hidden>
+                        <input type="text" name="subadminrate" value="{{ $user->user_cut_harf }}" hidden>
+
+                        <!-- Ander Table -->
+                        <table class="table table-bordered text-center">
+                            <thead>
+                                <tr class="bg-info text-white">
+                                    <th colspan="5">Ander</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="fw-bold bg-light">
+                                    @for ($i = 0; $i < 5; $i++) <td>{{ $i }}</td> @endfor
+                                </tr>
+                                <tr>
+                                    @for ($i = 0; $i < 5; $i++)
+                                        <td><input type="number" class="form-control text-center bid-input" name="ander[{{ $i }}]" min="{{ $betPrice['harfGame'] ?? 0 }}" placeholder="Amount"></td>
+                                        @endfor
+                                </tr>
+                                <tr class="fw-bold bg-light">
+                                    @for ($i = 5; $i < 10; $i++) <td>{{ $i }}</td> @endfor
+                                </tr>
+                                <tr>
+                                    @for ($i = 5; $i < 10; $i++)
+                                        <td><input type="number" class="form-control text-center bid-input" name="ander[{{ $i }}]" min="{{ $betPrice['harfGame'] ?? 0 }}" placeholder="Amount"></td>
+                                        @endfor
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- bahar Table -->
+                        <table class="table table-bordered text-center">
+                            <thead>
+                                <tr class="bg-info text-white">
+                                    <th colspan="5">Bahar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="fw-bold bg-light">
+                                    @for ($i = 0; $i < 5; $i++) <td>{{ $i }}</td> @endfor
+                                </tr>
+                                <tr>
+                                    @for ($i = 0; $i < 5; $i++)
+                                        <td><input type="number" class="form-control text-center bid-input" name="bahar[{{ $i }}]" min="{{ $betPrice['harfGame'] ?? 0 }}" placeholder="Amount"></td>
+                                        @endfor
+                                </tr>
+                                <tr class="fw-bold bg-light">
+                                    @for ($i = 5; $i < 10; $i++) <td>{{ $i }}</td> @endfor
+                                </tr>
+                                <tr>
+                                    @for ($i = 5; $i < 10; $i++)
+                                        <td><input type="number" class="form-control text-center bid-input" name="bahar[{{ $i }}]" min="{{ $betPrice['harfGame'] ?? 0 }}" placeholder="Amount"></td>
+                                        @endfor
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Submit Button -->
+                        <div class="text-center mt-3">
+                            <button type="submit" class="btn btn-primary btn-lg w-100">Place Bid</button>
                         </div>
                     </form>
                 </div>
+
             </div>
             <br>
             <!-- Bid Table -->
@@ -78,36 +126,41 @@ $betPrice = getThemeOptions('betSetting');
                         <thead>
                             <tr>
                                 <th>Ans</th>
-                                <th>Bid At</th>
                                 <th>Amount</th>
+                                <th>Win Amount</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($bids as $bid)
                             <tr>
-                                <td>{{ $bid->answer }}</td>
-                                <td>{{ $bid->harf_digit }}</td>
+                                <td>{{$bid->harf_digit}}({{ $bid->answer }})</td>
                                 <td>{{ $bid->bid_amount }}</td>
-                                <td>
+                                <td>{{ $bid->bid_amount*$user->admin_cut_harf }}</td>
+                                <th scope="row">
                                     <form action="{{ route('deleteBid', ['id' => $bid->id]) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="remove-product"><i class="ti ti-x"></i></button>
-                                    </form>
-                                </td>
+                                        <button type="submit" class="remove-product"><i
+                                                class="ti ti-x"></i></button>
+                                        <form>
+                                </th>
                             </tr>
                             @endforeach
                             <tr>
                                 <td>Total</td>
                                 <td>{{ $totalAmount }}</td>
-                                <td></td>
+                                <td>{{ $winAmount }}</td>
+                                <th scope="row">
+
+                                </th>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <!-- Cancel All and Submit All -->
+
                 <div class="card-body d-flex align-items-center justify-content-between">
-                    <form action="{{ route('cancelAllBid', ['game_id' => $post->post_id]) }}" method="POST" id="cancelAllBid">
+                    <form action="{{ route('cancelAllBid', ['game_id' => $post->post_id]) }}" method="POST"
+                        id="cancelAllBid">
                         @csrf
                         <button type="submit" class="btn btn-primary">Cancel</button>
                     </form>
@@ -115,6 +168,9 @@ $betPrice = getThemeOptions('betSetting');
                         @csrf
                         <input type="text" name="user_id" value="{{ $user->user_id }}" hidden>
                         <input type="text" name="game_id" value="{{ $post->post_id }}" hidden>
+                        <input type="text" name="parent_id" value="{{ $user->parent }}" hidden>
+                        <input type="text" name="admin_cut" value="{{ $user->admin_cut_harf}}" hidden>
+                        <input type="text" name="subadmin_cut" value="{{ $user->user_cut_harf}}" hidden>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
@@ -122,6 +178,7 @@ $betPrice = getThemeOptions('betSetting');
         </div>
     </div>
 </div>
+
 
 <!-- Timer Script -->
 <script>

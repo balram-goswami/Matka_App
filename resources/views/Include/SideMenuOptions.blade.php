@@ -11,7 +11,7 @@
                 <h5 class="user-name mb-1 text-white">{{ $user->name }}</h5>
                 <p class="available-balance text-white">Balance :-
                     @if (isset($wallet->balance))
-                        <span class="counter">{{ $wallet->balance }}</span>
+                    <span class="counter">{{ $wallet->balance }}</span>
                     @endif
                 </p>
             </div>
@@ -40,26 +40,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="card settings-card">
-                    <div class="card-body">
-                        <!-- Single Settings-->
-                        <div class="single-settings d-flex align-items-center justify-content-between">
-                            <div class="title"><i class="ti ti-pilcrow"></i><span>RTL Mode</span></div>
-                            <div class="data-content">
-                                <div class="toggle-button-cover">
-                                    <div class="button r">
-                                        <input class="checkbox" id="rtlSwitch" type="checkbox">
-                                        <div class="knobs"></div>
-                                        <div class="layer"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </li>
             <br>
-            <li><i class="ti ti-logout"></i><a href="{{ route('auth.logout') }}">Sign Out</a></li>
+            <li><a href="{{ route('auth.logout') }}"><i class="ti ti-logout"></i>Sign Out</a></li>
         </ul>
     </div>
 </div>

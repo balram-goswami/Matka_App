@@ -41,30 +41,43 @@ class UserService
     }
     public function store($request)
     {
-        $email = $request->input('email');
-        $randomPassword = sha1(mt_rand(10000, 99999) . time() . $email);
-        $password = $request->input('password') ?? $randomPassword;
-
         $service = $this->service;
         if ($request->file('photo')) {
             $mealService->photo = fileuploadExtra($request, 'photo');
         } elseif ($request->input('photo')) {
             $service->photo = $request->input('photo');
         }
-        $service->name = $request->input('name');
-        $service->email = $request->input('email');
-        $service->phone = $request->input('phone');
+        function generateUsername() {
+            $randomNumber = rand(100000, 999999);
+            return "MG" . $randomNumber;
+        }
+        
+        
+        // Generate username
+        $username = generateUsername();
+        
+        // Generate password based on the username
+        $password = "matka@123";
+        $service->name = $username;
+
         $service->parent = $request->input('parent');
-        $service->toss_game = $request->input('toss_game');
-        $service->crossing = $request->input('crossing');
-        $service->harf = $request->input('harf');
-        $service->odd_even = $request->input('odd_even');
-        $service->jodi = $request->input('jodi');
+        $service->admin_cut_toss_game = $request->input('admin_cut_toss_game');
+        $service->admin_cut_crossing = $request->input('admin_cut_crossing');
+        $service->admin_cut_harf = $request->input('admin_cut_harf');
+        $service->admin_cut_odd_even = $request->input('admin_cut_odd_even');
+        $service->admin_cut_jodi = $request->input('admin_cut_jodi');
+
+        $service->user_cut_toss_game = $request->input('user_cut_toss_game');
+        $service->user_cut_crossing = $request->input('user_cut_crossing');
+        $service->user_cut_harf = $request->input('user_cut_harf');
+        $service->user_cut_odd_even = $request->input('user_cut_odd_even');
+        $service->user_cut_jodi = $request->input('user_cut_jodi');
         if ($password) {
             $service->password = bcrypt($password);
         }
         $service->email_verified_at = dateTime();
-        $service->role = $request->input('role') ?? 'user';
+        $service->role = $request->input('role') ?? 'player';
+        $service->status = $request->input('status') ?? 'Active';
         $service->save();
 
         if (!$wallet = Wallet::where('user_id', $service->id)->get()->first()) {
@@ -74,7 +87,11 @@ class UserService
             $wallet->created_at = dateTime();
             $wallet->save();
 
-            $pWallet = Wallet::where('user_id', $request->input('parent'))->first();
+            if($request->input('role') === 'subadmin'){
+                $pWallet = Wallet::where('user_id', 1)->first();
+            } else {
+                $pWallet = Wallet::where('user_id', $request->input('parent'))->first();
+            }
 
             // Ensure the parent wallet exists and has sufficient balance
             if ($pWallet && $pWallet->balance >= $request->input('balance')) {
@@ -106,8 +123,7 @@ class UserService
             $service->photo = $request->input('photo');
         }
         $service->name = $request->input('name');
-        $service->email = $request->input('email');
-        $service->phone = $request->input('phone');
+        
         $service->bank_name = $request->input('bank_name');
         $service->ac_holder_name = $request->input('ac_holder_name');
         $service->ac_number = $request->input('ac_number');
@@ -115,12 +131,19 @@ class UserService
         $service->upi_one = $request->input('upi_one');
         $service->upi_two = $request->input('upi_two');
         $service->upi_three = $request->input('upi_three');
+
         $service->parent = $request->input('parent');
-        $service->toss_game = $request->input('toss_game');
-        $service->crossing = $request->input('crossing');
-        $service->harf = $request->input('harf');
-        $service->odd_even = $request->input('odd_even');
-        $service->jodi = $request->input('jodi');
+        $service->admin_cut_toss_game = $request->input('admin_cut_toss_game');
+        $service->admin_cut_crossing = $request->input('admin_cut_crossing');
+        $service->admin_cut_harf = $request->input('admin_cut_harf');
+        $service->admin_cut_odd_even = $request->input('admin_cut_odd_even');
+        $service->admin_cut_jodi = $request->input('admin_cut_jodi');
+        $service->user_cut_toss_game = $request->input('user_cut_toss_game');
+        $service->user_cut_crossing = $request->input('user_cut_crossing');
+        $service->user_cut_harf = $request->input('user_cut_harf');
+        $service->user_cut_odd_even = $request->input('user_cut_odd_even');
+        $service->user_cut_jodi = $request->input('user_cut_jodi');
+        $service->status = $request->input('status');
         if ($password) {
             $service->password = bcrypt($password);
         }

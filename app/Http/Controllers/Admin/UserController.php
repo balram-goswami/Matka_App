@@ -14,8 +14,10 @@ use App\Models\{
     BidTransaction,
     Wallet,
     WalletTransactions,
-    Posts
+    Posts,
+    User
 };
+use Carbon\Carbon;
 
 
 class UserController extends Controller
@@ -33,7 +35,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $user = $this->service->table()->where('role', 'admin');
+            $user = $this->service->table()->where('role', 'subadmin');
             return Datatables::of($user)
                 ->addIndexColumn()
                 ->editColumn('photo', function ($row) {
@@ -65,10 +67,10 @@ class UserController extends Controller
         return view('Admin', compact('view'));
     }
 
-    public function customers(Request $request)
+    public function player(Request $request)
     {
         if ($request->ajax()) {
-            $user = $this->service->table()->where('role', 'user');
+            $user = $this->service->table()->where('role', 'player');
             return Datatables::of($user)
                 ->addIndexColumn()
                 ->editColumn('photo', function ($row) {
@@ -120,8 +122,9 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $this->service->store($request);
-        Session::flash('success', "New User saves successfully.");
+        $user = $this->service->store($request);
+        $newUser = User::latest()->first(); // Fetch the last created user
+        Session::flash('success', "New User (ID: {$newUser->name} PWD: matka@123) saved successfully.");
         return redirect()->back();
     }
 
@@ -195,8 +198,12 @@ class UserController extends Controller
         $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
         $results = GameResult::all();
 
-        // Optimize game name retrieval
-        $gameNames = Posts::whereIn('post_id', $results->pluck('id'))->pluck('post_title', 'post_id');
+        $gameNames = [];
+
+        foreach ($results as $result) {
+            $game = Posts::where('post_id', $result->game_id)->first();
+            $gameNames[$result->game_id] = $game ? $game->post_title : 'Unknown Game';
+        }
 
         $view = 'Admin.Results.ResultDashboard';
 
@@ -250,47 +257,33 @@ class UserController extends Controller
                 ->where('bid_result', NULL)
                 ->get();
 
+
             foreach ($bidTable as $table) {
+                $gameId = $request->game_id;
+                $result = $request->result;
+                $bidResult = null;
+
                 if ($table->harf_digit === 'oddEven') {
-
-                    $bidResult = ($request->result % 2 === 0) ? 'EVEN' : 'ODD';
-
-                    BidTransaction::where('game_id', $request->game_id)
-                        ->update([
-                            'bid_result' => $request->result,
-                            'result_status' => DB::raw("CASE WHEN answer = '$bidResult' THEN 'win' ELSE 'loss' END"),
-                        ]);
-
-                    return redirect()->back()->with('success', 'Bid result updated successfully');
-                } elseif ($table->harf_digit === 'open') {
-                    $firstDigit = intval(substr($request->result, 0, 1));
-
-                    BidTransaction::where('game_id', $request->game_id)
-                        ->update([
-                            'bid_result' => $request->result,
-                            'bid_result' => DB::raw("CASE WHEN answer = '$firstDigit' THEN 'win' ELSE 'loss' END"),
-                        ]);
-                } elseif ($table->harf_digit === 'close') {
-                    $secondDigit = intval(substr($request->result, 1, 1));
-                    dd($secondDigit);
-                    BidTransaction::where('game_id', $request->game_id)
-                        ->update([
-                            'bid_result' => $request->result,
-                            'bid_result' => DB::raw("CASE WHEN answer = '$secondDigit' THEN 'win' ELSE 'loss' END"),
-                        ]);
-
-                    return redirect()->back()->with('success', 'Bid results updated successfully');
+                    $bidResult = ($result % 2 === 0) ? 'EVEN' : 'ODD';
+                } elseif ($table->harf_digit === 'Ander') {
+                    $bidResult = intval(substr($result, 0, 1)); // First digit
+                } elseif ($table->harf_digit === 'Bahar') {
+                    $bidResult = intval(substr($result, 1, 1)); // Second digit
                 } else {
-                    BidTransaction::where('game_id', $request->game_id)
-                        ->update([
-                            'bid_result' => $request->result,
-                            'result_status' => DB::raw("CASE WHEN answer = '$request->result' THEN 'win' ELSE 'loss' END"),
-                        ]);
-
-                    return redirect()->back()->with('success', 'Result Saved');
+                    $bidResult = $result; // Default case
                 }
-                return redirect()->back()->with('success', 'Result Saved');
+
+                // Ensure filtering by harf_digit to update the correct bid
+                BidTransaction::where('game_id', $gameId)
+                    ->where('harf_digit', $table->harf_digit) // Add this condition
+                    ->update([
+                        'bid_result' => $bidResult, // Use $bidResult instead of $result
+                        'result_status' => DB::raw("CASE WHEN answer = '" . addslashes($bidResult) . "' THEN 'win' ELSE 'loss' END"),
+                    ]);
             }
+
+            // Ensure a single success response after all iterations
+            return redirect()->back()->with('success', 'Bid results updated successfully');
         } catch (\Exception $e) {
             \Log::error('Error saving game result: ' . $e->getMessage());
             return redirect()->back()->with('error', 'An error occurred while saving the result');
@@ -323,6 +316,7 @@ class UserController extends Controller
                 'game_id' => $request->game_id,
                 'result' => $request->result,
             ]);
+
 
             // Update bid transactions
             BidTransaction::where('game_id', $request->game_id)
@@ -460,49 +454,57 @@ class UserController extends Controller
 
     public function jantriTable()
     {
-        $numberGame = getPostsByPostType('optiongame', 0, 'new', true);
+        $tossGame = getPostsByPostType('optiongame', 0, 'new', true);
         $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
-        $games = $numberGame->merge($sattaGame);
-        $gameIds = BidTransaction::select('game_id')->distinct()->pluck('game_id');
-
-        $game_id = 1;
-
-        // Fetch Jantri data for the selected game
-        $jantriData = BidTransaction::where('game_id', $game_id)
-            ->where('bid_result', NULL)
-            ->selectRaw('answer as number, SUM(bid_amount) as total_amount')
-            ->groupBy('answer')
-            ->orderBy('answer', 'asc')
-            ->get()
-            ->keyBy('number');
-
         $view = 'Admin.Jantri.JantriView';
-        return view('Admin', compact('view', 'games', 'jantriData'));
+        return view('Admin', compact('view', 'tossGame', 'sattaGame'));
     }
 
     public function jantri(Request $request)
     {
-        $game_id = $request->query('game_id', 1);
+        if ($request->tossGame == !NULL) {
+            $game_id = $request->tossGame;
+            $gameType = 'option';
 
-        // Fetch Jantri data for the selected game
-        $jantriData = BidTransaction::where('game_id', $game_id)
-            ->where('bid_result', NULL)
-            ->selectRaw('answer as number, SUM(bid_amount) as total_amount')
-            ->groupBy('answer')
-            ->orderBy('answer', 'asc')
-            ->get()
-            ->keyBy('number'); // Key by answer (number) for lookup
+            $gameResult = GameResult::where('game_id', $game_id)->get('result')->first();
 
-        // Get unique game IDs for dropdown selection
-        $numberGame = getPostsByPostType('optiongame', 0, 'new', true);
-        $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
-        $games = $numberGame->merge($sattaGame);
+            $getgame = getPostsByPostType('optiongame', 0, 'new', true);
+            $game = $getgame->where('post_id', $game_id)->first();
 
-        $user = getCurrentUser();
-        $subAdminWallet = Wallet::where('user_id', $user->user_id)->get()->first();
-        
+            $jantriData = BidTransaction::where('game_id', $game_id)
+                ->selectRaw('answer, SUM(admin_cut) as total_bid, SUM(win_amount + subadminget) as total_win, result_status')
+                ->groupBy('answer', 'result_status')
+                ->orderBy('answer', 'asc')
+                ->get();
 
-        $view = 'Admin.Jantri.JantriView';
-        return view('Admin', compact('view', 'jantriData', 'games', 'game_id'));
+            $view = 'Admin.Jantri.Table';
+            return view('Admin', compact('view', 'jantriData', 'gameType', 'game', 'gameResult'));
+        } else {
+            $game_id = $request->sattaGame;
+            $time = $request->sattaGameTime;
+            $date = $request->date;
+
+            $gameType = 'satta';
+            $gameResult = GameResult::where('game_id', $game_id)->first(['result']); // Using first() to avoid collections
+
+            // Merge date and time into a DateTime format
+            $selectedDateTime = Carbon::parse("$date $time");
+
+            // Get the timestamp for 5 hours before the updated_at field
+            $timeLimit = Carbon::now()->subHours(5);
+
+            $jantriData = BidTransaction::where('game_id', $game_id)
+                ->where('updated_at', '>=', $timeLimit) // Only results updated in the last 5 hours
+                ->where('updated_at', '<=', $selectedDateTime) // Ensure records match the selected date-time
+                ->selectRaw('answer, SUM(admin_cut) as total_bid, SUM(win_amount + subadminget) as total_win, result_status')
+                ->groupBy('answer', 'result_status')
+                ->orderBy('answer', 'asc')
+                ->get();
+
+            $view = 'Admin.Jantri.Table';
+            return view('Admin', compact('view', 'jantriData', 'gameType', 'gameResult'));
+        }
+
+        return redirect()->back()->with('danger', 'No Jantri Found.');
     }
 }

@@ -8,6 +8,21 @@ $currentUser = getCurrentUser();
             <div class="card">
                 <div class="d-flex align-items-end row">
                     <div class="col-sm-7">
+                        @if (session('password_change_alert'))
+                        <div class="card-body" id="passwordAlert">
+                            <h5 class="card-title danger" style="color: red;">
+                                {{ session('password_change_alert') }}
+                            </h5>
+                        </div>
+
+                        <script>
+                            setTimeout(function() {
+                                document.getElementById("passwordAlert").style.display = "none";
+                            }, 3000); // Hides the message after 5 seconds
+                        </script>
+                        @endif
+                    </div>
+                    <div class="col-sm-7">
                         <div class="card-body">
                             <h5 class="card-title text-primary">Welcome {{ $currentUser->name }} 🎉</h5>
                         </div>
@@ -47,7 +62,7 @@ $currentUser = getCurrentUser();
                             <br>
                         </div>
                         <ul class="p-0 m-0">
-                        <li class="d-flex align-items-center mb-5">
+                            <li class="d-flex align-items-center mb-5">
                                 <div class="avatar flex-shrink-0 me-3">
                                     <span class="avatar-initial rounded bg-label-primary"><i class="bx bx-mobile-alt"></i></span>
                                 </div>

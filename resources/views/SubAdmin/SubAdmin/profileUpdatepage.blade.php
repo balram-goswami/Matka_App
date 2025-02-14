@@ -5,16 +5,6 @@
             <div class="table-responsive text-nowrap">
                 {{Form::open(array('route' => array('users.update', $user->user_id), 'method' => 'PUT'))}}
 
-                <div class="row mb-3" hidden>
-                    <label class="col-sm-2 col-form-label" for="photo">Photo</label>
-                    <div class="col-md-10 imageUploadGroup">
-                        <img src="{{asset($user->photo)}}" class="file-upload" id="photo-img" style="width: 100px; height: 100px;">
-                        <button type="button" data-eid="photo" class="btn btn-success setFeaturedImage">Select image</button>
-                        <button type="button" data-eid="photo" class="btn btn-warning removeFeaturedImage">Remove image</button>
-                        <input type="hidden" name="photo" id="photo" value="">
-                    </div>
-                </div>
-
                 <div class="row mb-3">
                     <label class="col-sm-2 col-form-label" for="basic-default-company">name</label>
                     <div class="col-sm-10">
@@ -24,37 +14,10 @@
                             class="form-control"
                             id="basic-default-company"
                             value="{{$user->name??old('name')}}"
-                            required>
+                            readonly>
                     </div>
                 </div>
 
-                <div class="row mb-3">
-                    <label class="col-sm-2 col-form-label" for="basic-default-email">email</label>
-                    <div class="col-sm-10">
-                        <div class="input-group input-group-merge">
-                            <input
-                                type="text"
-                                name="email"
-                                id="basic-default-email"
-                                class="form-control"
-                                value="{{$user->email??old('email')}}"
-                                required>
-                        </div>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <label class="col-sm-2 col-form-label" for="basic-default-email">Phone Number</label>
-                    <div class="col-sm-10">
-                        <div class="input-group input-group-merge">
-                            <input
-                                type="text"
-                                name="phone"
-                                id="basic-default-email"
-                                class="form-control"
-                                value="{{$user->phone??old('phone')}}">
-                        </div>
-                    </div>
-                </div>
                 <div class="row mb-3">
                     <label class="col-sm-2 col-form-label" for="basic-default-email">Password</label>
                     <div class="col-sm-10">
@@ -63,6 +26,7 @@
                                 type="text"
                                 name="password"
                                 id="basic-default-email"
+                                placeholder="Enter new Password to Change"
                                 class="form-control">
                         </div>
                     </div>

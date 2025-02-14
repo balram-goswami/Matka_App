@@ -6,7 +6,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive text-nowrap">
-                <form method="POST" action="{{ route('jantri.view') }}" id="game_result">
+                <form method="POST" action="{{ route('jantrisa.view') }}" id="game_result">
                     @csrf
                     <div class="row mb-3">
                         <div class="col-sm-4">

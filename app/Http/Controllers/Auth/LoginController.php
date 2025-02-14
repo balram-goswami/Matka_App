@@ -35,21 +35,25 @@ class LoginController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'password' => 'required'
         ]);
         if ($validator->fails()) {
             Session::flash('warning', $validator->getMessageBag()->first());
             return Redirect::back();
         }
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only('name', 'password');
 
         if (Auth::attempt($credentials, true)) {
             Session::flash('success', "Login Successfully");
             $currentUser = getCurrentUser();
             if ($currentUser->role === User::USER) {
-                return redirect()->route('user-dashboard');
-            } else {
+                return redirect()->route('dashboard.index');
+            } else if ($currentUser->role === User::SUBADMIN) {
+                return redirect()->route('subadminDashboard');
+            } else if ($currentUser->role === User::PLAYER) {
+                return redirect()->route('playerDashboard');
+            } else{
                 return redirect()->route('dashboard.index');
             }
         } else {

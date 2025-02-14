@@ -11,7 +11,7 @@ use App\Models\User;
 use Auth;
 use Illuminate\Support\Facades\Route;
 
-class SubAdminToken
+class PlayerToken
 {
     /**
      * Handle an incoming request.
@@ -29,7 +29,7 @@ class SubAdminToken
                 return redirect()->route('login.index');
             }else{ 
 
-                if ($user->role != User::SUBADMIN) {
+                if ($user->role != User::PLAYER) {
                     Session::flash ( 'warning', "You are not authorized to access this url, Please login again." );
                     return redirect()->route('login.index');
                 }               

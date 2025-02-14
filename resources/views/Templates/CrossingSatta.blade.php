@@ -1,10 +1,12 @@
-<!-- Header Area -->
+@php
+$betPrice = getThemeOptions('betSetting');
+@endphp
 
 <div class="header-area" id="headerArea">
     <div class="container h-100 d-flex align-items-center justify-content-between rtl-flex-d-row-r">
         <!-- Back Button -->
         <div class="back-button me-2">
-            <a href="{{ route('user-dashboard') }}"><i class="ti ti-arrow-left"></i></a>
+            <a href="{{ route('playerDashboard') }}"><i class="ti ti-arrow-left"></i></a>
         </div>
         <!-- Page Title -->
         <div class="page-heading">
@@ -31,6 +33,10 @@
                         00:00:00
                     </a>
                 </div>
+                <div class="card-body d-flex align-items-center justify-content-between">
+                <h6>Win Rate:- {{$user->admin_cut_crossing}}X </h6>
+                <h6>Min Bet Amount:- {{$betPrice['crossingGame']}} </h6>
+                </div>
 
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <form action="{{ route('crossingGameEntry') }}" method="POST">
@@ -40,13 +46,38 @@
                             <div class="col-md-12 col-12">
                                 <input type="text" name="user_id" value="{{ $user->user_id }}" hidden>
                                 <input type="text" name="game_id" value="{{ $post->post_id }}" hidden>
-                                <label for="numbers">Enter Numbers (comma-separated, e.g., 0,1,2,3,6,9):</label>
-                                <input type="text" name="numbers" id="numbers" value="{{ old('numbers') }}" required>
+                                
+                                <input type="text" name="adminshare" value="{{ $parentDetails->admin_cut_crossing }}" hidden>
+                                <input type="text" name="subadminshare" value="{{ $parentDetails->user_cut_crossing }}" hidden>
+                                <input type="text" name="adminrate" value="{{ $user->admin_cut_crossing }}" hidden>
+                                <input type="text" name="subadminrate" value="{{ $user->user_cut_crossing }}" hidden>
+
+                                <label class="text-danger mt-2">Enter Bid Amount</label>
+                                <input type="text" name="bid_amount" min="{{ $betPrice['crossingGame'] ?? '100'}}" placeholder="Bid Amount" value="{{ old('bid_amount') }}" required>
                             </div>
+
+                            <!-- Number Buttons -->
+                            <div class="col-md-12 mt-3">
+                                <div class="btn-group w-100" role="group">
+                                    <!-- Buttons for numbers 0-9 -->
+                                    <button type="button" class="btn btn-outline-primary number-btn" data-number="0">0</button>
+                                    <button type="button" class="btn btn-outline-primary number-btn" data-number="1">1</button>
+                                    <button type="button" class="btn btn-outline-primary number-btn" data-number="2">2</button>
+                                    <button type="button" class="btn btn-outline-primary number-btn" data-number="3">3</button>
+                                    <button type="button" class="btn btn-outline-primary number-btn" data-number="4">4</button>
+                                    <button type="button" class="btn btn-outline-primary number-btn" data-number="5">5</button>
+                                    <button type="button" class="btn btn-outline-primary number-btn" data-number="6">6</button>
+                                    <button type="button" class="btn btn-outline-primary number-btn" data-number="7">7</button>
+                                    <button type="button" class="btn btn-outline-primary number-btn" data-number="8">8</button>
+                                    <button type="button" class="btn btn-outline-primary number-btn" data-number="9">9</button>
+                                </div>
+                                <label class="text-danger mt-2">Selections</label>
+                                <input type="text" name="numbers" id="numbers" value="{{ old('numbers') }}" required readonly>
+                            </div>
+
                             <!-- Submit Button -->
-                            
-                            <label for="numbers" style="color: red">Please review your bids carefully before submitting</label>
-                            <div class="col-md-6 col-12">
+                            <label class="text-danger mt-2">Please review your bids carefully before submitting</label>
+                            <div class="col-md-6 col-12 mt-2">
                                 <button type="submit" class="btn btn-primary btn-lg w-100">Place Bid</button>
                             </div>
                         </div>
@@ -62,6 +93,8 @@
                             <tr>
                                 <th>Ans</th>
                                 <th>Amount</th>
+                                <th>Win Amount</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -69,32 +102,43 @@
                             <tr>
                                 <td>{{ $bid->answer }}</td>
                                 <td>{{ $bid->bid_amount }}</td>
+                                <td>{{ $bid->bid_amount*$user->admin_cut_crossing }}</td>
+                                <th scope="row">
+                                    <form action="{{ route('deleteBid', ['id' => $bid->id]) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="remove-product"><i
+                                                class="ti ti-x"></i></button>
+                                        <form>
+                                </th>
                             </tr>
                             @endforeach
                             <tr>
                                 <td>Total</td>
                                 <td>{{ $totalAmount }}</td>
-                                <td></td>
+                                <td>{{ $winAmount }}</td>
+                                <th scope="row">
+
+                                </th>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <!-- Cancel All and Submit All -->
+
                 <div class="card-body d-flex align-items-center justify-content-between">
-                    <form action="{{ route('cancelAllBid', ['game_id' => $post->post_id]) }}" method="POST" id="cancelAllBid">
+                    <form action="{{ route('cancelAllBid', ['game_id' => $post->post_id]) }}" method="POST"
+                        id="cancelAllBid">
                         @csrf
                         <button type="submit" class="btn btn-primary">Cancel</button>
                     </form>
-                    @if($totalAmount >= $wallet->balance)
-                    <a href="{{ route('addMoneyPage') }}" class="btn btn-primary">Add Balance</a>
-                    @else
                     <form action="{{ route('submitAllBid') }}" method="POST" id="submitAllBid">
                         @csrf
                         <input type="text" name="user_id" value="{{ $user->user_id }}" hidden>
                         <input type="text" name="game_id" value="{{ $post->post_id }}" hidden>
+                        <input type="text" name="parent_id" value="{{ $user->parent }}" hidden>
+                        <input type="text" name="admin_cut" value="{{ $user->admin_cut_crossing}}" hidden>
+                        <input type="text" name="subadmin_cut" value="{{ $user->user_cut_crossing}}" hidden>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
-                    @endif
                 </div>
             </div>
         </div>
@@ -126,6 +170,32 @@
             updateTimer();
             setInterval(updateTimer, 1000);
         }
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let selectedNumbers = new Set();
+        const inputField = document.getElementById("numbers");
+        const buttons = document.querySelectorAll(".number-btn");
+
+        buttons.forEach(button => {
+            button.addEventListener("click", function() {
+                const number = this.getAttribute("data-number");
+
+                if (selectedNumbers.has(number)) {
+                    selectedNumbers.delete(number);
+                    this.classList.remove("btn-primary");
+                    this.classList.add("btn-outline-primary");
+                } else {
+                    selectedNumbers.add(number);
+                    this.classList.remove("btn-outline-primary");
+                    this.classList.add("btn-primary");
+                }
+
+                inputField.value = Array.from(selectedNumbers).sort().join(",");
+            });
+        });
     });
 </script>
 

@@ -65,8 +65,10 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'adminToken' => \App\Http\Middleware\AdminToken::class,
         'authToken' => \App\Http\Middleware\AuthToken::class,
+        
         'userToken' => \App\Http\Middleware\UserToken::class,
         'visitorTracking' => \App\Http\Middleware\VisitorTracking::class,
-        'SubAdminToken' => \App\Http\Middleware\SubAdminToken::class
+        'subAdminToken' => \App\Http\Middleware\SubAdminToken::class,
+        'playerToken' => \App\Http\Middleware\PlayerToken::class
     ];
 }

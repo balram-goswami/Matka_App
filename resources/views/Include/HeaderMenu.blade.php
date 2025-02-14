@@ -7,7 +7,7 @@ $homePage = getThemeOptions('homePage');
     <div class="container h-100 d-flex align-items-center justify-content-between d-flex rtl-flex-d-row-r">
         <!-- Logo Wrapper -->
          @if(isset($headerOption['headerlogo']))
-        <div class="logo-wrapper"><a href=""><img src="{{ $headerOption['headerlogo'] }}" alt="headerLogo" style="height: 50px;"></a>
+        <div class="logo-wrapper"><a href=""><img src="{{ publicPath($headerOption['headerlogo']) }}" alt="headerLogo" style="height: 50px;"></a>
             @else
             <div class="logo-wrapper"><a href=""><img src="..\themeAssets\img\matka\matka.png" alt="headerLogo" style="height: 50px;"></a>
         @endif

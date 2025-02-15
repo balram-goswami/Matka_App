@@ -58,18 +58,27 @@ $gameStatus = getThemeOptions('betSetting');
         <!-- Hero Slides-->
         <div class="hero-slides owl-carousel">
             @foreach(['banner1', 'banner2', 'banner3'] as $banner)
-                @if(isset($homePage[$banner]))
-                    <div class="single-hero-slide" style="background-image: url('{{ publicPath($homePage[$banner]) }}')">
-                        <div class="slide-content h-100 d-flex align-items-center">
-                            <div class="slide-text">
-                                <h4 class="text-white mb-0" data-animation="fadeInUp" data-delay="100ms"
-                                    data-duration="1000ms">{{ $homePage['bannerText'] ?? 'Matka App' }}</h4>
-                                <p class="text-white" data-animation="fadeInUp" data-delay="400ms"
-                                    data-duration="1000ms">{{ $homePage['buttonText'] ?? 'Play Unlimited' }}</p>
-                            </div>
-                        </div>
+            @if(isset($homePage[$banner]))
+            <div class="single-hero-slide" style="background-image: url('{{ publicPath($homePage[$banner]) }}')">
+                <div class="slide-content h-100 d-flex align-items-center">
+                    <div class="slide-text">
+                        <h4 class="text-white mb-0" data-animation="fadeInUp" data-delay="100ms"
+                            data-duration="1000ms">{{ $homePage['bannerText'] ?? 'Matka App' }}</h4>
+                        <p class="text-white" data-animation="fadeInUp" data-delay="400ms"
+                            data-duration="1000ms">{{ $homePage['buttonText'] ?? 'Play Unlimited' }}</p>
                     </div>
-                @endif
+                </div>
+            </div>
+            @else
+            <div class="single-hero-slide" style="background-image: url('../themeAssets/img/bg-img/1.jpg')">
+                <div class="slide-content h-100 d-flex align-items-center">
+                    <div class="slide-text">
+                        <h4 class="text-white mb-0" data-animation="fadeInUp" data-delay="100ms" data-duration="1000ms">Amazon Echo</h4>
+                        <p class="text-white" data-animation="fadeInUp" data-delay="400ms" data-duration="1000ms">3rd Generation, Charcoal</p><a class="btn btn-primary" href="#" data-animation="fadeInUp" data-delay="800ms" data-duration="1000ms">Buy Now</a>
+                    </div>
+                </div>
+            </div>
+            @endif
             @endforeach
         </div>
     </div>

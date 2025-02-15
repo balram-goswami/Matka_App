@@ -108,6 +108,34 @@ function themeFieldArray()
                     'placeholder' =>'UPI Id',
                     'default' => '',
                 ],
+                [
+                    'title' =>'Bank Name',
+                    'id' => 'bank_name',
+                    'type' => 'text',
+                    'placeholder' =>'Bank Name',
+                    'default' => '',
+                ],
+                [
+                    'title' =>'Bank AC No',
+                    'id' => 'account_no',
+                    'type' => 'text',
+                    'placeholder' =>'AC no',
+                    'default' => '',
+                ],
+                [
+                    'title' =>'IFSC Code',
+                    'id' => 'ifsc',
+                    'type' => 'text',
+                    'placeholder' =>'IFSC Code',
+                    'default' => '',
+                ],
+                [
+                    'title' =>'IFSC Code',
+                    'id' => 'ifsc',
+                    'type' => 'text',
+                    'placeholder' =>'IFSC Code',
+                    'default' => '',
+                ],
             ]
         ],
         [
@@ -118,11 +146,27 @@ function themeFieldArray()
             [
                 // Banner Section
                 [
-                    'title' =>'Banner Logo',
-                    'id' => 'bannerLogo',
+                    'title' =>'Banner 1',
+                    'id' => 'banner1',
                     'type' => 'FilesUpload',
-                    'slug'=>'bannerLogo',
-                    'placeholder' => 'Banner Logo',
+                    'slug'=>'banner1',
+                    'placeholder' => 'Banner',
+                    'default' => '',
+                ],
+                [
+                    'title' =>'Banner 2',
+                    'id' => 'banner2',
+                    'type' => 'FilesUpload',
+                    'slug'=>'banner2',
+                    'placeholder' => 'Banner',
+                    'default' => '',
+                ],
+                [
+                    'title' =>'Banner 3',
+                    'id' => 'banner3',
+                    'type' => 'FilesUpload',
+                    'slug'=>'banner3',
+                    'placeholder' => 'Banner',
                     'default' => '',
                 ],
                 [
@@ -132,13 +176,7 @@ function themeFieldArray()
                     'placeholder' =>'Banner Text',
                     'default' => '',
                 ], 
-                [
-                    'title' =>'Button Text',
-                    'id' => 'buttonText',
-                    'type' => 'text',
-                    'placeholder' =>'Button Text',
-                    'default' => '',
-                ], 
+                
             ]
         ],
         [
@@ -147,6 +185,17 @@ function themeFieldArray()
             'icon' => '<i class="fa fa-cog" aria-hidden="true"></i>',
             'fields' =>
             [
+                [
+                    'title' => 'Game Status',
+                    'id' => 'status',
+                    'type' => 'select',
+                    'placeholder' => 'Game Status',
+                    'default' => '',
+                    'options' => [
+                        'on' => 'Game On',
+                        'off' => 'Game Off',
+                    ],
+                ],
                 [
                     'title' =>'Choice Game',
                     'id' => 'choiceGame',
@@ -182,7 +231,7 @@ function themeFieldArray()
                     'placeholder' =>'Enter Amount',
                     'default' => '',
                 ],
-                 
+                                 
             ]
         ],
     ];

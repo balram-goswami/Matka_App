@@ -28,7 +28,7 @@ class AdminToken
                 return redirect()->route('login.index');
             } else {
 
-                if (!in_array($user->role, [User::ASTROLOGER, User::ADMIN, User::USER])) {
+                if (!in_array($user->role, [User::ADMIN, User::USER, User::SUBADMIN, User::PLAYER ])) {
                     Session::flash('warning', "You are not authorized to access this url, Please login again.");
                     return redirect()->route('login.index');
                 }

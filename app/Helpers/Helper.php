@@ -551,8 +551,9 @@ function userTypes()
 {
 	return [
 		User::ADMIN => 'Admin',
-		User::ASTROLOGER => 'Astrologer',
-		User::USER => 'User'
+		User::SUBADMIN => 'SubAdmin',
+		User::USER => 'User',
+		User::PLAYER => 'Player',
 	];
 }
 function daysName()
@@ -573,41 +574,7 @@ function priceFormat($price)
 	return '$ ' . number_format($price, 2);
 }
 
-// function priceFormat($number)
-// {
-// 	return '$ ' . number_format($number, 2);
-// }
-function itemShowPrice($menuItem)
-{
-	/*if ($menuItem->item_is == 'Attributes') {
-        return \App\MenuItemAttributes::join('menu_attributes','menu_attributes.menu_attr_id','menu_item_attributes.menu_attr_id')
-            ->where('menu_item_id', $menuItem->menu_item_id)
-            ->where('menu_attributes.attr_main_choice', 1)
-            ->select('menu_item_attributes.attr_name as item_attr_name','menu_item_attributes.attr_price', 'menu_item_attributes.item_attr_id','menu_attributes.attr_name as menu_attr_name','menu_attributes.attr_type')
-            ->orderBy('attr_price', 'ASC')
-            ->get()->pluck('attr_price')->first();
-    }*/
-	$delivery_pickup_address = Session::get('delivery_pickup_address');
-	$slot = (isset($delivery_pickup_address['slot']) ? $delivery_pickup_address['slot'] : '');
-	$order_type = (isset($delivery_pickup_address['order_type']) ? $delivery_pickup_address['order_type'] : '');
-	$item_for = json_decode($menuItem->item_for);
-	$extraPrice = 0;
-	if ($order_type == 'Pickup') {
-		$extraPrice = (isset($item_for->$slot->pickup_price) ? $item_for->$slot->pickup_price : 0);
-	} else {
-		$extraPrice = (isset($item_for->$slot->delivery_price) ? $item_for->$slot->delivery_price : 0);
-	}
-	$price = $menuItem->item_price;
-	if ($menuItem->item_sale_price) {
-		$price = $menuItem->item_sale_price;
-	}
-	$discountPrice = $price;
-	if ($menuItem->item_discount_start <= date('Y-m-d') && $menuItem->item_discount_end >= date('Y-m-d')) {
-		$discount = ($price * $menuItem->item_discount / 100);
-		$discountPrice = $price - $discount;
-	}
-	return $discountPrice + $extraPrice;
-}
+
 function genders()
 {
 	return [
@@ -652,7 +619,7 @@ function getMenus()
 			'title' => 'Media',
 			'route' => 'media.index',
 			'icon' => 'menu-icon tf-icons bx bxs-file-image',
-			'role' => [User::ADMIN, User::USER],
+			'role' => [User::ADMIN],
 		],
 		[
 			'title' => 'Settings',
@@ -671,6 +638,38 @@ function getMenus()
 			'route' => 'paymentRequest',
 			'icon' => 'tf-icons bx bx-cog',
 			'role' => [User::ADMIN],
+		],
+		[
+			'title' => 'Jantri Table',
+			'route' => 'jantriTable',
+			'icon' => 'tf-icons bx bx-cog',
+			'role' => [User::ADMIN],
+		],
+		
+		// Sub Admin
+		[
+			'title' => 'Dashboard',
+			'route' => 'subadminDashboard',
+			'icon' => 'tf-icons bx bx-home-circle',
+			'role' => [User::SUBADMIN],
+		], 
+		[
+			'title' => 'My Players',
+			'route' => 'viewPlayers',
+			'icon' => 'tf-icons bx bx-home-circle',
+			'role' => [User::SUBADMIN],
+		],
+		[
+			'title' => 'Payments Request',
+			'route' => 'userPayment',
+			'icon' => 'tf-icons bx bx-cog',
+			'role' => [User::SUBADMIN],
+		],
+		[
+			'title' => 'Jantri Table',
+			'route' => 'jantriTablesa',
+			'icon' => 'tf-icons bx bx-cog',
+			'role' => [User::SUBADMIN],
 		],
 	];
 }
@@ -695,7 +694,7 @@ function postTypes()
 		
 		'optiongame' => [
 			'area' => 'Admin',
-			'title' => 'Vote Games',
+			'title' => 'Toss Games',
 			'icon' => 'tf-icons bx bxl-blogger',
 			'slug' => 'optiongame',
 			'role' => [User::ADMIN],
@@ -719,6 +718,20 @@ function postTypes()
 			'support' => [],
 			'templateOption' => [
 				'DailySatta' => 'Number Games',
+			],
+			'taxonomy' => []
+		],
+		'news' => [
+			'area' => 'Admin',
+			'title' => 'Game News',
+			'icon' => 'tf-icons bx bxl-blogger',
+			'slug' => 'news',
+			'role' => [User::ADMIN],
+			'showMenu' => false,
+			'multilng' => false,
+			'support' => ['excerpt'],
+			'templateOption' => [
+				'News' => 'News',
 			],
 			'taxonomy' => []
 		],
@@ -931,7 +944,7 @@ function addPostMetaBox($post_type,  $post_id)
 		case 'numberGame':
 			$postBoxHtml = postnumberGameMetaBox($post_id);
 			break;
-
+		
 		default:
 			$postBoxHtml = '';
 			break;

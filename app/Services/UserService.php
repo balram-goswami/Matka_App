@@ -8,16 +8,14 @@ use App\Models\{
     Wallet
 };
 
-use App\Services\CommunicationService;
 
 class UserService
 {
     protected $service;
     protected $communicationService;
-    public function __construct(User $user, CommunicationService $communicationService)
+    public function __construct(User $user)
     {
         $this->service = $user;
-        $this->communicationService = $communicationService;
     }
     public function table($type = null)
     {
@@ -43,38 +41,66 @@ class UserService
     }
     public function store($request)
     {
-        $email = $request->input('email');
-        $randomPassword = sha1(mt_rand(10000, 99999) . time() . $email);
-        $password = $request->input('password') ?? $randomPassword;
-
         $service = $this->service;
         if ($request->file('photo')) {
             $mealService->photo = fileuploadExtra($request, 'photo');
         } elseif ($request->input('photo')) {
             $service->photo = $request->input('photo');
         }
-        $service->name = $request->input('name');
-        $service->email = $request->input('email');
-        $service->phone = $request->input('phone');
+        function generateUsername() {
+            $randomNumber = rand(100000, 999999);
+            return "MG" . $randomNumber;
+        }
+        
+        
+        // Generate username
+        $username = generateUsername();
+        
+        // Generate password based on the username
+        $password = "matka@123";
+        $service->name = $username;
+
+        $service->parent = $request->input('parent');
+        $service->admin_cut_toss_game = $request->input('admin_cut_toss_game');
+        $service->admin_cut_crossing = $request->input('admin_cut_crossing');
+        $service->admin_cut_harf = $request->input('admin_cut_harf');
+        $service->admin_cut_odd_even = $request->input('admin_cut_odd_even');
+        $service->admin_cut_jodi = $request->input('admin_cut_jodi');
+
+        $service->user_cut_toss_game = $request->input('user_cut_toss_game');
+        $service->user_cut_crossing = $request->input('user_cut_crossing');
+        $service->user_cut_harf = $request->input('user_cut_harf');
+        $service->user_cut_odd_even = $request->input('user_cut_odd_even');
+        $service->user_cut_jodi = $request->input('user_cut_jodi');
         if ($password) {
             $service->password = bcrypt($password);
         }
         $service->email_verified_at = dateTime();
-        $service->role = $request->input('role') ?? 'user';
+        $service->role = $request->input('role') ?? 'player';
+        $service->status = $request->input('status') ?? 'Active';
         $service->save();
 
         if (!$wallet = Wallet::where('user_id', $service->id)->get()->first()) {
             $wallet = new Wallet();
             $wallet->user_id = $service->user_id;
-            $wallet->balance = '0';
+            $wallet->balance = $request->input('balance') ?? '0';
             $wallet->created_at = dateTime();
             $wallet->save();
+
+            if($request->input('role') === 'subadmin'){
+                $pWallet = Wallet::where('user_id', 1)->first();
+            } else {
+                $pWallet = Wallet::where('user_id', $request->input('parent'))->first();
+            }
+
+            // Ensure the parent wallet exists and has sufficient balance
+            if ($pWallet && $pWallet->balance >= $request->input('balance')) {
+                $pWallet->decrement('balance', $request->input('balance'));
+            } else {
+                return redirect()->back()->withErrors(['error' => 'Insufficient balance in parent wallet.'])->withInput();
+            }
         }
 
-        // $name = $request->input('name');
-        // $emailSubject = 'Login details at '.appName();
-        // $emailBody = view('Email.RegisterVerifyEmailLink', compact('name', 'password', 'email'));
-        // $this->communicationService->mail($email, $emailSubject, $emailBody);
         return $service;
     }
     public function get($id = null)
@@ -97,8 +123,7 @@ class UserService
             $service->photo = $request->input('photo');
         }
         $service->name = $request->input('name');
-        $service->email = $request->input('email');
-        $service->phone = $request->input('phone');
+        
         $service->bank_name = $request->input('bank_name');
         $service->ac_holder_name = $request->input('ac_holder_name');
         $service->ac_number = $request->input('ac_number');
@@ -106,6 +131,19 @@ class UserService
         $service->upi_one = $request->input('upi_one');
         $service->upi_two = $request->input('upi_two');
         $service->upi_three = $request->input('upi_three');
+
+        $service->parent = $request->input('parent');
+        $service->admin_cut_toss_game = $request->input('admin_cut_toss_game');
+        $service->admin_cut_crossing = $request->input('admin_cut_crossing');
+        $service->admin_cut_harf = $request->input('admin_cut_harf');
+        $service->admin_cut_odd_even = $request->input('admin_cut_odd_even');
+        $service->admin_cut_jodi = $request->input('admin_cut_jodi');
+        $service->user_cut_toss_game = $request->input('user_cut_toss_game');
+        $service->user_cut_crossing = $request->input('user_cut_crossing');
+        $service->user_cut_harf = $request->input('user_cut_harf');
+        $service->user_cut_odd_even = $request->input('user_cut_odd_even');
+        $service->user_cut_jodi = $request->input('user_cut_jodi');
+        $service->status = $request->input('status');
         if ($password) {
             $service->password = bcrypt($password);
         }
@@ -114,7 +152,7 @@ class UserService
 
         return $service;
     }
-    
+
     public function delete($service = null)
     {
         if (!is_object($service)) {

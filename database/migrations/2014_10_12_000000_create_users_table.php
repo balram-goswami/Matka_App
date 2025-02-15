@@ -15,12 +15,23 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('user_id');
-            $table->string('name')->nullable();
-            $table->string('email')->unique();
+            $table->string('name')->unique();
+            $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->string('photo')->nullable();
             $table->string('password'); 
-            $table->string("role");
+            $table->string('role');
+            $table->string('parent')->nullable();
+            $table->string('admin_cut_toss_game')->nullable();
+            $table->string('admin_cut_crossing')->nullable();
+            $table->string('admin_cut_harf')->nullable();
+            $table->string('admin_cut_odd_even')->nullable();
+            $table->string('admin_cut_jodi')->nullable();
+            $table->string('user_cut_toss_game')->nullable();
+            $table->string('user_cut_crossing')->nullable();
+            $table->string('user_cut_harf')->nullable();
+            $table->string('user_cut_odd_even')->nullable();
+            $table->string('user_cut_jodi')->nullable();
             $table->string('bank_name')->nullable();
             $table->string('ac_holder_name')->nullable();
             $table->string('ac_number')->nullable();
@@ -28,6 +39,7 @@ class CreateUsersTable extends Migration
             $table->string('upi_one')->nullable();
             $table->string('upi_two')->nullable();
             $table->string('upi_three')->nullable();
+            $table->enum("status",["Active","Block"]);
             $table->datetime('email_verified_at');
             $table->rememberToken();
             $table->timestamps();

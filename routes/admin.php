@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\{
 };
 use App\Http\Controllers\Admin\{
     DashboardController,
-    AstrologerController,
     ThemeController,
     MediaController,
     UserController,
@@ -13,16 +12,12 @@ use App\Http\Controllers\Admin\{
     TaxonomyController,
     FeedbackController,
     SubscribersController,
-    ApplyNowController,
     MenuController
 };
 
 // Dashboard
 Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
-// Astrologer
-Route::get('astrologerdashboard', [AstrologerController::class, 'index'])->name('astrologer.index');
-Route::get('profile', [AstrologerController::class, 'profile'])->name('astrologer.profile');
 
 // Clear Cache
 Route::get('/clear-cache', function () {
@@ -42,7 +37,8 @@ Route::get('confermPayment/{id}', [UserController::class, 'confermPayment'])->na
 Route::post('/gameOptions', [UserController::class, 'gameOptions'])->name('gameOptions');
 Route::get('viewPayment/{id}',[UserController::class, 'viewPayment'])->name('viewPayment');
 Route::post('withdralRequest', [UserController::class, 'withdralRequest'])->name('withdralRequest');
-
+Route::get('jantriTable', [UserController::class, 'jantriTable'])->name('jantriTable');
+Route::post('jantri', [UserController::class, 'jantri'])->name('jantri.view');
 
 // Media
 Route::resource('/media', MediaController::class, ['names' => 'media']);
@@ -53,8 +49,7 @@ Route::get('/update/media/gallery', [MediaController::class, 'update'])->name('m
 
 // Users
 Route::resource('users', UserController::class);
-Route::get('astrologer', [UserController::class, 'astrologer'])->name('users.astrologer');
-Route::get('customers', [UserController::class, 'customers'])->name('users.customers');
+Route::get('player', [UserController::class, 'player'])->name('player');
 
 // Posts
 Route::resource('/post', PostController::class, [
@@ -82,11 +77,3 @@ Route::get('/menus', [MenuController::class, 'index'])->name('menus');
 Route::post('/add/menu', [MenuController::class, 'addMenuItems'])->name('add.menu');
 Route::get('/delete/menu', [MenuController::class, 'deleteMenuItems'])->name('delete.menu');
 
-// Feedback
-Route::resource('feedbacks', FeedbackController::class);
-
-// Subscriber
-Route::resource('subscribers', SubscribersController::class);
-
-// ApplyNow
-Route::resource('apply-now', ApplyNowController::class);

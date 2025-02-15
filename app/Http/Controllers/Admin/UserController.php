@@ -4,16 +4,20 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Session, DataTables, Redirect, DB, Validator, Form;
+use Session, DataTables, Redirect, Validator, Form;
 use App\Services\{
     UserService
 };
+use Illuminate\Support\Facades\DB;
 use App\Models\{
     GameResult,
     BidTransaction,
     Wallet,
-    WalletTransactions
+    WalletTransactions,
+    Posts,
+    User
 };
+use Carbon\Carbon;
 
 
 class UserController extends Controller
@@ -31,7 +35,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $user = $this->service->table()->where('role', 'admin');
+            $user = $this->service->table()->where('role', 'subadmin');
             return Datatables::of($user)
                 ->addIndexColumn()
                 ->editColumn('photo', function ($row) {
@@ -62,10 +66,11 @@ class UserController extends Controller
         $view = 'Admin.Users.Index';
         return view('Admin', compact('view'));
     }
-    public function customers(Request $request)
+
+    public function player(Request $request)
     {
         if ($request->ajax()) {
-            $user = $this->service->table()->where('role', 'user');
+            $user = $this->service->table()->where('role', 'player');
             return Datatables::of($user)
                 ->addIndexColumn()
                 ->editColumn('photo', function ($row) {
@@ -117,8 +122,9 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $this->service->store($request);
-        Session::flash('success', "New User saves successfully.");
+        $user = $this->service->store($request);
+        $newUser = User::latest()->first(); // Fetch the last created user
+        Session::flash('success', "New User (ID: {$newUser->name} PWD: matka@123) saved successfully.");
         return redirect()->back();
     }
 
@@ -190,9 +196,20 @@ class UserController extends Controller
         $user = $this->service->select();
         $numberGame = getPostsByPostType('optiongame', 0, 'new', true);
         $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
+        $results = GameResult::all();
+
+        $gameNames = [];
+
+        foreach ($results as $result) {
+            $game = Posts::where('post_id', $result->game_id)->first();
+            $gameNames[$result->game_id] = $game ? $game->post_title : 'Unknown Game';
+        }
+
         $view = 'Admin.Results.ResultDashboard';
-        return view('Admin', compact('view', 'user', 'numberGame', 'sattaGame'));
+
+        return view('Admin', compact('view', 'user', 'numberGame', 'sattaGame', 'results', 'gameNames'));
     }
+
 
     public function paymentRequest()
     {
@@ -239,47 +256,34 @@ class UserController extends Controller
             $bidTable = BidTransaction::where('game_id', $request->game_id)
                 ->where('bid_result', NULL)
                 ->get();
+
+
             foreach ($bidTable as $table) {
+                $gameId = $request->game_id;
+                $result = $request->result;
+                $bidResult = null;
+
                 if ($table->harf_digit === 'oddEven') {
-
-                    $bidResult = ($request->result % 2 === 0) ? 'EVEN' : 'ODD';
-
-                    BidTransaction::where('game_id', $request->game_id)
-                        ->update([
-                            'bid_result' => $request->result,
-                            'result_status' => DB::raw("CASE WHEN answer = '$bidResult' THEN 'win' ELSE 'loss' END"),
-                        ]);
-
-                    return redirect()->back()->with('success', 'Bid result updated successfully');
-                } elseif ($table->harf_digit === 'open') {
-                    $firstDigit = intval(substr($request->result, 0, 1));
-
-                    BidTransaction::where('game_id', $request->game_id)
-                        ->update([
-                            'bid_result' => $request->result,
-                            'bid_result' => DB::raw("CASE WHEN answer = '$firstDigit' THEN 'win' ELSE 'loss' END"),
-                        ]);
-                } elseif ($table->harf_digit === 'close') {
-                    $secondDigit = intval(substr($request->result, 1, 1));
-
-                    BidTransaction::where('game_id', $request->game_id)
-                        ->update([
-                            'bid_result' => $request->result,
-                            'bid_result' => DB::raw("CASE WHEN answer = '$secondDigit' THEN 'win' ELSE 'loss' END"),
-                        ]);
-
-                    return redirect()->back()->with('success', 'Bid results updated successfully');
+                    $bidResult = ($result % 2 === 0) ? 'EVEN' : 'ODD';
+                } elseif ($table->harf_digit === 'Ander') {
+                    $bidResult = intval(substr($result, 0, 1)); // First digit
+                } elseif ($table->harf_digit === 'Bahar') {
+                    $bidResult = intval(substr($result, 1, 1)); // Second digit
                 } else {
-                    BidTransaction::where('game_id', $request->game_id)
-                        ->update([
-                            'bid_result' => $request->result,
-                            'result_status' => DB::raw("CASE WHEN answer = '$request->result' THEN 'win' ELSE 'loss' END"),
-                        ]);
-
-                    return redirect()->back()->with('success', 'Result Saved');
+                    $bidResult = $result; // Default case
                 }
-                return redirect()->back()->with('success', 'Result Saved');
+
+                // Ensure filtering by harf_digit to update the correct bid
+                BidTransaction::where('game_id', $gameId)
+                    ->where('harf_digit', $table->harf_digit) // Add this condition
+                    ->update([
+                        'bid_result' => $bidResult, // Use $bidResult instead of $result
+                        'result_status' => DB::raw("CASE WHEN answer = '" . addslashes($bidResult) . "' THEN 'win' ELSE 'loss' END"),
+                    ]);
             }
+
+            // Ensure a single success response after all iterations
+            return redirect()->back()->with('success', 'Bid results updated successfully');
         } catch (\Exception $e) {
             \Log::error('Error saving game result: ' . $e->getMessage());
             return redirect()->back()->with('error', 'An error occurred while saving the result');
@@ -313,6 +317,7 @@ class UserController extends Controller
                 'result' => $request->result,
             ]);
 
+
             // Update bid transactions
             BidTransaction::where('game_id', $request->game_id)
                 ->update([
@@ -345,6 +350,14 @@ class UserController extends Controller
 
         // Find the associated wallet
         $wallet = Wallet::find($pay->wallet_id);
+        $pUser = getcurrentUser();
+        $pWallet = Wallet::find($pUser->user_id);
+
+        if (!$pWallet) {
+            return redirect()->back()->with('danger', 'Wallet not found.');
+        }
+        $pWallet->balance -= $pay->deposit_amount; // Increment the balance
+        $pWallet->save();
 
         if (!$wallet) {
             return redirect()->back()->with('danger', 'Wallet not found.');
@@ -384,46 +397,114 @@ class UserController extends Controller
 
     public function withdralRequest(Request $request)
     {
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'id' => 'required',
-                'wallet_id' => 'required',
-                'transaction_type' => 'required',
-                'utr_number' => 'required',
-            ]
-        );
+        // **Validate incoming request**
+        $request->validate([
+            'id'                => 'required|exists:wallet_transactions,id',
+            'wallet_id'         => 'required|exists:wallets,id',
+            'parent_id'         => 'nullable|exists:wallets,user_id',
+            'transaction_type'  => 'required|string',
+            'utr_number'        => 'required|string|unique:wallet_transactions,utr_number',
+        ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
+        // Fetch the pending transaction
         $pay = WalletTransactions::where('id', $request->id)
             ->where('request_status', 'pending')
             ->first();
 
-        // Check if the transaction exists and is pending
         if (!$pay) {
             return redirect()->back()->with('danger', 'Transaction not found or already processed.');
         }
 
-        // Update the transaction status
-        $pay->request_status = 'complete';
-        $pay->transaction_type = $request->transaction_type;
-        $pay->utr_number = $request->utr_number;
-        $pay->save();
+        // Find the associated wallet (user's wallet)
+        $wallet = Wallet::findOrFail($request->wallet_id);
 
-        // Find the associated wallet
-        $wallet = Wallet::find($request->wallet_id);
-
-        if (!$wallet) {
-            return redirect()->back()->with('danger', 'Wallet not found.');
+        // Check if the user has enough balance
+        if ($wallet->balance < $pay->withdraw_amount) {
+            return redirect()->back()->withErrors(['error' => 'Insufficient balance in user wallet.'])->withInput();
         }
 
-        // Update the wallet balance
-        $wallet->balance -= $pay->withdraw_amount; // Increment the balance
-        $wallet->save();
+        // If parent_id is provided, fetch the parent wallet
+        $parent = $request->parent_id ? Wallet::where('user_id', $request->parent_id)->first() : null;
 
-        return redirect()->route('paymentRequest')->with('success', 'Payment successfully confirmed.');
+        // **Ensure sufficient balance in parent account (if applicable)**
+        if ($parent && $parent->balance < $pay->withdraw_amount) {
+            return redirect()->back()->withErrors(['error' => 'Insufficient balance in parent wallet.'])->withInput();
+        }
+
+        // **Begin Transaction**
+        DB::transaction(function () use ($pay, $wallet, $parent, $request) {
+            // Deduct from user's wallet
+            $wallet->decrement('balance', $pay->withdraw_amount);
+
+            // Deduct from parent wallet (if applicable)
+            if ($parent) {
+                $parent->increment('balance', $pay->withdraw_amount);
+            }
+
+            // Update the transaction status and details
+            $pay->update([
+                'request_status'    => 'complete',
+                'transaction_type'  => $request->transaction_type,
+                'utr_number'        => $request->utr_number,
+            ]);
+        });
+
+        return redirect()->back()->with('success', 'Withdrawal request processed successfully.');
+    }
+
+    public function jantriTable()
+    {
+        $tossGame = getPostsByPostType('optiongame', 0, 'new', true);
+        $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
+        $view = 'Admin.Jantri.JantriView';
+        return view('Admin', compact('view', 'tossGame', 'sattaGame'));
+    }
+
+    public function jantri(Request $request)
+    {
+        if ($request->tossGame == !NULL) {
+            $game_id = $request->tossGame;
+            $gameType = 'option';
+
+            $gameResult = GameResult::where('game_id', $game_id)->get('result')->first();
+
+            $getgame = getPostsByPostType('optiongame', 0, 'new', true);
+            $game = $getgame->where('post_id', $game_id)->first();
+
+            $jantriData = BidTransaction::where('game_id', $game_id)
+                ->selectRaw('answer, SUM(admin_cut) as total_bid, SUM(win_amount + subadminget) as total_win, result_status')
+                ->groupBy('answer', 'result_status')
+                ->orderBy('answer', 'asc')
+                ->get();
+
+            $view = 'Admin.Jantri.Table';
+            return view('Admin', compact('view', 'jantriData', 'gameType', 'game', 'gameResult'));
+        } else {
+            $game_id = $request->sattaGame;
+            $time = $request->sattaGameTime;
+            $date = $request->date;
+
+            $gameType = 'satta';
+            $gameResult = GameResult::where('game_id', $game_id)->first(['result']); // Using first() to avoid collections
+
+            // Merge date and time into a DateTime format
+            $selectedDateTime = Carbon::parse("$date $time");
+
+            // Get the timestamp for 5 hours before the updated_at field
+            $timeLimit = Carbon::now()->subHours(5);
+
+            $jantriData = BidTransaction::where('game_id', $game_id)
+                ->where('updated_at', '>=', $timeLimit) // Only results updated in the last 5 hours
+                ->where('updated_at', '<=', $selectedDateTime) // Ensure records match the selected date-time
+                ->selectRaw('answer, SUM(admin_cut) as total_bid, SUM(win_amount + subadminget) as total_win, result_status')
+                ->groupBy('answer', 'result_status')
+                ->orderBy('answer', 'asc')
+                ->get();
+
+            $view = 'Admin.Jantri.Table';
+            return view('Admin', compact('view', 'jantriData', 'gameType', 'gameResult'));
+        }
+
+        return redirect()->back()->with('danger', 'No Jantri Found.');
     }
 }

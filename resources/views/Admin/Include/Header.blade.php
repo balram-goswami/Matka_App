@@ -35,7 +35,7 @@
 
             <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
                 <div class="app-brand demo">
-                    <a href="{{ route('dashboard.index') }}" class="app-brand-link">
+                    <a href="javascript:void(0);" class="app-brand-link">
                         @if (isset($setting['headerlogo']) && $setting['headerlogo'])
                             <img src="<?php echo asset($setting['headerlogo']); ?>" style="max-width: 110px;" alt class="h-auto" />
                         @else
@@ -156,7 +156,7 @@
                                     <li>
                                         <div class="dropdown-divider"></div>
                                     </li>
-                                    <li>
+                                    <!-- <li>
                                         <a class="dropdown-item" href="<?php echo route('themes.index'); ?>">
                                             <i class="bx bx-cog me-2"></i>
                                             <span class="align-middle">Settings</span>
@@ -167,7 +167,7 @@
                                             <i class="bx bx-cog me-2"></i>
                                             <span class="align-middle">Clear Cache</span>
                                         </a>
-                                    </li>
+                                    </li> -->
                                     <li>
                                         <div class="dropdown-divider"></div>
                                     </li>

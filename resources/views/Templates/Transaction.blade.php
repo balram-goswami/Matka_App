@@ -2,7 +2,7 @@
 <div class="header-area" id="headerArea">
     <div class="container h-100 d-flex align-items-center justify-content-between rtl-flex-d-row-r">
         <!-- Back Button-->
-        <div class="back-button me-2"><a href="{{ route('user-dashboard') }}"><i class="ti ti-arrow-left"></i></a></div>
+        <div class="back-button me-2"><a href="{{ route('playerDashboard') }}"><i class="ti ti-arrow-left"></i></a></div>
         <!-- Page Title-->
         <div class="page-heading">
             <h6 class="mb-0">Transactions</h6>

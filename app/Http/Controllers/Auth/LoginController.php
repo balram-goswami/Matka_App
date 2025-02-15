@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Hash, Auth, Session, Redirect, Validator};
-use App\Services\{CommunicationService, UserService};
+use App\Services\{UserService};
 
 class LoginController extends Controller
 {
@@ -15,11 +15,9 @@ class LoginController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    protected $communicationService;
     protected $userService;
-    public function __construct(CommunicationService $communicationService , UserService $userService)
+    public function __construct(UserService $userService)
     {
-        $this->communicationService = $communicationService;
         $this->userService = $userService;
     }
 
@@ -37,21 +35,25 @@ class LoginController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'password' => 'required'
         ]);
         if ($validator->fails()) {
             Session::flash('warning', $validator->getMessageBag()->first());
             return Redirect::back();
         }
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only('name', 'password');
 
         if (Auth::attempt($credentials, true)) {
             Session::flash('success', "Login Successfully");
             $currentUser = getCurrentUser();
             if ($currentUser->role === User::USER) {
-                return redirect()->route('user-dashboard');
-            } else {
+                return redirect()->route('dashboard.index');
+            } else if ($currentUser->role === User::SUBADMIN) {
+                return redirect()->route('subadminDashboard');
+            } else if ($currentUser->role === User::PLAYER) {
+                return redirect()->route('playerDashboard');
+            } else{
                 return redirect()->route('dashboard.index');
             }
         } else {
@@ -90,14 +92,6 @@ class LoginController extends Controller
         $password = rand(000000000, 999999999);
         $user->password = bcrypt($password);
         $user->save();
-
-        $name = $user->name;
-        $email = $user->email;
-        $emailSubject = 'Reset Password Request AT ' . appName();
-        $emailBody = view('Email.ForgotPasswordEmail', compact('name', 'password', 'email'));
-
-        $this->communicationService->mail($email, $emailSubject, $emailBody);
-        Session::flash('success', 'Reset password has been sent to on your email.');
         return Redirect::back();
     }
 

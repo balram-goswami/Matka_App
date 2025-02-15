@@ -2,7 +2,7 @@
 <div class="header-area" id="headerArea">
     <div class="container h-100 d-flex align-items-center justify-content-between rtl-flex-d-row-r">
         <!-- Back Button-->
-        <div class="back-button me-2"><a href="{{ route('user-dashboard') }}"><i class="ti ti-arrow-left"></i></a></div>
+        <div class="back-button me-2"><a href="{{ route('playerDashboard') }}"><i class="ti ti-arrow-left"></i></a></div>
         <!-- Page Title-->
         <div class="page-heading">
             <h6 class="mb-0">{{ $post->post_title }}</h6>
@@ -25,7 +25,7 @@
                 <div class="col-6">
                     <div class="card catagory-card">
                         <div class="card-body px-2">
-                            <a href="{{ route('jodiSatta', ['post_id' => $post->post_id]) }}"><img src="..\themeAssets\img\matka\matka.png"
+                            <a href="{{ route('jodiSatta', ['post_id' => $post->post_id]) }}"><img src="{{publicPath('..\themeAssets\img\matka\matka.png')}}"
                                     alt=""><span>Jodi</span>
                             </a>
                         </div>
@@ -34,21 +34,21 @@
                 <!-- Catagory Card -->
                 <div class="col-6">
                     <div class="card catagory-card">
-                        <div class="card-body px-2"><a href="{{ route('harfSatta', ['post_id' => $post->post_id]) }}"><img src="..\themeAssets\img\matka\matka.png"
+                        <div class="card-body px-2"><a href="{{ route('harfSatta', ['post_id' => $post->post_id]) }}"><img src="{{publicPath('..\themeAssets\img\matka\matka.png')}}"
                                     alt=""><span>HARF</span></a></div>
                     </div>
                 </div>
                 <!-- Catagory Card -->
                 <div class="col-6">
                     <div class="card catagory-card">
-                        <div class="card-body px-2"><a href="{{ route('crossingSatta', ['post_id' => $post->post_id]) }}"><img src="..\themeAssets\img\matka\matka.png"
+                        <div class="card-body px-2"><a href="{{ route('crossingSatta', ['post_id' => $post->post_id]) }}"><img src="{{publicPath('..\themeAssets\img\matka\matka.png')}}"
                                     alt=""><span>CROSSING</span></a></div>
                     </div>
                 </div>
                 <!-- Catagory Card -->
                 <div class="col-6">
                     <div class="card catagory-card">
-                        <div class="card-body px-2"><a href="{{ route('oddEvenSatta', ['post_id' => $post->post_id]) }}"><img src="..\themeAssets\img\matka\matka.png"
+                        <div class="card-body px-2"><a href="{{ route('oddEvenSatta', ['post_id' => $post->post_id]) }}"><img src="{{publicPath('..\themeAssets\img\matka\matka.png')}}"
                                     alt=""><span>ODD & EVEN</span></a></div>
                     </div>
                 </div>

@@ -42,7 +42,7 @@ class RouteServiceProvider extends ServiceProvider
                 ->namespace($this->namespace.'\Api')
                 ->group(base_path('routes/api.php'));
 
-            Route::middleware(['web', 'adminToken', 'visitorTracking'])
+            Route::middleware(['web', 'adminToken'])
                 ->prefix('admin')
                 ->namespace($this->namespace.'\Admin')
                 ->group(base_path('routes/admin.php'));
@@ -50,6 +50,16 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware(['web', 'visitorTracking'])
                 ->namespace($this->namespace)
                 ->group(base_path('routes/web.php'));
+            
+            Route::middleware(['web', 'subAdminToken'])
+                ->prefix('subadmin')
+                ->namespace($this->namespace.'\SubAdmin')
+                ->group(base_path('routes/subadmin.php'));
+
+            Route::middleware(['web', 'playerToken'])
+                ->prefix('player')
+                ->namespace($this->namespace.'\Player')
+                ->group(base_path('routes/player.php'));
         });
     }
 

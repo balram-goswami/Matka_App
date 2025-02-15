@@ -26,14 +26,6 @@
                         </div>
                         <div class="data-content">{{ $user->name ?? 'Not available' }}</div>
                     </div>
-                    <div class="single-profile-data d-flex align-items-center justify-content-between">
-                        <div class="title d-flex align-items-center"><i class="ti ti-phone"></i><span>Phone</span></div>
-                        <div class="data-content">{{ $user->phone ?? 'Not available' }}</div>
-                    </div>
-                    <div class="single-profile-data d-flex align-items-center justify-content-between">
-                        <div class="title d-flex align-items-center"><i class="ti ti-mail"></i><span>Email</span></div>
-                        <div class="data-content">{{ $user->email ?? 'Not available' }} </div>
-                    </div>
 
                     <label>Bank Account Details</label>
                     <br>

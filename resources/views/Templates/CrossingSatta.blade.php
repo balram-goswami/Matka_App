@@ -85,12 +85,16 @@
                         @csrf
                         <button type="submit" class="btn btn-primary">Cancel</button>
                     </form>
+                    @if($totalAmount >= $wallet->balance)
+                    <a href="{{ route('addMoneyPage') }}" class="btn btn-primary">Add Balance</a>
+                    @else
                     <form action="{{ route('submitAllBid') }}" method="POST" id="submitAllBid">
                         @csrf
                         <input type="text" name="user_id" value="{{ $user->user_id }}" hidden>
                         <input type="text" name="game_id" value="{{ $post->post_id }}" hidden>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
+                    @endif
                 </div>
             </div>
         </div>

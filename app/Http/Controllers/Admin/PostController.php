@@ -104,24 +104,6 @@ class PostController extends Controller
         }else{
             $post_name = $title;
         }
-        if($request->input('createSiteMap') == 'yes'){
-            $postUrl = '';
-            if (in_array($postType, ['page'])) {
-                $postUrl = siteUrl().'/'.$post_name;
-            } else {
-                $postUrl = siteUrl().'/'.$postType.'/'.$post_name;
-            }
-            createUpdateSiteMapXML($postUrl);
-        }      
-        if($request->input('createSiteMap') == 'no'){
-            $postUrl = '';
-            if (in_array($postType, ['page'])) {
-                $postUrl = siteUrl().'/'.$post_name;
-            } else {
-                $postUrl = siteUrl().'/'.$postType.'/'.$post_name;
-            }
-            deleteSiteMapXML($postUrl);
-        }   
 
         $post_name = str_slug($post_name, '-');
         $post = new Posts();
@@ -249,24 +231,7 @@ class PostController extends Controller
 
         $postCount = Posts::where('post_title', $title)->get()->count();          
 
-        if($request->input('createSiteMap') == 'yes'){
-            $postUrl = '';
-            if (in_array($post->post_type, ['page'])) {
-                $postUrl = siteUrl().'/'.$post->post_name;
-            } else {
-                $postUrl = siteUrl().'/'.$post->post_type.'/'.$post->post_name;
-            }
-            createUpdateSiteMapXML($postUrl);
-        }      
-        if($request->input('createSiteMap') == 'no'){
-            $postUrl = '';
-            if (in_array($post->post_type, ['page'])) {
-                $postUrl = siteUrl().'/'.$post->post_name;
-            } else {
-                $postUrl = siteUrl().'/'.$post->post_type.'/'.$post->post_name;
-            }
-            deleteSiteMapXML($postUrl);
-        }
+        
 
         $post->post_title = $title;
         $post->user_id = Auth::user()->user_id;

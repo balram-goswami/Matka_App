@@ -7,6 +7,7 @@ $homePage = getThemeOptions('homePage');
 <html lang="en">
 
 <head>
+@laravelPWA
     <meta charset="utf-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, shrink-to-fit=no">
@@ -34,13 +35,13 @@ $homePage = getThemeOptions('homePage');
     <link rel="apple-touch-icon" sizes="180x180" href="../themeAssets/img/icons/icon-180x180.png">
 
     @include('Include.Style')
-    @laravelPWA
+   
     
 </head>
 
 <body>
-    {{-- <div class="preloader" id="preloader">
+    <div class="preloader" id="preloader">
         <div class="spinner-grow text-secondary" role="status">
             <div class="sr-only"></div>
         </div>
-    </div> --}}
+    </div> 

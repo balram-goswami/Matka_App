@@ -23,6 +23,7 @@
     @endif
 
     @Include('Common.Style')
+    @laravelPWA
 </head>
 
 <body>

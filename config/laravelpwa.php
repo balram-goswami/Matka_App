@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'name' => 'Matka-India',
+    'name' => 'Matka App',
     'manifest' => [
-        'name' => env('APP_NAME', 'Matka-India'),
-        'short_name' => 'PWA',
+        'name' => env('APP_NAME', 'Matka App'),
+        'short_name' => 'Matka',
         'start_url' => '/',
         'background_color' => '#ffffff',
         'theme_color' => '#000000',
@@ -13,49 +13,49 @@ return [
         'status_bar'=> 'black',
         'icons' => [
             '72x72' => [
-                'path' => '/images/icons/fevicon.png',
+                'path' => '..\themeAssets\img\matka\matka.png',
                 'purpose' => 'any'
             ],
             '96x96' => [
-                'path' => '/images/icons/fevicon.png',
+                'path' => '..\themeAssets\img\matka\matka.png',
                 'purpose' => 'any'
             ],
             '128x128' => [
-                'path' => '/images/icons/fevicon.png',
+                'path' => '..\themeAssets\img\matka\matka.png',
                 'purpose' => 'any'
             ],
             '144x144' => [
-                'path' => '/images/icons/fevicon.png',
+                'path' => '..\themeAssets\img\matka\matka.png',
                 'purpose' => 'any'
             ],
             '152x152' => [
-                'path' => '/images/icons/fevicon.png',
+                'path' => '..\themeAssets\img\matka\matka.png',
                 'purpose' => 'any'
             ],
             '192x192' => [
-                'path' => '/images/icons/fevicon.png',
+                'path' => '..\themeAssets\img\matka\matka.png',
                 'purpose' => 'any'
             ],
             '384x384' => [
-                'path' => '/images/icons/fevicon.png',
+                'path' => '..\themeAssets\img\matka\matka.png',
                 'purpose' => 'any'
             ],
             '512x512' => [
-                'path' => '/images/icons/fevicon.png',
+                'path' => '..\themeAssets\img\matka\matka.png',
                 'purpose' => 'any'
             ],
         ],
         'splash' => [
-            '640x1136' => '/images/icons/fevicon.png',
-            '750x1334' => '/images/icons/fevicon.png',
-            '828x1792' => '/images/icons/fevicon.png',
-            '1125x2436' => '/images/icons/fevicon.png',
-            '1242x2208' => '/images/icons/fevicon.png',
-            '1242x2688' => '/images/icons/fevicon.png',
-            '1536x2048' => '/images/icons/fevicon.png',
-            '1668x2224' => '/images/icons/fevicon.png',
-            '1668x2388' => '/images/icons/fevicon.png',
-            '2048x2732' => '/images/icons/fevicon.png',
+            '640x1136' => '..\themeAssets\img\matka\matka.png',
+            '750x1334' => '..\themeAssets\img\matka\matka.png',
+            '828x1792' => '..\themeAssets\img\matka\matka.png',
+            '1125x2436' => '..\themeAssets\img\matka\matka.png',
+            '1242x2208' => '..\themeAssets\img\matka\matka.png',
+            '1242x2688' => '..\themeAssets\img\matka\matka.png',
+            '1536x2048' => '..\themeAssets\img\matka\matka.png',
+            '1668x2224' => '..\themeAssets\img\matka\matka.png',
+            '1668x2388' => '..\themeAssets\img\matka\matka.png',
+            '2048x2732' => '..\themeAssets\img\matka\matka.png',
         ],
         'shortcuts' => [
             [
@@ -63,7 +63,7 @@ return [
                 'description' => 'Shortcut Link 1 Description',
                 'url' => '/shortcutlink1',
                 'icons' => [
-                    "src" => "/images/icons/fevicon.png",
+                    "src" => "..\themeAssets\img\matka\matka.png",
                     "purpose" => "any"
                 ]
             ],

@@ -7,6 +7,37 @@
     <div class="card-body">
       <div class="table-responsive text-nowrap">
         {{Form::open(array('route' => 'users.store', 'method' => 'POST'))}}
+        @php
+        $username = generateUsername();
+        @endphp
+       
+        <div class="row mb-3">
+          <label class="col-sm-2 col-form-label" for="basic-default-company">User Name</label>
+          <div class="col-sm-10">
+            <input
+              type="text"
+              name="name"
+              readonly
+              class="form-control"
+              id="basic-default-company"
+              value="{{$user->name ?? $username}}"
+              required>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="col-sm-2 col-form-label" for="basic-default-email">Password</label>
+          <div class="col-sm-10">
+            <div class="input-group input-group-merge">
+              <input
+                type="text"
+                name="password"
+                placeholder="Enter Password "
+                id="basic-default-email"
+                class="form-control">
+            </div>
+          </div>
+        </div>
         <div class="row mb-3" hidden>
           <label class="col-sm-2 col-form-label" for="basic-default-email">Role</label>
           <div class="col-sm-10">

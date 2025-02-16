@@ -8,6 +8,7 @@ use App\Http\Controllers\Player\{PlayerController, SattaGameController};
 Route::get('playerDashboard', [PlayerController::class, 'playerDashboard'])->name('playerDashboard');
 
 Route::get('profileUpdate', [PlayerController::class, 'profileUpdate'])->name('profileUpdate');
+Route::get('pwsChange', [PlayerController::class, 'pwsChange'])->name('pwsChange');
 
 Route::get('addMoneyPage', [PlayerController::class, 'addMoneyPage'])->name('addMoneyPage');
 Route::post('moneyRequest', [PlayerController::class, 'moneyRequest'])->name('moneyRequest');

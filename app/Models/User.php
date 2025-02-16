@@ -72,8 +72,26 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    public function userDetails()
+    public function walletDetails()
     {
-        return $this->hasOne(UserDetails::class, 'user_id', 'user_id');
+        return $this->hasOne(Wallet::class, 'user_id', 'user_id');
+    }
+
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class, 'user_id', 'user_id');
+    }
+
+    public function players()
+    {
+        return $this->hasMany(User::class, 'parent', 'user_id');
+    }
+    public function activePlayers()
+    {
+        return $this->hasMany(User::class, 'parent', 'user_id')->where('status', 'Active');
+    }
+    public function blockPlayers()
+    {
+        return $this->hasMany(User::class, 'parent', 'user_id')->where('status', 'Block');
     }
 }

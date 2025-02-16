@@ -9,20 +9,29 @@
       <div class="table-responsive text-nowrap">
         @if($user->user_id)
         {{Form::open(array('route' => array('users.update', $user->user_id), 'method' => 'PUT'))}}
+
+        @else
+        {{Form::open(array('route' => 'users.store', 'method' => 'POST'))}}
+        @endif
+        @php
+        $username = generateUsername();
+        @endphp
+       
         <div class="row mb-3">
           <label class="col-sm-2 col-form-label" for="basic-default-company">User Name</label>
           <div class="col-sm-10">
             <input
               type="text"
               name="name"
+              readonly
               class="form-control"
               id="basic-default-company"
-              value="{{$user->name??old('name')}}"
+              value="{{$user->name ?? $username}}"
               required>
           </div>
         </div>
 
-        
+
         <div class="row mb-3">
           <label class="col-sm-2 col-form-label" for="basic-default-email">Password</label>
           <div class="col-sm-10">
@@ -30,17 +39,12 @@
               <input
                 type="text"
                 name="password"
-                placeholder="Enter New Password To Update"
+                placeholder="Enter Password "
                 id="basic-default-email"
                 class="form-control">
             </div>
           </div>
         </div>
-        @else
-        {{Form::open(array('route' => 'users.store', 'method' => 'POST'))}}
-        @endif
-
-        
 
         <div class="row mb-3">
           <label class="col-sm-2 col-form-label" for="basic-default-email">Role</label>

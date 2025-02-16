@@ -1,5 +1,5 @@
 @php
-    $currentUser = getCurrentUser();
+$currentUser = getCurrentUser();
 @endphp
 
 <div class="container-xxl flex-grow-1 container-p-y">
@@ -9,7 +9,8 @@
                 <div class="d-flex align-items-end row">
                     <div class="col-sm-7">
                         <div class="card-body">
-                            <h5 class="card-title text-primary">Welcome {{ $currentUser->name }} 🎉</h5>
+                            <h5 class="card-title text-primary">User Name: {{ $currentUser->name }} 🎉</h5>
+                            <h5 class="card-title text-primary">Wallet Balance: {{ number_format($balance->balance, 2) }}</h5>
                         </div>
                     </div>
                     <div class="col-sm-5 text-center text-sm-left">
@@ -35,15 +36,15 @@
                     </div>
                 </div>
                 @foreach ($postCounts as $postCount)
-                    <div class="col-lg-6 col-md-6 col-6 mb-6" style="margin-bottom: 10px;">
-                        <div class="card">
-                            <div class="card-body">
-                                <span class="fw-semibold d-block mb-1">{{ $postCount['postTitle'] }} (<small
-                                        class="text-success fw-semibold">{{ $postCount['postCount'] }}</small>)</span>
-                                <a href="<?php echo route('post.index', ['postType' => $postCount['postType']]); ?>">View More</a>
-                            </div>
+                <div class="col-lg-6 col-md-6 col-6 mb-6" style="margin-bottom: 10px;">
+                    <div class="card">
+                        <div class="card-body">
+                            <span class="fw-semibold d-block mb-1">{{ $postCount['postTitle'] }} (<small
+                                    class="text-success fw-semibold">{{ $postCount['postCount'] }}</small>)</span>
+                            <a href="<?php echo route('post.index', ['postType' => $postCount['postType']]); ?>">View More</a>
                         </div>
                     </div>
+                </div>
                 @endforeach
             </div>
         </div>

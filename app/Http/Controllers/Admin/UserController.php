@@ -32,75 +32,48 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        if ($request->ajax()) {
-            $user = $this->service->table()->where('role', 'subadmin');
-            return Datatables::of($user)
-                ->addIndexColumn()
-                ->editColumn('photo', function ($row) {
-                    if ($row->photo) {
-                        return '<img src="' . asset($row->photo) . '" style="width:70px;" />';
-                    }
-                })
-                ->addColumn('action', function ($row) {
-                    return '<div class="dropdown">
-                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                        <i class="bx bx-dots-vertical-rounded"></i>
-                        </button>
-                        <div class="dropdown-menu">
-                           <a class="dropdown-item btn btn-info" href="' . route('users.edit', $row->user_id) . '"
-                              ><i class="bx bx-edit-alt me-1"></i> Edit</a
-                              >
-                            ' . Form::open(array('route' => array('users.destroy', $row->user_id), 'method' => 'delete')) . '
-                                <button type="submit" class="btn btn-danger"><i class="bx bx-trash me-1"></i> Delete</button>
-                            </form>
-                        </div>';
-                })
-                ->editColumn('created_at', function ($row) {
-                    return dateFormat($row->created_at);
-                })
-                ->rawColumns(['action', 'created_at', 'photo'])
-                ->make(true);
-        }
+        $users = User::where('role', 'subadmin')
+            ->with(['wallet', 'players'])
+            ->get();
+
         $view = 'Admin.Users.Index';
-        return view('Admin', compact('view'));
+        return view('Admin', compact('view', 'users'));
     }
 
-    public function player(Request $request)
+    public function viewSubadmin($id)
     {
-        if ($request->ajax()) {
-            $user = $this->service->table()->where('role', 'player');
-            return Datatables::of($user)
-                ->addIndexColumn()
-                ->editColumn('photo', function ($row) {
-                    if ($row->photo) {
-                        return '<img src="' . asset($row->photo) . '" style="width:70px;" />';
-                    }
-                })
-                ->addColumn('action', function ($row) {
-                    return '<div class="dropdown">
-                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                        <i class="bx bx-dots-vertical-rounded"></i>
-                        </button>
-                        <div class="dropdown-menu">
-                           <a class="dropdown-item btn btn-info" href="' . route('users.edit', $row->user_id) . '"
-                              ><i class="bx bx-edit-alt me-1"></i> Edit</a
-                              >
-                            ' . Form::open(array('route' => array('users.destroy', $row->user_id), 'method' => 'delete')) . '
-                                <button type="submit" class="btn btn-danger"><i class="bx bx-trash me-1"></i> Delete</button>
-                            </form>
-                        </div>';
-                })
-                ->editColumn('created_at', function ($row) {
-                    return dateFormat($row->created_at);
-                })
-                ->rawColumns(['action', 'created_at', 'photo'])
-                ->make(true);
-        }
-        $view = 'Admin.Users.Index';
-        return view('Admin', compact('view'));
+        // Fetch Subadmin
+        $user = User::where('user_id', $id)->first();
+
+        // Fetch Players with Wallets and Players (Eager Loading)
+        $players = User::where('parent', $id)
+            ->with(['wallet', 'players'])
+            ->get();
+
+        // Fetch all bid transactions for these players in one query
+        $exposer = BidTransaction::whereIn('user_id', $players->pluck('user_id'))
+            ->where('status', 'submitted')
+            ->whereNull('bid_result')
+            ->get();
+
+        $view = 'Admin.Users.ViewSubAdminDetails';
+        return view('Admin', compact('view', 'players', 'user', 'exposer'));
     }
+
+
+    public function blockUserByAdmin($id)
+    {
+        $user = User::findOrFail($id);
+
+        // Toggle status
+        $user->status = ($user->status === 'Active') ? 'Block' : 'Active';
+        $user->save();
+
+        return redirect()->back()->with('success', 'User status updated successfully.');
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -123,8 +96,8 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $user = $this->service->store($request);
-        $newUser = User::latest()->first(); // Fetch the last created user
-        Session::flash('success', "New User (ID: {$newUser->name} PWD: matka@123) saved successfully.");
+        $newUser = User::latest()->first();
+        Session::flash('success', "New User (ID: {$newUser->name}) saved successfully.");
         return redirect()->back();
     }
 
@@ -171,6 +144,13 @@ class UserController extends Controller
         $this->service->update($request, $user);
         Session::flash('success', "User Details update successfully.");
         return redirect()->back();
+    }
+
+    public function changePassword()
+    {
+        $user = getCurrentUser();
+        $view = 'Admin.Users.ChangePassword';
+        return view('Admin', compact('view', 'user'));
     }
 
     /**
@@ -397,7 +377,7 @@ class UserController extends Controller
 
     public function withdralRequest(Request $request)
     {
-        // **Validate incoming request**
+        // Validate incoming request
         $request->validate([
             'id'                => 'required|exists:wallet_transactions,id',
             'wallet_id'         => 'required|exists:wallets,id',
@@ -415,42 +395,41 @@ class UserController extends Controller
             return redirect()->back()->with('danger', 'Transaction not found or already processed.');
         }
 
-        // Find the associated wallet (user's wallet)
-        $wallet = Wallet::findOrFail($request->wallet_id);
+        $adminwallet = Wallet::where('user_id', 1)->first();
+        $userWallet = Wallet::where('id', $request->wallet_id)->first();
 
-        // Check if the user has enough balance
-        if ($wallet->balance < $pay->withdraw_amount) {
-            return redirect()->back()->withErrors(['error' => 'Insufficient balance in user wallet.'])->withInput();
+        if (!$adminwallet) {
+            return redirect()->back()->with(['danger' => 'Admin wallet not found.'])->withInput();
         }
 
-        // If parent_id is provided, fetch the parent wallet
-        $parent = $request->parent_id ? Wallet::where('user_id', $request->parent_id)->first() : null;
-
-        // **Ensure sufficient balance in parent account (if applicable)**
-        if ($parent && $parent->balance < $pay->withdraw_amount) {
-            return redirect()->back()->withErrors(['error' => 'Insufficient balance in parent wallet.'])->withInput();
+        if (!$userWallet) {
+            return redirect()->back()->with(['danger' => 'User wallet not found.'])->withInput();
         }
 
-        // **Begin Transaction**
-        DB::transaction(function () use ($pay, $wallet, $parent, $request) {
-            // Deduct from user's wallet
-            $wallet->decrement('balance', $pay->withdraw_amount);
+        // Check if the admin has enough balance
+        if ($adminwallet->balance < $pay->withdraw_amount) {
+            return redirect()->back()->with(['danger' => 'Insufficient balance in admin wallet.'])->withInput();
+        }
 
-            // Deduct from parent wallet (if applicable)
-            if ($parent) {
-                $parent->increment('balance', $pay->withdraw_amount);
-            }
+        // Use a transaction to prevent race conditions
+        DB::transaction(function () use ($adminwallet, $userWallet, $pay, $request) {
+            $adminwallet->balance = $adminwallet->balance + $pay->withdraw_amount;
+            $adminwallet->save();
 
-            // Update the transaction status and details
+            $userWallet->balance = $userWallet->balance - $pay->withdraw_amount;
+            $userWallet->save();
+
             $pay->update([
                 'request_status'    => 'complete',
                 'transaction_type'  => $request->transaction_type,
                 'utr_number'        => $request->utr_number,
+                'remark'            => 'Paid From Admin Account'
             ]);
         });
 
         return redirect()->back()->with('success', 'Withdrawal request processed successfully.');
     }
+
 
     public function jantriTable()
     {

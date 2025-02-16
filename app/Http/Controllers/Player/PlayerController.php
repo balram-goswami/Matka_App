@@ -26,7 +26,7 @@ class PlayerController extends Controller
   {
     $view = "Templates.Home";
     $user = getCurrentUser();
-    if ($user && $user->status === 'block') {
+    if ($user && $user->status === 'Block') {
       $view = "Templates.Block";
       return view('Front', compact('view'));
     }
@@ -75,6 +75,11 @@ class PlayerController extends Controller
       \Log::info("Is Evening Open: {$satta['isEveningOpen']}");
     }
 
+    $exposer = BidTransaction::where('user_id', $user->user_id)
+      ->where('status', 'submitted')
+      ->whereNull('bid_result')
+      ->get();
+
     // Return the view with the necessary data
     return view('Front', compact(
       'view',
@@ -83,7 +88,8 @@ class PlayerController extends Controller
       'optionGame',
       'wallet',
       'user',
-      'sattaGame'
+      'sattaGame',
+      'exposer'
     ));
   }
 
@@ -107,6 +113,7 @@ class PlayerController extends Controller
       $view = 'Templates.NotFound';
       return view('NotFound', compact('view', 'post'));
     }
+
     return view('Front', compact('view', 'post', 'homePage'));
   }
 
@@ -123,24 +130,73 @@ class PlayerController extends Controller
       $wallet->balance = $wallet->balance + $winning_amount;
       $wallet->save();
 
+      $transaction  = new WalletTransactions;
+      $transaction->user_id = $bid->user_id;
+      $transaction->wallet_id = 1;
+      $transaction->deposit_amount = $winning_amount;
+      $transaction->request_status = "complete";
+      $transaction->remark = 'Winning Amount from Game Admin';
+      $transaction->save();
+
       $getId = User::where('user_id', $bid->user_id)->get('parent')->first();
 
       $adminwallet = Wallet::where('user_id', 1)->get()->first();
       $adminwallet->balance = $adminwallet->balance + $bid->subadmin_share;
       $adminwallet->save();
 
+      $transaction  = new WalletTransactions;
+      $transaction->user_id = 1;
+      $transaction->wallet_id = 1;
+      $transaction->deposit_amount = $bid->subadmin_share;
+      $transaction->request_status = "complete";
+      $transaction->remark = 'Sub Admin Share to Admin';
+      $transaction->save();
+
+      $transaction  = new WalletTransactions;
+      $transaction->user_id = $bid->parent_id;
+      $transaction->wallet_id = 1;
+      $transaction->withdraw_amount = $bid->subadmin_share;
+      $transaction->request_status = "complete";
+      $transaction->remark = 'Sub Admin Share to Admin';
+      $transaction->save();
+
       $adminPay = $bid->win_amount + $bid->subadminGet;
       $adminwalletpay = Wallet::where('user_id', 1)->get()->first();
       $adminwalletpay->balance = $adminwalletpay->balance - $adminPay;
       $adminwalletpay->save();
+
+      $transaction  = new WalletTransactions;
+      $transaction->user_id = 1;
+      $transaction->wallet_id = 1;
+      $transaction->deposit_amount = $adminPay;
+      $transaction->request_status = "complete";
+      $transaction->remark = 'Total Amount payd after user win';
+      $transaction->save();
+
 
       $subadminwallet = Wallet::where('user_id', $getId->parent)->get()->first();
 
       $subadminwallet->balance = $subadminwallet->balance - $bid->subadmin_share;
       $subadminwallet->save();
 
+      $transaction  = new WalletTransactions;
+      $transaction->user_id = $getId->parent;
+      $transaction->wallet_id = 1;
+      $transaction->deposit_amount = $bid->subadmin_share;
+      $transaction->request_status = "complete";
+      $transaction->remark = 'Sub admin Share payed to Admin';
+      $transaction->save();
+
       $subadminwallet->balance = $subadminwallet->balance + $bid->subadminGet;
       $subadminwallet->save();
+
+      $transaction  = new WalletTransactions;
+      $transaction->user_id = $getId->parent;
+      $transaction->wallet_id = 1;
+      $transaction->deposit_amount = $bid->subadminGet;
+      $transaction->request_status = "complete";
+      $transaction->remark = 'Amount Get from Admin';
+      $transaction->save();
 
       return redirect()->back()->with('success', 'Amount Claimed Successfully');
     }
@@ -462,5 +518,13 @@ class PlayerController extends Controller
     $view = 'Templates.ResultPage';
 
     return view('Front', compact('view', 'result', 'user'));
+  }
+
+  public function pwsChange()
+  {
+    $user = getCurrentUser();
+    $view = 'Templates.PasswordUpdate';
+
+    return view('Front', compact('view', 'user'));
   }
 }

@@ -15,6 +15,14 @@
                     @endif
                 </p>
             </div>
+            <div class="user-info">
+
+                @if(isset($exposer))
+                <p class="available-balance text-white">Exposer :-
+                    <span class="counter">{{ $exposer->sum('bid_amount') }}</span>
+                </p>
+                @endif
+            </div>
         </div>
         <!-- Sidenav Nav-->
         <ul class="sidenav-nav ps-0">
@@ -42,6 +50,7 @@
                 </div>
             </li>
             <br>
+            <li><a href="{{ route('pwsChange') }}"><i class="ti ti-adjustments-horizontal"></i>Change Password</a></li>
             <li><a href="{{ route('auth.logout') }}"><i class="ti ti-logout"></i>Sign Out</a></li>
         </ul>
     </div>

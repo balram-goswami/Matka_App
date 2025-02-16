@@ -11,18 +11,12 @@
                 <div class="register-form mt-5">
                     {{ Form::open(['route' => ['users.update', $user->user_id], 'method' => 'PUT']) }}
                     @csrf
-                    <!-- <div class="row mb-3">
-                        <label class="col-sm-2 col-form-label" for="photo">Photo</label>
-                        <div class="col-md-10 imageUploadGroup">
-                            <img src="{{ asset($user->photo) }}" class="file-upload" id="photo-img"
-                                style="width: 100px; height: 100px;">
-                            <button type="button" data-eid="photo" class="btn btn-success setFeaturedImage">Select
-                                image</button>
-                            <button type="button" data-eid="photo" class="btn btn-warning removeFeaturedImage">Remove
-                                image</button>
-                            <input type="hidden" name="photo" id="photo" value="">
-                        </div>
-                    </div> -->
+                    <div class="form-group text-start mb-4" hidden>
+                        <label for="status"><i class="ti ti-user"></i></label>
+                        <input class="form-control" id="status" name="status" type="status"
+                             value="{{ $user->status ?? old('status') }}"
+                            style="border-color: white;">
+                    </div>
 
                     <div class="form-group text-start mb-4">
                         <span>Name</span>
@@ -32,20 +26,6 @@
                             style="border-color: white;">
                     </div>
 
-                    <div class="form-group text-start mb-4">
-                        <span>Email Id</span>
-                        <label for="email"><i class="ti ti-mail"></i></label>
-                        <input class="form-control" id="email" name="email" type="email"
-                            placeholder="Enter Email Id" value="{{ $user->email ?? old('email') }}"
-                            style="border-color: white;">
-                    </div>
-                    <div class="form-group text-start mb-4">
-                        <span>Phone</span>
-                        <label for="email"><i class="ti ti-phone"></i></label>
-                        <input class="form-control" id="phone" name="phone" type="tel"
-                            placeholder="Phone Number" value="{{ $user->phone ?? old('phone') }}"
-                            style="border-color: white;">
-                    </div>
                     <input hidden id="role" name="role" value="{{ $user->role }}">
 
                     <div class="form-group text-start mb-4">

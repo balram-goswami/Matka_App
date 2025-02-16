@@ -110,7 +110,7 @@
                 <div class="modal-dialog modal-dialog-centered" role="document">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title" id="deleteMoneyTitle">Cutt Money</h5>
+                      <h5 class="modal-title" id="deleteMoneyTitle">Cut Money</h5>
                       <button
                         type="button"
                         class="btn-close"
@@ -140,7 +140,7 @@
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                           Close
                         </button>
-                        <button type="submit" class="btn btn-primary">Add Now</button>
+                        <button type="submit" class="btn btn-primary">Cut Now</button>
                       </div>
                     </form>
                   </div>
@@ -359,8 +359,8 @@
                 </div>
                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                   <div class="me-2">
-                    <h6 class="mb-0">{{ $wallet->transaction_type }}</h6>
-                    <h6 class="mb-0">{{ $wallet->request_status }}</h6>
+                    <h6 class="mb-0">Added by {{ $wallet->transaction_type }} Id</h6>
+                    <h6 class="mb-0">Status {{ $wallet->request_status }}</h6>
                   </div>
                   <div class="user-progress">
                     <h6 class="mb-0">{{ $wallet->deposit_amount }}</h6>
@@ -399,8 +399,8 @@
                 </div>
                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                   <div class="me-2">
-                    <h6 class="mb-0">{{ $wallet->transaction_type }}</h6>
-                    <h6 class="mb-0">{{ $wallet->request_status }}</h6>
+                  <h6 class="mb-0">Withdral by {{ $wallet->transaction_type }} Id</h6>
+                  <h6 class="mb-0">Status:- {{ $wallet->request_status }}</h6>
                   </div>
                   <div class="user-progress">
                     <h6 class="mb-0">{{ $wallet->withdraw_amount }}</h6>

@@ -4,26 +4,27 @@ namespace App\Services;
 
 use App\Models\{
     User,
-    UserDetails,
-    Wallet
+    Wallet,
+    WalletTransactions
 };
 
 
 class UserService
 {
     protected $service;
-    protected $communicationService;
-    public function __construct(User $user)
+    protected $walletService;
+    public function __construct(User $user, Wallet $walletService)
     {
         $this->service = $user;
+        $this->walletService = $walletService;
     }
     public function table($type = null)
     {
         return $this->service->select('*');
     }
-    public function representative()
+    public function walletService($type = null)
     {
-        return $this->service->where('role', 'representative')->get();
+        return $this->walletService->select('*');
     }
     public function select()
     {
@@ -47,18 +48,9 @@ class UserService
         } elseif ($request->input('photo')) {
             $service->photo = $request->input('photo');
         }
-        function generateUsername() {
-            $randomNumber = rand(100000, 999999);
-            return "MG" . $randomNumber;
-        }
         
-        
-        // Generate username
-        $username = generateUsername();
-        
-        // Generate password based on the username
-        $password = "matka@123";
-        $service->name = $username;
+        $service->name = $request->input('name');
+        $password = $request->input('password');
 
         $service->parent = $request->input('parent');
         $service->admin_cut_toss_game = $request->input('admin_cut_toss_game');
@@ -99,6 +91,15 @@ class UserService
             } else {
                 return redirect()->back()->withErrors(['error' => 'Insufficient balance in parent wallet.'])->withInput();
             }
+
+            $storTransactions = new WalletTransactions();
+            $storTransactions->user_id = $service->user_id;
+            $storTransactions->wallet_id = 1;
+            $storTransactions->withdraw_amount = $request->input('balance');
+            $storTransactions->remark = 'New user deposit';
+            $storTransactions->request_status = 'complete';
+            $storTransactions->created_at = dateTime();
+            $storTransactions->save();
         }
 
         return $service;

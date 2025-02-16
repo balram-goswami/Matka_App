@@ -36,7 +36,7 @@ $betPrice = getThemeOptions('betSetting');
                 </div>
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <h6>Win Rate:- {{$user->admin_cut_harf}}X </h6>
-                    <h6>Min Bet Amount:- {{$betPrice['harfGame']}} </h6>
+                    <h6>Min Bet Amount:- {{$betPrice['harfGame'] ?? 'NA'}} </h6>
                 </div>
 
                 <div class="container mt-3">

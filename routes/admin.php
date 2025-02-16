@@ -10,14 +10,11 @@ use App\Http\Controllers\Admin\{
     UserController,
     PostController,
     TaxonomyController,
-    FeedbackController,
-    SubscribersController,
     MenuController
 };
 
 // Dashboard
 Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
-
 
 // Clear Cache
 Route::get('/clear-cache', function () {
@@ -39,6 +36,9 @@ Route::get('viewPayment/{id}',[UserController::class, 'viewPayment'])->name('vie
 Route::post('withdralRequest', [UserController::class, 'withdralRequest'])->name('withdralRequest');
 Route::get('jantriTable', [UserController::class, 'jantriTable'])->name('jantriTable');
 Route::post('jantri', [UserController::class, 'jantri'])->name('jantri.view');
+Route::get('viewSubadmin/{id}', [UserController::class, 'viewSubadmin'])->name('viewSubadmin');
+Route::get('blockUserbyadmin/{id}', [UserController::class, 'blockUserbyadmin'])->name('blockUserbyadmin');
+Route::get('changePassword', [UserController::class, 'changePassword'])->name('changePassword');
 
 // Media
 Route::resource('/media', MediaController::class, ['names' => 'media']);

@@ -82,7 +82,7 @@
                         <td>
                            <a title="View" class="edit-button" href="<?php echo $permalink ?>" target="_blank"><button type="button" class="btn btn-success "><span class="pcoded-micon"><i class='bx bx-low-vision'></i></span></button></a> |
                            <a title="Edit" class="edit-button" href="<?php echo route('post.edit', $post->post_id, $postType) ?>"><button type="button" class="btn btn-info "><span class="pcoded-micon"><i class='bx bx-edit-alt'></i></span></button></a> |
-                           <a title="Clone" href="<?php echo route('post.clone', $post->post_id) ?>"><button type="button" class="btn btn-warning"><span class="pcoded-micon"><i class='bx bx-copy'></i></span></button></a> |
+                           <!-- <a title="Clone" href="<?php echo route('post.clone', $post->post_id) ?>"><button type="button" class="btn btn-warning"><span class="pcoded-micon"><i class='bx bx-copy'></i></span></button></a> | -->
                            <?php echo Form::open(['route' => array('post.destroy', $post->post_id), 'method' => 'delete', 'style' => 'display: inline-block;']) ?>
                            <button title="Delete" type="submit" class="btn btn-danger"><span class="pcoded-micon"><i class='bx bx-trash-alt'></i></span></button>
                            </form>

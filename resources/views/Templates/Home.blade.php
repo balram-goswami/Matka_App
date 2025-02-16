@@ -14,7 +14,6 @@ $gameStatus = getThemeOptions('betSetting');
         overflow: hidden;
         white-space: nowrap;
         position: relative;
-        margin-top: -19px;
     }
 
     /* Scrolling Content */
@@ -74,7 +73,8 @@ $gameStatus = getThemeOptions('betSetting');
                 <div class="slide-content h-100 d-flex align-items-center">
                     <div class="slide-text">
                         <h4 class="text-white mb-0" data-animation="fadeInUp" data-delay="100ms" data-duration="1000ms">Amazon Echo</h4>
-                        <p class="text-white" data-animation="fadeInUp" data-delay="400ms" data-duration="1000ms">3rd Generation, Charcoal</p><a class="btn btn-primary" href="#" data-animation="fadeInUp" data-delay="800ms" data-duration="1000ms">Buy Now</a>
+                        <p class="text-white" data-animation="fadeInUp" data-delay="400ms" data-duration="1000ms">3rd Generation, Charcoal</p>
+                        <a class="btn btn-primary" href="#" data-animation="fadeInUp" data-delay="800ms" data-duration="1000ms">Buy Now</a>
                     </div>
                 </div>
             </div>
@@ -104,6 +104,9 @@ $gameStatus = getThemeOptions('betSetting');
 </div>
 @endisset
 
+
+
+
 <div class="weekly-best-seller-area py-3">
     <div class="container">
         <div class="section-heading d-flex align-items-center justify-content-between dir-rtl">
@@ -113,73 +116,53 @@ $gameStatus = getThemeOptions('betSetting');
             @foreach($optionGame as $index => $quizgame)
             @if($quizgame['extraFields']['close_date'] >= now()->toDateString())
             <div class="col-12">
-                <div class="card horizontal-product-card">
-                    <div class="d-flex align-items-center">
-                        <div class="product-thumbnail-side">
+                <div class="single-vendor-wrap bg-img p-4 bg-overlay" style="background-image: url('../themeAssets/img/bg-img/16.jpg')">
+                    <h6 class="vendor-title text-white">{{ $quizgame->post_title }}</h6>
+                    <div class="vendor-info">
+                        <p class="mb-1 text-white"><i class="ti ti-map-pin me-1"></i>Game Category: {{ $quizgame->post_type }}</p>
+                        @php
+                        $closeDate = $quizgame['extraFields']['close_date'] ?? null;
+                        $currentDate = dateonly();
+                        $closeTime = $quizgame['extraFields']['close_time'] ?? null;
+                        @endphp
+                        @if($closeDate >= $currentDate)
+                        <p class="product-rating text-white"><i class="ti ti-clock"></i>
+                            <span id="time-left-{{ $index }}" data-time-left="{{ \Carbon\Carbon::parse($quizgame['extraFields']['close_time'])->diffInSeconds(now()) }}">
+                                Loading...
+                            </span>
+                        </p>
+                        <div class="ratings lh-1 text-white"><i class="ti ti-star-filled"></i>Market <span class="ms-1">( Open )</span></div>
+                        <a class="btn btn-primary btn-sm mt-3" href="{{ route('single.post', ['post_type' => $quizgame->post_type, 'slug' => $quizgame->post_name]) }}">Play Now<i class="ti ti-arrow-right ms-1"></i></a>
+                        @else
+                        <div class="ratings lh-1 text-white"><i class="ti ti-star-filled"></i>Market <span class="ms-1">( Closed )</span></div>
+                        @php
+                        $result = DB::table('game_results')->where('game_id', $quizgame->post_id)->get()->first();
+                        @endphp
+                        <div class="ratings lh-1 text-white"><i class="ti ti-star-filled"></i>Result <span class="ms-1">:- {{ $result->result ?? 'Waiting for Result' }}</span></div>
+                        @endif
+                    </div>
+                    <!-- Vendor Profile-->
+                    <div class="vendor-profile shadow">
+                        <figure class="m-0">
                             @if (isset($quizgame->post_image))
-                            <a class="product-thumbnail d-block" href="void('0')"><img
-                                    src="{{ publicPath($quizgame->post_image) }}" alt="game"></a>
+                            <img src="{{ publicPath($quizgame->post_image) }}" alt="game">
                             @else
-                            <a class="product-thumbnail d-block" href="void('0')"><img
-                                    src="..\themeAssets\img\matka\matka.png" alt="game"></a>
+                            <img src="../themeAssets/img/matka/matka.png" alt="game">
                             @endif
-                        </div>
-                        <div class="product-description">
-                            <!-- Product Title -->
-                            <p class="product-title d-block">{{ $quizgame->post_title }}</p>
-                            @php
-                            $closeDate = $quizgame['extraFields']['close_date'] ?? null;
-                            $currentDate = dateonly();
-                            $closeTime = $quizgame['extraFields']['close_time'] ?? null;
-                            @endphp
-
-                            @if($closeDate >= $currentDate)
-
-                            <p class="product-rating"><i class="ti ti-clock"></i>
-                                <span id="time-left-{{ $index }}" data-time-left="{{ \Carbon\Carbon::parse($quizgame['extraFields']['close_time'])->diffInSeconds(now()) }}">
-                                    Loading...
-                                </span>
-                            </p>
-                            <div class="product-rating"><i class="ti ti-star-filled"></i>Market <span
-                                    class="ms-1">( Open )</span></div>
-                            <div class="sale-price"><i class="ti ti-arrow-right"></i><a
-                                    href="{{ route('single.post', ['post_type' => $quizgame->post_type, 'slug' => $quizgame->post_name]) }}">Play</a>
-                            </div>
-                            @else
-                            <div class="product-rating"><i class="ti ti-star-filled"></i>Market <span
-                                    class="ms-1">( Closed )</span></div>
-                            @php
-                            $result = DB::table('game_results')->where('game_id', $quizgame->post_id)->get()->first();
-                            @endphp
-                            <div class="product-rating"><i class="ti ti-star-filled"></i>Result <span
-                                    class="ms-1">:- {{ $result->result ?? 'Waiting for Result' }}</span></div>
-                            @endif
-
-                        </div>
+                        </figure>
                     </div>
                 </div>
             </div>
             @else
             <div class="col-12">
-                <div class="card horizontal-product-card">
-                    <div class="d-flex align-items-center">
-                        <div class="product-thumbnail-side">
-                            <a class="product-thumbnail d-block" href="void('0')"><img
-                                    src="..\themeAssets\img\matka\matka.png" alt="game"></a>
-
-                        </div>
-                        <div class="product-description">
-                            <!-- Product Title -->
-                            <p class="product-title d-block">Option Game Coming Soon...</p>
-
-                        </div>
-                    </div>
+                <div class="single-vendor-wrap bg-img p-4 bg-overlay" style="background-image: url('../themeAssets/img/bg-img/16.jpg')">
+                    <h6 class="vendor-title text-white">Option Game Coming Soon...</h6>
                 </div>
             </div>
             @endif
             @endforeach
-
         </div>
+
     </div>
 </div>
 
@@ -188,51 +171,43 @@ $gameStatus = getThemeOptions('betSetting');
         <div class="section-heading d-flex align-items-center justify-content-between dir-rtl">
             <h6>Daily Satta</h6>
         </div>
-        <div class="row g-2">
-            @foreach($sattaGame as $index => $satta)
-            <div class="col-12">
-                <div class="card horizontal-product-card">
-                    <div class="d-flex align-items-center">
-                        <div class="product-thumbnail-side">
-                            @if (isset($satta->post_image))
-                            <a class="product-thumbnail d-block" href="void('0')"><img src="{{ publicPath($satta->post_image) }}" alt="game"></a>
-                            @else
-                            <a class="product-thumbnail d-block" href="void('0')"><img src="..\themeAssets\img\matka\matka.png" alt="game"></a>
-                            @endif
-                        </div>
-                        <div class="product-description">
-                            <!-- Product Title -->
-                            <div class="card-body d-flex align-items-center justify-content-between">
-                                <h5>{{ $satta->post_title }}</h5>
-                                @if($satta['isMorningOpen'] || $satta['isEveningOpen'])
-                                <p class="product-rating">
-                                    <i class="ti ti-clock"></i>
-                                    <span id="time-left-{{ $index }}" data-time-left="{{ \Carbon\Carbon::parse($satta['extraFields']['close_time_evening'])->diffInSeconds(now()) }}">
-                                        Loading...
-                                    </span>
-                                </p>@endif
-                            </div>
-
-                            <!-- Check if morning or evening market is open -->
-                            @if($satta['isMorningOpen'] || $satta['isEveningOpen'])
-                            <div class="product-rating">
-                                <i class="ti ti-star-filled"></i>Market <span class="ms-1">( Open )</span>
-                            </div>
-                            <div class="sale-price">
-                                <i class="ti ti-arrow-right"></i>
-                                <a href="{{ route('single.post', ['post_type' => $satta->post_type, 'slug' => $satta->post_name]) }}">Play</a>
-                            </div>
-                            @else
-                            <div class="product-rating">
-                                <i class="ti ti-star-filled"></i>Market <span class="ms-1">( Closed )</span>
-                            </div>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @endforeach
+        <div class="col-12">
+    @foreach($sattaGame as $index => $satta)
+    <!-- Single Vendor -->
+    <div class="single-vendor-wrap bg-img p-4 bg-overlay" style="background-image: url('../themeAssets/img/bg-img/16.jpg')">
+        <h6 class="vendor-title text-white">{{ $satta->post_title }}</h6>
+        <div class="vendor-info">
+            @if($satta['isMorningOpen'] || $satta['isEveningOpen'])
+            <p class="mb-1 text-white"><i class="ti ti-clock me-1"></i>Market Status: <span class="text-success">Open</span></p>
+            <p class="product-rating text-white">
+                <i class="ti ti-clock"></i>
+                <span id="time-left-{{ $index }}" data-time-left="{{ \Carbon\Carbon::parse($satta['extraFields']['close_time_evening'])->diffInSeconds(now()) }}">
+                    Loading...
+                </span>
+            </p>
+            @else
+            <p class="mb-1 text-white"><i class="ti ti-clock me-1"></i>Market Status: <span class="text-danger">Closed</span></p>
+            @endif
+            
         </div>
+        @if($satta['isMorningOpen'] || $satta['isEveningOpen'])
+        <a class="btn btn-primary btn-sm mt-3" href="{{ route('single.post', ['post_type' => $satta->post_type, 'slug' => $satta->post_name]) }}">Play<i class="ti ti-arrow-right ms-1"></i></a>
+        @endif
+        
+        <!-- Vendor Profile-->
+        <div class="vendor-profile shadow">
+            <figure class="m-0">
+                @if (isset($satta->post_image))
+                <img src="{{ publicPath($satta->post_image) }}" alt="game">
+                @else
+                <img src="../themeAssets/img/matka/matka.png" alt="game">
+                @endif
+            </figure>
+        </div>
+    </div>
+    @endforeach
+</div>
+
     </div>
 </div>
 

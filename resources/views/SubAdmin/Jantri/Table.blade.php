@@ -6,7 +6,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-header">Jantri Table</h5>
-                <h5 class="card-header">Result:- {{$gameResult->result}}</h5>
+                <h5 class="card-header">Result:- {{$gameResult->result ?? 'Result Not Declared'}}</h5>
             </div>
             <div class="table-responsive text-nowrap">
                 <table class="table">
@@ -21,7 +21,7 @@
                         @foreach($jantriData as $data)
                         <tr>
                             <td><span>{{ $data->answer }}</span></td>
-                            <td><span>{{ $data->total_bid }}</span></td>
+                            <td><span>{{ number_format($data->total_bid, 2) }}</span></td>
                             <td>
                                 @if($data->result_status === 'win')
                                 <span class="badge bg-label-primary me-1" style="color: #f41010 !important">{{ $data->total_win }}</span>
@@ -46,7 +46,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-header">Jantri Table</h5>
-                <h5 class="card-header">Result:- {{$gameResult->result}}</h5>
+                <h5 class="card-header">Result:- {{$gameResult->result ?? 'Result Not Declared'}}</h5>
             </div>
             <div class="table-responsive text-nowrap">
                 <table class="table">
@@ -64,7 +64,7 @@
                             @endphp
                             <tr>
                                 <td><span>{{ $i }}</span></td>
-                                <td>{{ $bid ? $bid->total_bid : 0 }}</td>
+                                <td>{{ number_format($bid ? $bid->total_bid : 0, 2) }}</td>
                                 <td>
                                     @if($bid && $bid->result_status === 'win')
                                     <span class="badge bg-label-primary me-1" style="color: #f41010 !important">
@@ -79,7 +79,7 @@
 
                             <!-- ODD & EVEN Rows -->
                             @php
-                            $gameValue = $gameResult->result; // Replace 'value' with the correct column name
+                            $gameValue = $gameResult->result ?? 0; // Replace 'value' with the correct column name
                             $bidResult = ($gameValue % 2 === 0) ? 'EVEN' : 'ODD';
 
                             // Calculate ODD & EVEN totals correctly
@@ -92,7 +92,7 @@
                             
                             <tr>
                                 <td><strong>ODD</strong></td>
-                                <td>{{ $oddTotalBid }}</td>
+                                <td>{{ number_format($oddTotalBid, 2) }}</td>
                                 <td>
                                     @if( $bidResult === 'ODD')
                                     <span class="badge bg-label-primary me-1" style="color: #f41010 !important">
@@ -106,7 +106,7 @@
 
                             <tr>
                                 <td><strong>EVEN</strong></td>
-                                <td>{{ $evenTotalBid }}</td>
+                                <td>{{ number_format($evenTotalBid, 2) }}</td>
                                 <td>
                                 @if( $bidResult === 'EVEN')
                                     <span class="badge bg-label-primary me-1" style="color: #f41010 !important">

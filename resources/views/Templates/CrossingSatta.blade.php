@@ -35,7 +35,7 @@ $betPrice = getThemeOptions('betSetting');
                 </div>
                 <div class="card-body d-flex align-items-center justify-content-between">
                 <h6>Win Rate:- {{$user->admin_cut_crossing}}X </h6>
-                <h6>Min Bet Amount:- {{$betPrice['crossingGame']}} </h6>
+                <h6>Min Bet Amount:- {{$betPrice['crossingGame'] ?? 'NA'}} </h6>
                 </div>
 
                 <div class="card-body d-flex align-items-center justify-content-between">

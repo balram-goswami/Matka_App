@@ -550,9 +550,9 @@ function timeFormat($date)
 function userTypes()
 {
 	return [
-		User::ADMIN => 'Admin',
+		// User::ADMIN => 'Admin',
 		User::SUBADMIN => 'SubAdmin',
-		User::USER => 'User',
+		// User::USER => 'User',
 		User::PLAYER => 'Player',
 	];
 }
@@ -574,6 +574,10 @@ function priceFormat($price)
 	return '$ ' . number_format($price, 2);
 }
 
+function generateUsername() {
+	$randomNumber = rand(100000, 999999);
+	return "MG" . $randomNumber;
+}
 
 function genders()
 {

@@ -239,17 +239,13 @@ class SubAdminController extends Controller
 
     public function blockUser($id)
     {
-        $user = User::find($id);
-
-        if (!$user) {
-            return redirect()->back()->withErrors(['error' => 'User not found'])->withInput();
-        }
+        $user = User::findOrFail($id);
 
         // Toggle status
-        $user->status = ($user->status === 'active') ? 'block' : 'active';
+        $user->status = ($user->status === 'Active') ? 'Block' : 'Active';
         $user->save();
 
-        return redirect()->back()->with('success', 'User status updated successfully');
+        return redirect()->back()->with('success', 'User status updated successfully.');
     }
 
     public function jantriTablesa()
@@ -265,7 +261,7 @@ class SubAdminController extends Controller
         if ($request->tossGame == !NULL) {
             $game_id = $request->tossGame;
             $gameType = 'option';
-            $c_user = getCurrentUser();
+            $c_user = getCurrentUser(); 
 
             $gameResult = GameResult::where('game_id', $game_id)->get('result')->first();
 
@@ -274,7 +270,7 @@ class SubAdminController extends Controller
 
             $jantriData = BidTransaction::where('game_id', $game_id)
                 ->where('parent_id', $c_user->user_id)
-                ->selectRaw('answer, SUM(admin_cut) as total_bid, SUM(win_amount + subadminget) as total_win, result_status')
+                ->selectRaw('answer, SUM(subadmin_cut) as total_bid, SUM(win_amount) as total_win, result_status')
                 ->groupBy('answer', 'result_status')
                 ->orderBy('answer', 'asc')
                 ->get();

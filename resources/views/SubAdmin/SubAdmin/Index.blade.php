@@ -156,7 +156,7 @@ $currentUser = getCurrentUser();
                                         <h6 class="mb-0">Wallet Balance</h6>
                                     </div>
                                     <div class="user-progress">
-                                        <h6 class="mb-0">Rs- {{ $wallet->balance ?? 'NA' }}</h6>
+                                        <h6 class="mb-0">Rs- {{ number_format($wallet->balance, 2) ?? 'NA' }}</h6>
                                     </div>
                                 </div>
                             </li>

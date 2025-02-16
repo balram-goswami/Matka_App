@@ -24,7 +24,7 @@
                             <td>{{ $userName->name }}</td>
                             <td>{{ $list->utr_number}}</td>
                             <td>{{ $list->remark}}</td>
-                            <td>{{ $list->deposit_amount}}</td>
+                            <td>{{ number_format($list->deposit_amount, 2)}}</td>
                             <td>
                                 @if($list->request_status === 'pending')
                                 <span class="badge bg-label-success me-1">Pending</span>
@@ -60,6 +60,7 @@
                             <th>User</th>
                             <th>Wallet Balance</th>
                             <th>Amount</th>
+                            <th>Remark</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -75,7 +76,8 @@
                         <tr>
                             <td>{{ $userName->name }}</td>
                             <td>{{ $walletBalance->balance }}</td>
-                            <td>{{ $list->withdraw_amount}}</td>
+                            <td>{{ number_format($list->withdraw_amount, 2)}}</td>
+                            <td>{{ $list->remark}}</td>
                             <td>
                                 @if($list->request_status === 'pending')
                                 <span class="badge bg-label-success me-1">Pending</span>

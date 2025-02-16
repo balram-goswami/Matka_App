@@ -36,7 +36,7 @@ $betPrice = getThemeOptions('betSetting');
                 </div>
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <h6>Win Rate:- {{$user->admin_cut_odd_even}}X </h6>
-                    <h6>Min Bet Amount:- {{$betPrice['oddevenGame']}} </h6>
+                    <h6>Min Bet Amount:- {{$betPrice['oddevenGame'] ?? 'NA'}} </h6>
                 </div>
 
                 <div class="card-body d-flex align-items-center justify-content-between">

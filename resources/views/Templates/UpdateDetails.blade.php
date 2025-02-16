@@ -13,15 +13,21 @@
                     @csrf
                     <div class="form-group text-start mb-4" hidden>
                         <label for="status"><i class="ti ti-user"></i></label>
-                        <input class="form-control" id="status" name="status" type="status"
+                        <input class="form-control" id="status" name="status" type="text"
                              value="{{ $user->status ?? old('status') }}"
+                            style="border-color: white;">
+                    </div>
+                    <div class="form-group text-start mb-4" hidden>
+                        <label for="status"><i class="ti ti-user"></i></label>
+                        <input class="form-control" id="parent" name="parent" type="text"
+                             value="{{ $user->parent}}"
                             style="border-color: white;">
                     </div>
 
                     <div class="form-group text-start mb-4">
                         <span>Name</span>
                         <label for="name"><i class="ti ti-user"></i></label>
-                        <input class="form-control" id="name" name="name" type="name"
+                        <input class="form-control" id="name" name="name" type="text"
                             placeholder="Enter Name" value="{{ $user->name ?? old('name') }}"
                             style="border-color: white;">
                     </div>

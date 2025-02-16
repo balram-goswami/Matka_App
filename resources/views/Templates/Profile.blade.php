@@ -71,7 +71,7 @@
                             href="{{ route('profileUpdate') }}"><i class="ti ti-pencil me-2"></i>Edit Profile</a>
                     </div>
                     <div class="edit-profile-btn mt-3"><a class="btn btn-primary btn-lg w-100"
-                            href="{{ route('profileUpdate') }}"><i class="ti ti-pencil me-2"></i>Change Password</a>
+                            href="{{ route('pwsChange') }}"><i class="ti ti-pencil me-2"></i>Change Password</a>
                     </div>
                 </div>
             </div>

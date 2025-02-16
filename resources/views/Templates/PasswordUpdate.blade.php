@@ -27,6 +27,12 @@
                     </div>
 
                     <input hidden id="role" name="role" value="{{ $user->role }}">
+                    <div class="form-group text-start mb-4" hidden>
+                        <label for="status"><i class="ti ti-user"></i></label>
+                        <input class="form-control" id="parent" name="parent" type="text"
+                             value="{{ $user->parent}}"
+                            style="border-color: white;">
+                    </div>
 
                     <div class="form-group text-start mb-4">
                         <span>Old Password</span>

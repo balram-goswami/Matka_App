@@ -66,7 +66,7 @@ $betPrice = getThemeOptions('betSetting');
                                 $availableBalance = $balance - $totalAmount;
                                 @endphp
                                 <input class="form-control border mb-1" id="bid_amount" name="bid_amount" type="number"
-                                    placeholder="Bid Amount" min="{{$betPrice['oddevenGame'] ?? '10'}}" max="{{ $availableBalance }}" step="0.01" required>
+                                    placeholder="Bid Amount" min="{{$betPrice['oddevenGameMin'] ?? '10'}}"  max="{{ $betPrice['oddevenGameMax'] ?? $availableBalance }}" step="0.01" required>
                             </div>
                             <!-- Submit Button -->
                             <div class="col-md-6 col-12">

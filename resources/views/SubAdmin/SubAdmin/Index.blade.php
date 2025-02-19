@@ -8,20 +8,21 @@ $currentUser = getCurrentUser();
             <div class="card">
                 <div class="d-flex align-items-end row">
                     <div class="col-sm-7">
-                        @if (session('password_change_alert'))
+                        @if($pwdMsg->created_at->eq($pwdMsg->updated_at))
                         <div class="card-body" id="passwordAlert">
                             <h5 class="card-title danger" style="color: red;">
-                                {{ session('password_change_alert') }}
+                                Hello {{$currentUser->name}}, please change your password before continuing to use your account. If done, ignore.
                             </h5>
                         </div>
 
                         <script>
                             setTimeout(function() {
                                 document.getElementById("passwordAlert").style.display = "none";
-                            }, 3000); // Hides the message after 5 seconds
+                            }, 5000);
                         </script>
                         @endif
                     </div>
+
                     <div class="col-sm-7">
                         <div class="card-body">
                             <h5 class="card-title text-primary">Welcome {{ $currentUser->name }} 🎉</h5>
@@ -70,8 +71,6 @@ $currentUser = getCurrentUser();
                                     <div class="me-2">
                                         <h6 class="mb-0">Personal Details</h6>
                                         <small>Name:- {{ $currentUser->name}}</small><br>
-                                        <small>Email:- {{ $currentUser->email}}</small><br>
-                                        <small>Phone no:- {{ $currentUser->phone}}</small><br>
                                     </div>
                                 </div>
                             </li>
@@ -81,24 +80,23 @@ $currentUser = getCurrentUser();
                                 </div>
                                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                     <div class="me-2">
-                                        <h6 class="mb-0">Bank Details</h6>
-                                        <small>Bank Name:- {{ $currentUser->bank_name}}</small><br>
-                                        <small>Bank Holder Name:- {{ $currentUser->ac_holder_name}}</small><br>
-                                        <small>AC no.:- {{ $currentUser->ac_number}}</small><br>
-                                        <small>{{ $currentUser->ifsc_code}}</small>
+                                        <h6 class="mb-0">Wallet Balance</h6>
+                                    </div>
+                                    <div class="user-progress">
+                                        <h6 class="mb-0">Rs: {{ number_format($wallet->balance, 2) ?? 'NA' }}</h6>
                                     </div>
                                 </div>
                             </li>
                             <li class="d-flex align-items-center mb-5">
                                 <div class="avatar flex-shrink-0 me-3">
-                                    <span class="avatar-initial rounded bg-label-primary"><i class="bx bx-mobile-alt"></i></span>
+                                    <span class="avatar-initial rounded bg-label-success"><i class="bx bx-closet"></i></span>
                                 </div>
                                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                     <div class="me-2">
-                                        <h6 class="mb-0">UPI Details</h6>
-                                        <small>UPI 1 :- {{ $currentUser->upi_one}}</small><br>
-                                        <small>UPI 1 :- {{ $currentUser->upi_two}}</small><br>
-                                        <small>UPI 1 :- {{ $currentUser->upi_three}}</small><br>
+                                        <h6 class="mb-0">Total Players</h6>
+                                    </div>
+                                    <div class="user-progress">
+                                        <h6 class="mb-0">{{ count($players) }}</h6>
                                     </div>
                                 </div>
                             </li>
@@ -156,7 +154,7 @@ $currentUser = getCurrentUser();
                                         <h6 class="mb-0">Wallet Balance</h6>
                                     </div>
                                     <div class="user-progress">
-                                        <h6 class="mb-0">Rs- {{ number_format($wallet->balance, 2) ?? 'NA' }}</h6>
+                                        <h6 class="mb-0">Rs: {{ number_format($wallet->balance, 2) ?? 'NA' }}</h6>
                                     </div>
                                 </div>
                             </li>

@@ -1,5 +1,8 @@
 <div class="content-wrapper">
   <!-- Content -->
+  <div class="card-header d-flex justify-content-between align-items-center">
+            <a class="btn btn-primary" href="{{ route('viewPlayers')}}">Back</a>
+        </div>
 
   <div class="container-xxl flex-grow-1 container-p-y">
     <div class="row">
@@ -263,7 +266,20 @@
                     <h6 class="mb-0">Wallet Balance</h6>
                   </div>
                   <div class="user-progress">
-                    <h6 class="mb-0">Rs- {{ $wallet->balance ?? 'NA' }}</h6>
+                    <h6 class="mb-0">{{ $wallet->balance ?? 'NA' }}</h6>
+                  </div>
+                </div>
+              </li>
+              <li class="d-flex align-items-center mb-5">
+                <div class="avatar flex-shrink-0 me-3">
+                  <span class="avatar-initial rounded bg-label-primary"><i class="bx bx-mobile-alt"></i></span>
+                </div>
+                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                  <div class="me-2">
+                    <h6 class="mb-0">Exposer Balance</h6>
+                  </div>
+                  <div class="user-progress">
+                    <h6 class="mb-0">{{ $exposer->sum('bid_amount') }}</h6>
                   </div>
                 </div>
               </li>
@@ -329,93 +345,67 @@
     </div>
   </div>
 </div>
-
-<div class="content-wrapper">
-  <!-- Content -->
-
-  <div class="container-xxl flex-grow-1 container-p-y">
-    <div class="row">
-      <!-- Order Statistics -->
-      <div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-6">
-        <div class="card h-100">
-          <div class="card-header d-flex justify-content-between">
-            <div class="card-title mb-0">
-              <h3 class="mb-1">Money Deposit Details</h3>
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="card mb-4">
+        <div class="card">
+            <h5 class="card-header">Player Open Bids</h5>
+            <div class="table-responsive text-nowrap">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Sr No.</th>
+                            <th>Game</th>
+                            <th>Bid Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                        @foreach($panding as $open)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $open->game_id}}</td>
+                            <td>{{ $open->bid_amount }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
-          </div>
-
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-6">
-              <div class="d-flex flex-column align-items-center gap-1">
-                <h3 class="mb-1"></h3>
-              </div>
-              <br>
-            </div>
-            <ul class="p-0 m-0">
-              @foreach($dipositwallet as $wallet)
-              <li class="d-flex align-items-center mb-5">
-                <div class="avatar flex-shrink-0 me-3">
-                  <span class="avatar-initial rounded bg-label-primary"><i class="bx bx-mobile-alt"></i></span>
-                </div>
-                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                  <div class="me-2">
-                    <h6 class="mb-0">Added by {{ $wallet->transaction_type }} Id</h6>
-                    <h6 class="mb-0">Status {{ $wallet->request_status }}</h6>
-                  </div>
-                  <div class="user-progress">
-                    <h6 class="mb-0">{{ $wallet->deposit_amount }}</h6>
-                  </div>
-                </div>
-              </li>
-              @endforeach
-
-            </ul>
-
-
-          </div>
         </div>
-      </div>
-
-      <div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-6">
-        <div class="card h-100">
-          <div class="card-header d-flex justify-content-between">
-            <div class="card-title mb-0">
-              <h3 class="mb-1">Money Withdrawal Details</h3>
-            </div>
-          </div>
-
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-6">
-              <div class="d-flex flex-column align-items-center gap-1">
-                <h3 class="mb-1"></h3>
-              </div>
-              <br>
-            </div>
-            <ul class="p-0 m-0">
-              @foreach($withdrawwallet as $wallet)
-              <li class="d-flex align-items-center mb-5">
-                <div class="avatar flex-shrink-0 me-3">
-                  <span class="avatar-initial rounded bg-label-primary"><i class="bx bx-mobile-alt"></i></span>
-                </div>
-                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                  <div class="me-2">
-                  <h6 class="mb-0">Withdral by {{ $wallet->transaction_type }} Id</h6>
-                  <h6 class="mb-0">Status:- {{ $wallet->request_status }}</h6>
-                  </div>
-                  <div class="user-progress">
-                    <h6 class="mb-0">{{ $wallet->withdraw_amount }}</h6>
-                  </div>
-                </div>
-              </li>
-              @endforeach
-
-            </ul>
-
-
-          </div>
-        </div>
-      </div>
-
     </div>
-  </div>
+</div>
+
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="card mb-4">
+        <div class="card">
+            <h5 class="card-header">Player Wallet Transactions</h5>
+            <div class="table-responsive text-nowrap">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Sr No.</th>
+                            <th>Date</th>
+                            <th>Credit</th>
+                            <th>Debit</th>
+                            <th>Balance</th>
+                            <th>Remark</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                        @foreach($payment as $list)
+                        @php
+                        $userName = getUserName($list->tofrom_id);
+                        @endphp
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $list->updated_at}}</td>
+                            <td>{{ number_format($list->credit, 2)}}</td>
+                            <td>{{ number_format($list->debit, 2)}}</td>
+                            <td>{{ $list->balance ?? 'NA'}}</td>
+                            <td>{{ $list->remark }} {{$userName->name}}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>

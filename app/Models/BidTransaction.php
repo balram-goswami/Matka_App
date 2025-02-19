@@ -14,6 +14,7 @@ class BidTransaction extends Model
         'game_id',
         'parent_id',
         'answer',
+        'slot',
         'bid_amount',
         'win_amount',
         'subadmin_share',

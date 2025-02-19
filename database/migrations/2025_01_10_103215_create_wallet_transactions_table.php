@@ -16,15 +16,11 @@ return new class extends Migration
         Schema::create('wallet_transactions', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('user_id');
-            $table->integer('wallet_id');
-            $table->integer('parent_id')->nullable();
-            $table->string('transaction_type')->nullable();
-            $table->string('utr_number')->nullable();
-            $table->string('diposit_image')->nullable();
-            $table->string('deposit_amount')->nullable();
-            $table->string('withdraw_amount')->nullable();
+            $table->integer('tofrom_id');
+            $table->string('credit')->nullable();
+            $table->string('debit')->nullable();
+            $table->string('balance')->nullable();
             $table->string('remark')->nullable();
-            $table->string('request_status')->default('pending');
             $table->timestamps();
         });
     }

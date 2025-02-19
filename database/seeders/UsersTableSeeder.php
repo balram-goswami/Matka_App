@@ -27,7 +27,7 @@ class UsersTableSeeder extends Seeder
 
         Wallet::create([
             'user_id' => 1, // Dynamically fetch user ID
-            'balance' => 100000, // Store numbers as integers, not strings
+            'balance' => 0, // Store numbers as integers, not strings
             'created_at' => now(),
             'updated_at' => now(),
         ]);

@@ -43,8 +43,10 @@
 
                         <div class="col-sm-4 sattaGameDiv" style="display: none;">
                             <div class="input-group input-group-merge">
-                                <select name="sattaGameTime" id="sattaGameTime" class="form-control">
+                                <select name="slot" id="slot" class="form-control">
                                     <option value="">Select Game Time</option>
+                                    <option value="morning">Morning</option>
+                                    <option value="evening">Evening</option>
                                 </select>
                             </div>
                         </div>

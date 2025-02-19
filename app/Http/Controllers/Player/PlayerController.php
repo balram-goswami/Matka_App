@@ -119,87 +119,6 @@ class PlayerController extends Controller
 
   public function singlePost($post_type, $page, Request $request)
   {
-    if ($post_type == 'claimAmount') {
-      $bid = BidTransaction::find($page);
-      $bid->result_status = 'claimed';
-      $bid->save();
-
-      $winning_amount = $bid->win_amount;
-
-      $wallet = Wallet::where('user_id', $bid->user_id)->first();
-      $wallet->balance = $wallet->balance + $winning_amount;
-      $wallet->save();
-
-      $transaction  = new WalletTransactions;
-      $transaction->user_id = $bid->user_id;
-      $transaction->wallet_id = 1;
-      $transaction->deposit_amount = $winning_amount;
-      $transaction->request_status = "complete";
-      $transaction->remark = 'Winning Amount from Game Admin';
-      $transaction->save();
-
-      $getId = User::where('user_id', $bid->user_id)->get('parent')->first();
-
-      $adminwallet = Wallet::where('user_id', 1)->get()->first();
-      $adminwallet->balance = $adminwallet->balance + $bid->subadmin_share;
-      $adminwallet->save();
-
-      $transaction  = new WalletTransactions;
-      $transaction->user_id = 1;
-      $transaction->wallet_id = 1;
-      $transaction->deposit_amount = $bid->subadmin_share;
-      $transaction->request_status = "complete";
-      $transaction->remark = 'Sub Admin Share to Admin';
-      $transaction->save();
-
-      $transaction  = new WalletTransactions;
-      $transaction->user_id = $bid->parent_id;
-      $transaction->wallet_id = 1;
-      $transaction->withdraw_amount = $bid->subadmin_share;
-      $transaction->request_status = "complete";
-      $transaction->remark = 'Sub Admin Share to Admin';
-      $transaction->save();
-
-      $adminPay = $bid->win_amount + $bid->subadminGet;
-      $adminwalletpay = Wallet::where('user_id', 1)->get()->first();
-      $adminwalletpay->balance = $adminwalletpay->balance - $adminPay;
-      $adminwalletpay->save();
-
-      $transaction  = new WalletTransactions;
-      $transaction->user_id = 1;
-      $transaction->wallet_id = 1;
-      $transaction->deposit_amount = $adminPay;
-      $transaction->request_status = "complete";
-      $transaction->remark = 'Total Amount payd after user win';
-      $transaction->save();
-
-
-      $subadminwallet = Wallet::where('user_id', $getId->parent)->get()->first();
-
-      $subadminwallet->balance = $subadminwallet->balance - $bid->subadmin_share;
-      $subadminwallet->save();
-
-      $transaction  = new WalletTransactions;
-      $transaction->user_id = $getId->parent;
-      $transaction->wallet_id = 1;
-      $transaction->deposit_amount = $bid->subadmin_share;
-      $transaction->request_status = "complete";
-      $transaction->remark = 'Sub admin Share payed to Admin';
-      $transaction->save();
-
-      $subadminwallet->balance = $subadminwallet->balance + $bid->subadminGet;
-      $subadminwallet->save();
-
-      $transaction  = new WalletTransactions;
-      $transaction->user_id = $getId->parent;
-      $transaction->wallet_id = 1;
-      $transaction->deposit_amount = $bid->subadminGet;
-      $transaction->request_status = "complete";
-      $transaction->remark = 'Amount Get from Admin';
-      $transaction->save();
-
-      return redirect()->back()->with('success', 'Amount Claimed Successfully');
-    }
     $post = Posts::where('posts.post_name', $page)
       ->leftJoin('posts as getImage', 'getImage.post_id', 'posts.guid')
       ->leftJoin('users as user', 'user.user_id', 'posts.user_id')
@@ -248,6 +167,7 @@ class PlayerController extends Controller
       ->where('status', 'pending')
       ->orderBy('created_at', 'DESC')
       ->get();
+
     $wallet = Wallet::where('user_id', $user->user_id)->first();
 
     $totalAmount = $bids->sum('bid_amount');
@@ -263,6 +183,15 @@ class PlayerController extends Controller
     $offices = getPostsByPostType('country', 3, 'new', true);
     $view = 'Templates.TermBlogs';
     return view('Front', compact('view', 'blogs', 'offices'));
+  }
+
+  public function optionGameList()
+  {
+    $user = getCurrentUser();
+    $wallet = Wallet::where('user_id', $user->user_id)->first();
+    $optionGame = getPostsByPostType('optiongame', 0, 'new', true);
+    $view = 'Templates.OptionGameList';
+    return view('Front', compact('view', 'optionGame', 'user', 'wallet'));
   }
 
   public function addMoneyPage()
@@ -356,9 +285,13 @@ class PlayerController extends Controller
       $view = "Templates.Welcome";
       return view('Front', compact('view'));
     }
+    $exposer = BidTransaction::where('user_id', $user->user_id)
+      ->where('status', 'submitted')
+      ->whereNull('bid_result')
+      ->get();
     $wallet = Wallet::where('user_id', $user->user_id)->first();
     $view = 'Templates.Profile';
-    return view('Front', compact('view', 'user', 'wallet'));
+    return view('Front', compact('view', 'user', 'wallet', 'exposer'));
   }
 
   public function profileUpdate()
@@ -380,11 +313,22 @@ class PlayerController extends Controller
       ->where('status', 'submitted')
       ->orderBy('created_at', 'DESC')
       ->get();
+
     $wallet = Wallet::where('user_id', $user->user_id)->first();
+
+    // Check if any bid has 'win' status
+    if ($bids->contains('result_status', 'win')) {
+      $claimResult = $this->clameWinAmount();
+
+      if ($claimResult instanceof \Illuminate\Http\RedirectResponse) {
+        return $claimResult;
+      }
+    }
 
     $view = 'Templates.MyBids';
     return view('Front', compact('view', 'bids', 'user', 'wallet'));
   }
+
 
   public function optionGameEntry(Request $request)
   {
@@ -408,6 +352,14 @@ class PlayerController extends Controller
     if ($validator->fails()) {
       return redirect()->back()->withErrors($validator)->withInput();
     }
+
+    $time = timeonly();
+    if ($time <= '12:00:00') {
+      $slots = 'morning';
+    } else {
+      $slots = 'evening';
+    }
+
     $user = getCurrentUser();
     $parent = User::where('user_id', $user->user_id)->get()->first();
 
@@ -431,6 +383,7 @@ class PlayerController extends Controller
     $bid->user_id = $request->user_id;
     $bid->game_id = $request->game_id;
     $bid->answer = $request->answer;
+    $bid->slot = $slots;
     $bid->harf_digit = $request->harf_digit ?? NULL;
     $bid->bid_amount = $request->bid_amount;
     $bid->admin_share = $adminShare;
@@ -469,6 +422,16 @@ class PlayerController extends Controller
     $userwallet->balance = $userwallet->balance - $bids->sum('bid_amount');
     $userwallet->save();
 
+    $transaction  = new WalletTransactions;
+    $transaction->user_id = $request->user_id;
+    $transaction->tofrom_id = 1;
+    $transaction->debit = $bids->sum('bid_amount');
+    $transaction->balance = $userwallet->balance;
+    $transaction->remark = 'Bid Amount Debited';
+    $transaction->created_at = dateTime();
+    $transaction->save();
+
+
     $totalrate = $request->admin_cut + $request->subadmin_cut;
     $convert = $bids->sum('bid_amount') * 100 / $totalrate;
     $adminCut = $request->admin_cut / 100 * $convert;
@@ -478,9 +441,27 @@ class PlayerController extends Controller
     $adminWallet->balance = $adminWallet->balance + $adminCut;
     $adminWallet->save();
 
+    $transaction  = new WalletTransactions;
+    $transaction->user_id = 1;
+    $transaction->tofrom_id = $request->user_id;
+    $transaction->credit = $adminCut;
+    $transaction->balance = $adminWallet->balance;
+    $transaction->remark = 'Bid Amount Admin Cut Credited';
+    $transaction->created_at = dateTime();
+    $transaction->save();
+
     $subAdminWallet = Wallet::where('user_id', $request->parent_id)->first();
     $subAdminWallet->balance = $subAdminWallet->balance + $subadmincut;
     $subAdminWallet->save();
+
+    $transaction  = new WalletTransactions;
+    $transaction->user_id = $request->parent_id;
+    $transaction->tofrom_id = $request->user_id;
+    $transaction->credit = $subadmincut;
+    $transaction->balance = $subAdminWallet->balance;
+    $transaction->remark = 'Bid Amount SubAdmin Cut Credited';
+    $transaction->created_at = dateTime();
+    $transaction->save();
 
     return redirect()->route('myBids')->with('success', 'All Bids Submitted Successfully');
   }
@@ -526,5 +507,83 @@ class PlayerController extends Controller
     $view = 'Templates.PasswordUpdate';
 
     return view('Front', compact('view', 'user'));
+  }
+
+  private function clameWinAmount()
+  {
+    $user = getCurrentUser();
+    $checkGame = BidTransaction::where('user_id', $user->user_id)
+      ->where('result_status', 'win')
+      ->get();
+
+    if ($checkGame->count() >= 1) {
+      $bid = BidTransaction::find($user->user_id);
+      if (!$bid) {
+        return redirect()->back()->with('error', 'No winning bid found.');
+      }
+
+      $bid->result_status = 'claimed';
+      $bid->save();
+
+      $winning_amount = $bid->win_amount;
+      $adminwallet = Wallet::where('user_id', 1)->first();
+      $subadminwallet = Wallet::where('user_id', $bid->parent_id)->first();
+      $playerWallet = Wallet::where('user_id', $bid->user_id)->first();
+      if ($playerWallet) {
+        $playerWallet->balance += $winning_amount;
+        $playerWallet->save();
+
+        $transaction  = new WalletTransactions;
+        $transaction->user_id = $bid->user_id;
+        $transaction->tofrom_id = 1;
+        $transaction->credit = $winning_amount;
+        $transaction->balance = $playerWallet->balance;
+        $transaction->remark = 'Win Amount Credited';
+        $transaction->created_at = dateTime();
+        $transaction->save();
+
+        $adminwallet->balance = $adminwallet->balance - $winning_amount;
+        $adminwallet->save();
+
+        $transaction  = new WalletTransactions;
+        $transaction->user_id = 1;
+        $transaction->tofrom_id = $bid->user_id;
+        $transaction->debit = $winning_amount;
+        $transaction->balance = $adminwallet->balance;
+        $transaction->remark = 'Win Amount Debited to';
+        $transaction->created_at = dateTime();
+        $transaction->save();
+      }
+
+      $subAdminGet = $bid->subadminGet - $bid->subadmin_share;
+
+      $adminwallet->balance = $adminwallet->balance - $subAdminGet;
+      $adminwallet->save();
+
+      $transaction  = new WalletTransactions;
+      $transaction->user_id = 1;
+      $transaction->tofrom_id = $bid->parent_id;
+      $transaction->debit = $subAdminGet;
+      $transaction->balance = $adminwallet->balance;
+      $transaction->remark = 'Sub admin Cut from Admin';
+      $transaction->created_at = dateTime();
+      $transaction->save();
+
+      $subadminwallet->balance = $subadminwallet->balance + $subAdminGet;
+      $subadminwallet->save();
+
+      $transaction  = new WalletTransactions;
+      $transaction->user_id = $bid->parent_id;
+      $transaction->tofrom_id = 1;
+      $transaction->credit = $subAdminGet;
+      $transaction->balance = $subadminwallet->balance;
+      $transaction->remark = 'Sub admin cut from admin';
+      $transaction->created_at = dateTime();
+      $transaction->save();
+
+      return redirect()->back()->with('success', 'Amount Claimed Successfully');
+    }
+
+    return redirect()->back()->with('error', 'No winnings found.');
   }
 }

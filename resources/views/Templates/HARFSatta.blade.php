@@ -36,7 +36,7 @@ $betPrice = getThemeOptions('betSetting');
                 </div>
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <h6>Win Rate:- {{$user->admin_cut_harf}}X </h6>
-                    <h6>Min Bet Amount:- {{$betPrice['harfGame'] ?? 'NA'}} </h6>
+                    <h6>Min Bet Amount:- {{$betPrice['harfGameMin'] ?? 'NA'}} </h6>
                 </div>
 
                 <div class="container mt-3">
@@ -69,7 +69,7 @@ $betPrice = getThemeOptions('betSetting');
                                 </tr>
                                 <tr>
                                     @for ($i = 0; $i < 5; $i++)
-                                        <td><input type="number" class="form-control text-center bid-input" name="ander[{{ $i }}]" min="{{ $betPrice['harfGame'] ?? 0 }}" placeholder="Amount"></td>
+                                        <td><input type="number" class="form-control text-center bid-input" name="ander[{{ $i }}]" min="{{ $betPrice['harfGameMin'] ?? 0 }}" max="{{ $betPrice['harfGameMax'] ?? $availableBalance }}" placeholder="Amount"></td>
                                         @endfor
                                 </tr>
                                 <tr class="fw-bold bg-light">
@@ -77,7 +77,7 @@ $betPrice = getThemeOptions('betSetting');
                                 </tr>
                                 <tr>
                                     @for ($i = 5; $i < 10; $i++)
-                                        <td><input type="number" class="form-control text-center bid-input" name="ander[{{ $i }}]" min="{{ $betPrice['harfGame'] ?? 0 }}" placeholder="Amount"></td>
+                                        <td><input type="number" class="form-control text-center bid-input" name="ander[{{ $i }}]" min="{{ $betPrice['harfGameMin'] ?? 0 }}" max="{{ $betPrice['harfGameMax'] ?? $availableBalance }}" placeholder="Amount"></td>
                                         @endfor
                                 </tr>
                             </tbody>
@@ -96,7 +96,7 @@ $betPrice = getThemeOptions('betSetting');
                                 </tr>
                                 <tr>
                                     @for ($i = 0; $i < 5; $i++)
-                                        <td><input type="number" class="form-control text-center bid-input" name="bahar[{{ $i }}]" min="{{ $betPrice['harfGame'] ?? 0 }}" placeholder="Amount"></td>
+                                        <td><input type="number" class="form-control text-center bid-input" name="bahar[{{ $i }}]" min="{{ $betPrice['harfGameMin'] ?? 0 }}" max="{{ $betPrice['harfGameMax'] ?? $availableBalance }}" placeholder="Amount"></td>
                                         @endfor
                                 </tr>
                                 <tr class="fw-bold bg-light">
@@ -104,7 +104,7 @@ $betPrice = getThemeOptions('betSetting');
                                 </tr>
                                 <tr>
                                     @for ($i = 5; $i < 10; $i++)
-                                        <td><input type="number" class="form-control text-center bid-input" name="bahar[{{ $i }}]" min="{{ $betPrice['harfGame'] ?? 0 }}" placeholder="Amount"></td>
+                                        <td><input type="number" class="form-control text-center bid-input" name="bahar[{{ $i }}]" min="{{ $betPrice['harfGameMin'] ?? 0 }}" max="{{ $betPrice['harfGameMax'] ?? $availableBalance }}" placeholder="Amount"></td>
                                         @endfor
                                 </tr>
                             </tbody>

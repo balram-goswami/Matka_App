@@ -42,67 +42,73 @@ class UserService
     }
     public function store($request)
     {
-        $service = $this->service;
-        if ($request->file('photo')) {
-            $mealService->photo = fileuploadExtra($request, 'photo');
-        } elseif ($request->input('photo')) {
-            $service->photo = $request->input('photo');
+        if ($request->input('role') === 'subadmin') {
+            $pWallet = Wallet::where('user_id', 1)->first();
+        } else {
+            $pWallet = Wallet::where('user_id', $request->input('parent'))->first();
         }
-        
-        $service->name = $request->input('name');
-        $password = $request->input('password');
 
-        $service->parent = $request->input('parent');
-        $service->admin_cut_toss_game = $request->input('admin_cut_toss_game');
-        $service->admin_cut_crossing = $request->input('admin_cut_crossing');
-        $service->admin_cut_harf = $request->input('admin_cut_harf');
-        $service->admin_cut_odd_even = $request->input('admin_cut_odd_even');
-        $service->admin_cut_jodi = $request->input('admin_cut_jodi');
+        if ($pWallet->balance >= $request->input('balance')) {
 
-        $service->user_cut_toss_game = $request->input('user_cut_toss_game');
-        $service->user_cut_crossing = $request->input('user_cut_crossing');
-        $service->user_cut_harf = $request->input('user_cut_harf');
-        $service->user_cut_odd_even = $request->input('user_cut_odd_even');
-        $service->user_cut_jodi = $request->input('user_cut_jodi');
-        if ($password) {
-            $service->password = bcrypt($password);
-        }
-        $service->email_verified_at = dateTime();
-        $service->role = $request->input('role') ?? 'player';
-        $service->status = $request->input('status') ?? 'Active';
-        $service->save();
+            $service = $this->service;
+            $service->name = $request->input('name');
+            $password = $request->input('password');
 
-        if (!$wallet = Wallet::where('user_id', $service->id)->get()->first()) {
-            $wallet = new Wallet();
-            $wallet->user_id = $service->user_id;
-            $wallet->balance = $request->input('balance') ?? '0';
-            $wallet->created_at = dateTime();
-            $wallet->save();
+            $service->parent = $request->input('parent');
+            $service->admin_cut_toss_game = $request->input('admin_cut_toss_game');
+            $service->admin_cut_crossing = $request->input('admin_cut_crossing');
+            $service->admin_cut_harf = $request->input('admin_cut_harf');
+            $service->admin_cut_odd_even = $request->input('admin_cut_odd_even');
+            $service->admin_cut_jodi = $request->input('admin_cut_jodi');
 
-            if($request->input('role') === 'subadmin'){
-                $pWallet = Wallet::where('user_id', 1)->first();
-            } else {
-                $pWallet = Wallet::where('user_id', $request->input('parent'))->first();
+            $service->user_cut_toss_game = $request->input('user_cut_toss_game');
+            $service->user_cut_crossing = $request->input('user_cut_crossing');
+            $service->user_cut_harf = $request->input('user_cut_harf');
+            $service->user_cut_odd_even = $request->input('user_cut_odd_even');
+            $service->user_cut_jodi = $request->input('user_cut_jodi');
+            if ($password) {
+                $service->password = bcrypt($password);
             }
+            $service->email_verified_at = dateTime();
+            $service->role = $request->input('role') ?? 'player';
+            $service->status = $request->input('status') ?? 'Active';
+            $service->save();
 
-            // Ensure the parent wallet exists and has sufficient balance
-            if ($pWallet && $pWallet->balance >= $request->input('balance')) {
-                $pWallet->decrement('balance', $request->input('balance'));
-            } else {
-                return redirect()->back()->withErrors(['error' => 'Insufficient balance in parent wallet.'])->withInput();
+            if (!$wallet = Wallet::where('user_id', $service->id)->get()->first()) {
+                $wallet = new Wallet();
+                $wallet->user_id = $service->user_id;
+                $wallet->balance = $request->input('balance') ?? '0';
+                $wallet->created_at = dateTime();
+                $wallet->save();
+
+                $pWallet->balance = $pWallet->balance - $request->input('balance');
+                $pWallet->save();
+
+                $TransactionsUser = new WalletTransactions();
+                $TransactionsUser->user_id = $service->user_id;
+                $TransactionsUser->tofrom_id = 1;
+                $TransactionsUser->credit = $request->input('balance');
+                $TransactionsUser->balance = $wallet->balance;
+                $TransactionsUser->remark = 'Credited by ';
+                $TransactionsUser->created_at = dateTime();
+                $TransactionsUser->save();
+
+                $TransactionsAdmin = new WalletTransactions();
+                $TransactionsAdmin->user_id = 1;
+                $TransactionsAdmin->tofrom_id = $service->user_id;
+                $TransactionsAdmin->debit = $request->input('balance');
+                $TransactionsAdmin->balance = $pWallet->balance;
+                $TransactionsAdmin->remark = 'Debited to User';
+                $TransactionsAdmin->created_at = dateTime();
+                $TransactionsAdmin->save();
             }
-
-            $storTransactions = new WalletTransactions();
-            $storTransactions->user_id = $service->user_id;
-            $storTransactions->wallet_id = 1;
-            $storTransactions->withdraw_amount = $request->input('balance');
-            $storTransactions->remark = 'New user deposit';
-            $storTransactions->request_status = 'complete';
-            $storTransactions->created_at = dateTime();
-            $storTransactions->save();
-        }
-
+            
+        $newUser = User::latest()->first();
+        return redirect()->back()->with('success', "New User (ID: {$newUser->name}) saved successfully.");
         return $service;
+        } else {
+            return redirect()->back()->with('danger', 'Insufficient balance in parent wallet.');
+        }
     }
     public function get($id = null)
     {
@@ -124,7 +130,7 @@ class UserService
             $service->photo = $request->input('photo');
         }
         $service->name = $request->input('name');
-        
+
         $service->bank_name = $request->input('bank_name');
         $service->ac_holder_name = $request->input('ac_holder_name');
         $service->ac_number = $request->input('ac_number');

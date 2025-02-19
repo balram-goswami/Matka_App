@@ -64,6 +64,16 @@
                         </div>
 
                         <div class="col-sm-4">
+                            <div class="input-group input-group-merge">
+                                <select name="slot" id="slot" class="form-control">
+                                    <option value="">Select Slot</option>
+                                    <option value="morning">Morning</option>
+                                    <option value="evening">Evening</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
                             <input name="result" id="result" class="form-control" placeholder="Enter Result"></input>
                         </div>
 
@@ -90,6 +100,7 @@
                         <tr>
                             <th>S.no</th>
                             <th>Game Name</th>
+                            <th>Game Slot</th>
                             <th>Result</th>
                             <th>Time of Result</th>
                         </tr>
@@ -99,6 +110,7 @@
                         <tr>
                             <td>{{ $result->id }}</td>
                             <td>{{ $gameNames[$result->game_id] ?? 'Unknown Game' }}</td>
+                            <td>{{ $result->slot ?? '-' }}</td>
                             <td>{{ $result->result }}</td>
                             <td>{{ $result->created_at }}</td>
                         </tr>

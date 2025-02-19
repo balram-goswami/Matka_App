@@ -533,6 +533,10 @@ function dateonly()
 {
 	return date('Y-m-d');
 }
+function timeonly()
+{
+	return date('H:i:s');
+}
 
 function dateFormat($date)
 {
@@ -550,10 +554,10 @@ function timeFormat($date)
 function userTypes()
 {
 	return [
-		// User::ADMIN => 'Admin',
+		User::ADMIN => 'Admin',
 		User::SUBADMIN => 'SubAdmin',
 		// User::USER => 'User',
-		User::PLAYER => 'Player',
+		// User::PLAYER => 'Player',
 	];
 }
 function daysName()
@@ -638,7 +642,7 @@ function getMenus()
 			'role' => [User::ADMIN],
 		],
 		[
-			'title' => 'Payments Request',
+			'title' => 'Tansactions',
 			'route' => 'paymentRequest',
 			'icon' => 'tf-icons bx bx-cog',
 			'role' => [User::ADMIN],
@@ -664,7 +668,7 @@ function getMenus()
 			'role' => [User::SUBADMIN],
 		],
 		[
-			'title' => 'Payments Request',
+			'title' => 'Tansactions',
 			'route' => 'userPayment',
 			'icon' => 'tf-icons bx bx-cog',
 			'role' => [User::SUBADMIN],

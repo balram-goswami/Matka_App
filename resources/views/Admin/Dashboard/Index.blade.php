@@ -8,6 +8,7 @@ $currentUser = getCurrentUser();
             <div class="card">
                 <div class="d-flex align-items-end row">
                     <div class="col-sm-7">
+
                         <div class="card-body">
                             <h5 class="card-title text-primary">User Name: {{ $currentUser->name }} 🎉</h5>
                             <h5 class="card-title text-primary">Wallet Balance: {{ number_format($balance->balance, 2) }}</h5>
@@ -19,6 +20,59 @@ $currentUser = getCurrentUser();
                                 data-app-dark-img="..\themeAssets\img\matka\matka.png"
                                 data-app-light-img="..\themeAssets\img\matka\matka.png" />
                         </div>
+                    </div>
+                    <div class="mt-4">
+                        <!-- Button trigger modal -->
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#addMoney">
+                            Add Money to self
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="addMoney" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="addMoneyTitle">Add Money</h5>
+                                        <button
+                                            type="button"
+                                            class="btn-close"
+                                            data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <form method="post" action="{{ route('balanceToAdmin') }}">
+                                        @csrf
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col mb-6">
+                                                    <label for="nameWithTitle" class="form-label">Enter Amount</label>
+                                                    <input
+                                                        type="text"
+                                                        class="form-control"
+                                                        name="balance"
+                                                        placeholder="Enter Amount" />
+                                                    <input
+                                                        hidden
+                                                        name="user_id"
+                                                        value="1"
+                                                        placeholder="Enter Amount" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                                Close
+                                            </button>
+                                            <button type="submit" class="btn btn-primary">Add Now</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
             </div>

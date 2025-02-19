@@ -9,6 +9,7 @@ Route::get('playerDashboard', [PlayerController::class, 'playerDashboard'])->nam
 
 Route::get('profileUpdate', [PlayerController::class, 'profileUpdate'])->name('profileUpdate');
 Route::get('pwsChange', [PlayerController::class, 'pwsChange'])->name('pwsChange');
+Route::get('optionGameList', [PlayerController::class, 'optionGameList'])->name('optionGameList');
 
 Route::get('addMoneyPage', [PlayerController::class, 'addMoneyPage'])->name('addMoneyPage');
 Route::post('moneyRequest', [PlayerController::class, 'moneyRequest'])->name('moneyRequest');

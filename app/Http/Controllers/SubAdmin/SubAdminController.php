@@ -30,15 +30,29 @@ class SubAdminController extends Controller
         $user = getCurrentUser();
         $wallet = Wallet::where('user_id', $user->user_id)->get()->first();
         $players = User::where('parent', $user->user_id)->get();
+        $pwdMsg = User::where('user_id', $user->user_id)->get()->first();
+
         $view = 'SubAdmin.SubAdmin.Index';
-        Session::flash('password_change_alert', "Hello {$user->name}, please change your password before continuing to use your account. If done Ignore");
-        return view('Admin', compact('view', 'wallet', 'players'));
+        return view('Admin', compact('view', 'wallet', 'players', 'pwdMsg'));
     }
 
     public function viewPlayers()
     {
+        $pId = getCurrentUser();
+        $users = User::where('parent', $pId->user_id)->get();
+
+        $exposer = []; // Initialize an empty array
+
+        foreach ($users as $user) {
+            $exposer[$user->user_id] = BidTransaction::where('user_id', $user->user_id)
+                ->where('status', 'submitted')
+                ->whereNull('bid_result')
+                ->get();
+        }
+
         $view = 'SubAdmin.SubAdmin.AddPlayers';
-        return view('Admin', compact('view'));
+
+        return view('Admin', compact('view', 'users', 'exposer'));
     }
 
     public function subadminAddUsers($id)
@@ -49,51 +63,14 @@ class SubAdminController extends Controller
         $win = BidTransaction::where('user_id', $id)->where('result_status', 'claimed')->get();
         $loss = BidTransaction::where('user_id', $id)->where('result_status', 'loss')->get();
         $panding = BidTransaction::where('user_id', $id)->where('result_status', NULL)->get();
-        $withdrawwallet = WalletTransactions::where('user_id', $id)->where('deposit_amount', NULL)->get();
-        $dipositwallet = WalletTransactions::where('user_id', $id)->where('withdraw_amount', NULL)->get();
+        $payment = WalletTransactions::where('user_id', $id)->get();
+        $exposer = BidTransaction::where('user_id', $id)
+            ->where('status', 'submitted')
+            ->whereNull('bid_result')
+            ->get();
 
         $view = 'SubAdmin.SubAdmin.PlayerDetails';
-        return view('Admin', compact('view', 'user', 'wallet', 'bids', 'win', 'loss', 'panding', 'withdrawwallet', 'dipositwallet'));
-    }
-
-    public function subadminplayers(Request $request)
-    { {
-            if ($request->ajax()) {
-                $parent = getCurrentUser();
-                $user = $this->service->table()->where('role', 'player')->where('parent', $parent->user_id);
-                return Datatables::of($user)
-                    ->addIndexColumn()
-                    ->editColumn('photo', function ($row) {
-                        if ($row->photo) {
-                            return '<img src="' . asset($row->photo) . '" style="width:70px;" />';
-                        }
-                    })
-                    ->addColumn('action', function ($row) {
-                        return '<div class="dropdown">
-                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                            <i class="bx bx-dots-vertical-rounded"></i>
-                            </button>
-                            <div class="dropdown-menu">
-                               <a class="btn btn-info" href="' . route('subadminAddUsers', $row->user_id) . '"
-                                  ><i class="bx bx-edit-alt me-1"></i> Edit</a
-                                  >
-                                  
-                                ' . Form::open(array('route' => array('users.destroy', $row->user_id), 'method' => 'delete')) . '
-                                    <button type="submit" class="btn btn-danger"><i class="bx bx-trash me-1"></i> Delete</button>
-                                </form>
-                                <a class="btn btn-success" href="' . route('blockUser', $row->user_id) . '"
-                                  ><i class="bx bx-edit-alt me-1"></i> Change Status</a>
-                            </div>';
-                    })
-                    ->editColumn('created_at', function ($row) {
-                        return dateFormat($row->created_at);
-                    })
-                    ->rawColumns(['action', 'created_at', 'photo'])
-                    ->make(true);
-            }
-            $view = 'SubAdmin.SubAdmin.AddPlayers';
-            return view('Admin', compact('view'));
-        }
+        return view('Admin', compact('view', 'user', 'wallet', 'bids', 'win', 'loss', 'panding', 'payment', 'exposer'));
     }
 
     public function addeditplayer()
@@ -127,16 +104,16 @@ class SubAdminController extends Controller
 
         // Check if parent wallet exists and has enough balance
         if (!$parent) {
-            return redirect()->back()->withErrors(['error' => 'Parent account not found'])->withInput();
+            return redirect()->back()->with('danger', 'Parent account not found');
         }
 
         if ($parent->balance < $request->balance) {
-            return redirect()->back()->withErrors(['error' => 'Insufficient balance'])->withInput();
+            return redirect()->back()->with('danger', 'Insufficient balance');
         }
 
         // Check if recipient account exists
         if (!$account) {
-            return redirect()->back()->withErrors(['user_id' => 'Account not found'])->withInput();
+            return redirect()->back()->with('danger', 'Account not found');
         }
 
         // Deduct from parent's wallet
@@ -148,16 +125,22 @@ class SubAdminController extends Controller
         $account->save();
 
         $walletUpdate = WalletTransactions::create([
-            'user_id'         => $request->user_id,   // Receiver ID
-            'wallet_id'       => $account->id,       // Receiver Wallet ID
-            'parent_id'       => $pUser->user_id,    // Sender (Parent) ID
-            'deposit_amount'  => $request->balance,
-            'transaction_type' => 'parent',           // Can be 'credit' or 'debit'
-            'request_status'   => 'complete',        // Can be 'pending', 'completed', etc.
+            'user_id'         => $request->user_id,
+            'tofrom_id'       => $pUser->user_id,
+            'credit'          => $request->balance,
+            'balance'          => $account->balance,
+            'remark'          => 'Credited by Sub Admin ',
+            'created_at'      => now(),
+        ]);
+        $walletUpdate = WalletTransactions::create([
+            'user_id'         => $pUser->user_id,
+            'tofrom_id'       => $request->user_id,
+            'debit'          => $request->balance,
+            'balance'          => $parent->balance,
+            'remark'          => 'Debited by Sub Admin ',
             'created_at'      => now(),
         ]);
         $walletUpdate->save();
-
 
         return redirect()->back()->with('success', 'Balance transferred successfully.');
     }
@@ -185,16 +168,12 @@ class SubAdminController extends Controller
 
         // Check if parent wallet exists and has enough balance
         if (!$parent) {
-            return redirect()->back()->withErrors(['error' => 'Parent account not found'])->withInput();
-        }
-
-        if ($parent->balance < $request->balance) {
-            return redirect()->back()->withErrors(['error' => 'Insufficient balance'])->withInput();
+            return redirect()->back()->with('danger', 'Parent account not found');
         }
 
         // Check if recipient account exists
         if (!$account) {
-            return redirect()->back()->withErrors(['user_id' => 'Account not found'])->withInput();
+            return redirect()->back()->with('danger', "$account->name Account not found");
         }
 
         // Deduct from parent's wallet
@@ -206,17 +185,22 @@ class SubAdminController extends Controller
         $account->save();
 
         $walletUpdate = WalletTransactions::create([
-            'user_id'         => $request->user_id,   // Receiver ID
-            'wallet_id'       => $account->id,       // Receiver Wallet ID
-            'parent_id'       => $pUser->user_id,    // Sender (Parent) ID
-            'withdraw_amount'  => $request->balance,
-            'transaction_type' => 'parent',           // Can be 'credit' or 'debit'
-            'request_status'   => 'complete',        // Can be 'pending', 'completed', etc.
+            'user_id'         => $request->user_id,
+            'tofrom_id'       => $pUser->user_id,
+            'debit'          => $request->balance,
+            'balance'          => $account->balance,
+            'remark'          => 'Credited by Sub Admin',
             'created_at'      => now(),
         ]);
-
+        $walletUpdate = WalletTransactions::create([
+            'user_id'         => $pUser->user_id,
+            'tofrom_id'       => $request->user_id,
+            'credit'          => $request->balance,
+            'balance'          => $parent->balance,
+            'remark'          => 'Debited by Sub Admin',
+            'created_at'      => now(),
+        ]);
         $walletUpdate->save();
-
 
         return redirect()->back()->with('success', 'Balance transferred successfully.');
     }
@@ -226,7 +210,7 @@ class SubAdminController extends Controller
         $user = $this->service->select();
         $puser = getCurrentUser();
         $view = 'SubAdmin.SubAdmin.PaymentPage';
-        $payment = WalletTransactions::where('parent_id', $puser->user_id)->get();
+        $payment = WalletTransactions::where('user_id', $puser->user_id)->get();
         return view('Admin', compact('view', 'user', 'payment'));
     }
 
@@ -261,7 +245,7 @@ class SubAdminController extends Controller
         if ($request->tossGame == !NULL) {
             $game_id = $request->tossGame;
             $gameType = 'option';
-            $c_user = getCurrentUser(); 
+            $c_user = getCurrentUser();
 
             $gameResult = GameResult::where('game_id', $game_id)->get('result')->first();
 
@@ -295,7 +279,7 @@ class SubAdminController extends Controller
                 ->where('parent_id', $c_user->user_id)
                 ->where('updated_at', '>=', $timeLimit) // Only results updated in the last 5 hours
                 ->where('updated_at', '<=', $selectedDateTime) // Ensure records match the selected date-time
-                ->selectRaw('answer, SUM(admin_cut) as total_bid, SUM(win_amount + subadminget) as total_win, result_status')
+                ->selectRaw('answer, SUM(subadmin_cut) as total_bid, SUM(win_amount + subadminget) as total_win, result_status')
                 ->groupBy('answer', 'result_status')
                 ->orderBy('answer', 'asc')
                 ->get();

@@ -26,27 +26,21 @@
                     <table class="table mb-0">
                         <thead>
                             <tr>
+                                <th>Sr. No.</th>
                                 <th>Date</th>
-                                <th>UTR No.</th>
-                                <th>Deposit</th>
-                                <th>Withdraw</th>
-                                <th>Status</th>
+                                <th>Credit</th>
+                                <th>Debit</th>
+                                <th>Balance</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($list as $item)
                                 <tr>
+                                    <td>{{ $loop->iteration }}</td>
                                     <td>{{ $item->updated_at }}</td>
-                                    <td>{{ $item->utr_number }}</td>
-                                    <td>{{ $item->deposit_amount }}</td>
-                                    <td>{{ $item->withdraw_amount }}</td>
-                                    @if ($item->request_status === 'pending')
-                                        <td style="color: red">Pending</td>
-                                    @else
-                                        <td style="color: green">
-                                            <b>Approved</b>
-                                        </td>
-                                    @endif
+                                    <td>{{ $item->credit }}</td>
+                                    <td>{{ $item->debit }}</td>
+                                    <td>{{ $item->balance }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

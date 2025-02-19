@@ -58,8 +58,10 @@ class UserController extends Controller
             ->whereNull('bid_result')
             ->get();
 
+        $payment = WalletTransactions::all();
+
         $view = 'Admin.Users.ViewSubAdminDetails';
-        return view('Admin', compact('view', 'players', 'user', 'exposer'));
+        return view('Admin', compact('view', 'players', 'user', 'exposer', 'payment'));
     }
 
 
@@ -68,7 +70,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         // Toggle status
-        $user->status = ($user->status === 'Active') ? 'Block' : 'Active';
+        $user->status = ($user->status === 'Active') ? 'BlockByAdmin' : 'Active';
         $user->save();
 
         return redirect()->back()->with('success', 'User status updated successfully.');
@@ -96,8 +98,6 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $user = $this->service->store($request);
-        $newUser = User::latest()->first();
-        Session::flash('success', "New User (ID: {$newUser->name}) saved successfully.");
         return redirect()->back();
     }
 
@@ -206,12 +206,16 @@ class UserController extends Controller
             [
                 'game_id' => 'required',
                 'result' => 'required|string|max:255',
+                'slot' => 'nullable',
             ]
         );
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
+
+        // Format the result (Ensure it's a number and pad if between 1-9)
+        $formattedResult = str_pad($request->result, 2, '0', STR_PAD_LEFT);
 
         // Check if result is already declared
         $gameResult = GameResult::where('game_id', $request->game_id)->latest()->first();
@@ -230,17 +234,17 @@ class UserController extends Controller
             // Save the game result
             GameResult::create([
                 'game_id' => $request->game_id,
-                'result' => $request->result,
+                'slot' => $request->slot ?? NULL,
+                'result' => $formattedResult, // Use formatted result
             ]);
 
             $bidTable = BidTransaction::where('game_id', $request->game_id)
                 ->where('bid_result', NULL)
                 ->get();
 
-
             foreach ($bidTable as $table) {
                 $gameId = $request->game_id;
-                $result = $request->result;
+                $result = $formattedResult; // Use formatted result
                 $bidResult = null;
 
                 if ($table->harf_digit === 'oddEven') {
@@ -257,7 +261,7 @@ class UserController extends Controller
                 BidTransaction::where('game_id', $gameId)
                     ->where('harf_digit', $table->harf_digit) // Add this condition
                     ->update([
-                        'bid_result' => $bidResult, // Use $bidResult instead of $result
+                        'bid_result' => $bidResult, // Use formatted result
                         'result_status' => DB::raw("CASE WHEN answer = '" . addslashes($bidResult) . "' THEN 'win' ELSE 'loss' END"),
                     ]);
             }
@@ -269,6 +273,7 @@ class UserController extends Controller
             return redirect()->back()->with('error', 'An error occurred while saving the result');
         }
     }
+
 
     public function gameResult(Request $request)
     {
@@ -461,20 +466,14 @@ class UserController extends Controller
         } else {
             $game_id = $request->sattaGame;
             $time = $request->sattaGameTime;
-            $date = $request->date;
 
             $gameType = 'satta';
-            $gameResult = GameResult::where('game_id', $game_id)->first(['result']); // Using first() to avoid collections
-
-            // Merge date and time into a DateTime format
-            $selectedDateTime = Carbon::parse("$date $time");
-
-            // Get the timestamp for 5 hours before the updated_at field
-            $timeLimit = Carbon::now()->subHours(5);
+            $gameResult = GameResult::where('game_id', $game_id)->where('slot', $request->slot)->first(['result']);
+            $dates = $request->gamedate . ' 00:00:00';
 
             $jantriData = BidTransaction::where('game_id', $game_id)
-                ->where('updated_at', '>=', $timeLimit) // Only results updated in the last 5 hours
-                ->where('updated_at', '<=', $selectedDateTime) // Ensure records match the selected date-time
+                ->where('slot', $request->slot)
+                ->where('updated_at', '>=', $dates)
                 ->selectRaw('answer, SUM(admin_cut) as total_bid, SUM(win_amount + subadminget) as total_win, result_status')
                 ->groupBy('answer', 'result_status')
                 ->orderBy('answer', 'asc')
@@ -485,5 +484,160 @@ class UserController extends Controller
         }
 
         return redirect()->back()->with('danger', 'No Jantri Found.');
+    }
+
+    public function balanceToAdmin(Request $request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'user_id' => 'required|exists:wallets,user_id',
+                'balance' => 'required|numeric|min:1',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $adminWallet = Wallet::where('user_id', $request->user_id)->first();
+        $adminWallet->balance = $adminWallet->balance + $request->balance;
+        $adminWallet->created_at = dateTime();
+        $adminWallet->save();
+
+        $TransactionsUser = new WalletTransactions();
+        $TransactionsUser->user_id = $request->user_id;
+        $TransactionsUser->tofrom_id = 1;
+        $TransactionsUser->credit = $request->balance;
+        $TransactionsUser->balance = $adminWallet->balance;
+        $TransactionsUser->remark = 'Add Balance to self';
+        $TransactionsUser->created_at = dateTime();
+        $TransactionsUser->save();
+
+        return redirect()->back()->with('success', 'Balance transferred successfully.');
+    }
+
+    public function addbalancebyadmin(Request $request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'user_id' => 'required|exists:wallets,user_id',
+                'balance' => 'required|numeric|min:1',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        // Retrieve the user's wallet account
+        $account = Wallet::where('user_id', $request->user_id)->first();
+
+        // Get the current logged-in user (assumed function)
+        $pUser = getCurrentUser();
+        $parent = Wallet::where('user_id', $pUser->user_id)->first();
+
+        // Check if parent wallet exists and has enough balance
+        if (!$parent) {
+            return redirect()->back()->with('danger', 'Parent account not found');
+        }
+
+        if ($parent->balance < $request->balance) {
+            return redirect()->back()->with('danger', 'Insufficient balance');
+        }
+
+        // Check if recipient account exists
+        if (!$account) {
+            return redirect()->back()->with('danger', 'Account not found');
+        }
+
+        // Deduct from parent's wallet
+        $parent->balance -= $request->balance;
+        $parent->save();
+
+        // Add to recipient's wallet
+        $account->balance += $request->balance;
+        $account->save();
+
+        $walletUpdate = WalletTransactions::create([
+            'user_id'         => $request->user_id,
+            'tofrom_id'       => $pUser->user_id,
+            'credit'          => $request->balance,
+            'balance'          => $account->balance,
+            'remark'          => 'Credited by Admin',
+            'created_at'      => now(),
+        ]);
+        $walletUpdate = WalletTransactions::create([
+            'user_id'         => $pUser->user_id,
+            'tofrom_id'       => $request->user_id,
+            'debit'          => $request->balance,
+            'balance'          => $parent->balance,
+            'remark'          => 'Debited by Admin',
+            'created_at'      => now(),
+        ]);
+        $walletUpdate->save();
+
+        return redirect()->back()->with('success', 'Balance transferred successfully.');
+    }
+
+    public function deletebalancebyadmin(Request $request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'user_id' => 'required|exists:wallets,user_id',
+                'balance' => 'required|numeric|min:1',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        // Retrieve the user's wallet account
+        $account = Wallet::where('user_id', $request->user_id)->first();
+
+        // Get the current logged-in user (assumed function)
+        $pUser = getCurrentUser();
+        $parent = Wallet::where('user_id', $pUser->user_id)->first();
+
+        // Check if parent wallet exists and has enough balance
+        if (!$parent) {
+            return redirect()->back()->with('danger', 'Parent account not found');
+        }
+
+        // Check if recipient account exists
+        if (!$account) {
+            return redirect()->back()->with('danger', "$account->name Account not found");
+        }
+
+        // Deduct from parent's wallet
+        $parent->balance += $request->balance;
+        $parent->save();
+
+        // Add to recipient's wallet
+        $account->balance -= $request->balance;
+        $account->save();
+
+        $walletUpdate = WalletTransactions::create([
+            'user_id'         => $request->user_id,
+            'tofrom_id'       => $pUser->user_id,
+            'debit'          => $request->balance,
+            'balance'          => $account->balance,
+            'remark'          => 'Credited by Admin',
+            'created_at'      => now(),
+        ]);
+        $walletUpdate = WalletTransactions::create([
+            'user_id'         => $pUser->user_id,
+            'tofrom_id'       => $request->user_id,
+            'credit'          => $request->balance,
+            'balance'          => $parent->balance,
+            'remark'          => 'Debited by Admin',
+            'created_at'      => now(),
+        ]);
+        $walletUpdate->save();
+
+        return redirect()->back()->with('success', 'Balance transferred successfully.');
     }
 }

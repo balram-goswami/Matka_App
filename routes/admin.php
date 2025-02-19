@@ -39,6 +39,9 @@ Route::post('jantri', [UserController::class, 'jantri'])->name('jantri.view');
 Route::get('viewSubadmin/{id}', [UserController::class, 'viewSubadmin'])->name('viewSubadmin');
 Route::get('blockUserbyadmin/{id}', [UserController::class, 'blockUserbyadmin'])->name('blockUserbyadmin');
 Route::get('changePassword', [UserController::class, 'changePassword'])->name('changePassword');
+Route::post('balanceToAdmin', [UserController::class, 'balanceToAdmin'])->name('balanceToAdmin');
+Route::post('addbalancebyadmin', [UserController::class, 'addbalancebyadmin'])->name('addbalancebyadmin');
+Route::post('deletebalancebyadmin', [UserController::class, 'deletebalancebyadmin'])->name('deletebalancebyadmin');
 
 // Media
 Route::resource('/media', MediaController::class, ['names' => 'media']);

@@ -90,7 +90,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="row m-t-30">
+                            <div class="row m-t-30" hidden>
                                 <div class="col-md-12">
                                     <label class="col-form-label" for="comment_status">Comments</label><br>
                                     <select class="form-control form-control-lg" name="comment_status"
@@ -100,7 +100,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="row m-t-30">
+                            <div class="row m-t-30" hidden>
                                 <div class="col-md-12">
                                     <label class="col-form-label" for="createSiteMap">Create This Page In
                                         SiteMap</label><br>

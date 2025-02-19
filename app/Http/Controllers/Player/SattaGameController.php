@@ -118,7 +118,6 @@ class SattaGameController extends Controller
 
                 'adminshare' => 'nullable',
                 'subadminshare' => 'nullable',
-                'bid_amount' => 'required',
             ]
         );
 
@@ -142,6 +141,12 @@ class SattaGameController extends Controller
             }
         }
 
+        $time = timeonly();
+        if ($time <= '12:00:00') {
+            $slots = 'morning';
+        } else {
+            $slots = 'evening';
+        }
         $winAmount = $request->bid_amount * $request->adminrate;
 
         // admin money convert
@@ -163,6 +168,7 @@ class SattaGameController extends Controller
             $bid->user_id = $request->user_id;
             $bid->game_id = $request->game_id;
             $bid->answer = $combination;
+            $bid->slot = $slots;
             $bid->bid_amount = $request->bid_amount;
             $bid->admin_share = $adminShare;
             $bid->subadmin_share = $subadminShare;
@@ -197,6 +203,12 @@ class SattaGameController extends Controller
         $user = getCurrentUser();
         $parent = User::where('user_id', $user->user_id)->get()->first();
 
+        $time = timeonly();
+        if ($time <= '12:00:00') {
+            $slots = 'morning';
+        } else {
+            $slots = 'evening';
+        }
 
         // Process Ander Bids (Stored as Open)
         if (!empty($request->ander)) {
@@ -224,6 +236,7 @@ class SattaGameController extends Controller
                         'game_id' => $request->game_id,
                         'harf_digit' => 'Ander',
                         'answer' => $digit,
+                        'slot' => $slots,
                         'bid_amount' => $amount,
                         'admin_share' => $adminShare,
                         'subadmin_share' => $subadminShare,
@@ -262,6 +275,7 @@ class SattaGameController extends Controller
                         'game_id' => $request->game_id,
                         'harf_digit' => 'Bahar',
                         'answer' => $digit,
+                        'slot' => $slots,
                         'bid_amount' => $amount,
                         'admin_share' => $adminShare,
                         'subadmin_share' => $subadminShare,

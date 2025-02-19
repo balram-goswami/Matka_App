@@ -39,7 +39,7 @@ class CreateUsersTable extends Migration
             $table->string('upi_one')->nullable();
             $table->string('upi_two')->nullable();
             $table->string('upi_three')->nullable();
-            $table->enum("status",["Active","Block"]);
+            $table->enum("status",["Active","Block","BlockByAdmin"]);
             $table->datetime('email_verified_at');
             $table->rememberToken();
             $table->timestamps();

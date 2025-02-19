@@ -43,11 +43,12 @@ class UserService
     public function store($request)
     {
         if ($request->input('role') === 'subadmin') {
-            $pWallet = Wallet::where('user_id', 1)->first();
+            $pWallet = Wallet::where('user_id', 1)->get()->first();
         } else {
-            $pWallet = Wallet::where('user_id', $request->input('parent'))->first();
+            $pWallet = Wallet::where('user_id', $request->input('parent'))->get()->first();
         }
-
+        
+        
         if ($pWallet->balance >= $request->input('balance')) {
 
             $service = $this->service;
@@ -86,7 +87,7 @@ class UserService
 
                 $TransactionsUser = new WalletTransactions();
                 $TransactionsUser->user_id = $service->user_id;
-                $TransactionsUser->tofrom_id = 1;
+                $TransactionsUser->tofrom_id = $pWallet->user_id;
                 $TransactionsUser->credit = $request->input('balance');
                 $TransactionsUser->balance = $wallet->balance;
                 $TransactionsUser->remark = 'Credited by ';
@@ -94,7 +95,7 @@ class UserService
                 $TransactionsUser->save();
 
                 $TransactionsAdmin = new WalletTransactions();
-                $TransactionsAdmin->user_id = 1;
+                $TransactionsAdmin->user_id = $pWallet->user_id;
                 $TransactionsAdmin->tofrom_id = $service->user_id;
                 $TransactionsAdmin->debit = $request->input('balance');
                 $TransactionsAdmin->balance = $pWallet->balance;

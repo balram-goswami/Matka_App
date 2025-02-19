@@ -26,8 +26,8 @@
                             <td>{{ number_format($data->total_bid, 2) }}</td>
                             <td>
                                 <span class="badge bg-label-primary me-1"
-                                    style="color: {{ $data->result_status === 'win' ? '#f41010' : '#000' }} !important">
-                                    {{ $data->result_status === 'win' ? number_format($data->total_win, 2) : '00' }}
+                                    style="color: {{ $data->result_status === 'claimed' ? '#f41010' : '#000' }} !important">
+                                    {{ $data->result_status === 'claimed' ? number_format($data->total_win, 2) : '00' }}
                                 </span>
                             </td>
                         </tr>
@@ -85,3 +85,4 @@
         </div>
     </div>
 </div>
+

@@ -66,15 +66,25 @@ class UserController extends Controller
 
 
     public function blockUserByAdmin($id)
-    {
-        $user = User::findOrFail($id);
+{
+    $user = User::findOrFail($id);
+    
+    // Toggle user status
+    $newStatus = ($user->status === 'Active') ? 'BlockByAdmin' : 'Active';
+    $user->status = $newStatus;
+    $user->save();
 
-        // Toggle status
-        $user->status = ($user->status === 'Active') ? 'BlockByAdmin' : 'Active';
-        $user->save();
-
-        return redirect()->back()->with('success', 'User status updated successfully.');
+    // If the user is a subadmin, block/unblock their players
+    if ($user->role === 'subadmin') {
+        $players = User::where('role', 'player')->where('parent', $user->user_id)->get();
+        foreach ($players as $player) {
+            $player->status = $newStatus; // Apply the same status change as subadmin
+            $player->save();
+        }
     }
+
+    return redirect()->back()->with('success', 'User status updated successfully.');
+}
 
 
     /**
@@ -218,17 +228,16 @@ class UserController extends Controller
         $formattedResult = str_pad($request->result, 2, '0', STR_PAD_LEFT);
 
         // Check if result is already declared
-        $gameResult = GameResult::where('game_id', $request->game_id)->latest()->first();
+        $gameResult = GameResult::where('game_id', $request->game_id)
+            ->where('slot', $request->slot)
+            ->latest()
+            ->first();
 
         if ($gameResult) {
-            $currentTime = now(); // Current timestamp
-            $resultTime = $gameResult->created_at; // Timestamp when the result was declared
-
-            // Check if the result was declared within the last 2 hours
-            if ($resultTime->diffInHours($currentTime) < 2) {
-                return redirect()->back()->with('danger', 'Result Already Declared Within the Last 2 Hours');
-            }
+            return redirect()->back()->with('danger', 'Result Already Declared');
         }
+
+
 
         try {
             // Save the game result

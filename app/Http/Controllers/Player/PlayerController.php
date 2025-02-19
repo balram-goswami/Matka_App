@@ -512,78 +512,92 @@ class PlayerController extends Controller
   private function clameWinAmount()
   {
     $user = getCurrentUser();
-    $checkGame = BidTransaction::where('user_id', $user->user_id)
+
+    // Get the winning bid
+    $bid = BidTransaction::where('user_id', $user->user_id)
       ->where('result_status', 'win')
-      ->get();
+      ->first();
 
-    if ($checkGame->count() >= 1) {
-      $bid = BidTransaction::find($user->user_id);
-      if (!$bid) {
-        return redirect()->back()->with('error', 'No winning bid found.');
-      }
+    if (!$bid) {
+      return redirect()->back()->with('error', 'No winning bid found.');
+    }
 
+    \DB::beginTransaction();
+    try {
+      // Update bid status to claimed
       $bid->result_status = 'claimed';
       $bid->save();
 
       $winning_amount = $bid->win_amount;
+
+      // Get wallets
       $adminwallet = Wallet::where('user_id', 1)->first();
       $subadminwallet = Wallet::where('user_id', $bid->parent_id)->first();
       $playerWallet = Wallet::where('user_id', $bid->user_id)->first();
-      if ($playerWallet) {
-        $playerWallet->balance += $winning_amount;
-        $playerWallet->save();
 
-        $transaction  = new WalletTransactions;
-        $transaction->user_id = $bid->user_id;
-        $transaction->tofrom_id = 1;
-        $transaction->credit = $winning_amount;
-        $transaction->balance = $playerWallet->balance;
-        $transaction->remark = 'Win Amount Credited';
-        $transaction->created_at = dateTime();
-        $transaction->save();
-
-        $adminwallet->balance = $adminwallet->balance - $winning_amount;
-        $adminwallet->save();
-
-        $transaction  = new WalletTransactions;
-        $transaction->user_id = 1;
-        $transaction->tofrom_id = $bid->user_id;
-        $transaction->debit = $winning_amount;
-        $transaction->balance = $adminwallet->balance;
-        $transaction->remark = 'Win Amount Debited to';
-        $transaction->created_at = dateTime();
-        $transaction->save();
+      if (!$adminwallet || !$playerWallet) {
+        throw new \Exception('Required wallet not found.');
       }
 
-      $subAdminGet = $bid->subadminGet - $bid->subadmin_share;
+      // Credit to player wallet
+      $playerWallet->balance += $winning_amount;
+      $playerWallet->save();
 
-      $adminwallet->balance = $adminwallet->balance - $subAdminGet;
+      WalletTransactions::create([
+        'user_id' => $bid->user_id,
+        'tofrom_id' => 1,
+        'credit' => $winning_amount,
+        'balance' => $playerWallet->balance,
+        'remark' => 'Win Amount Credited',
+        'created_at' => now(),
+      ]);
+
+      // Debit from admin wallet
+      $adminwallet->balance -= $winning_amount;
       $adminwallet->save();
 
-      $transaction  = new WalletTransactions;
-      $transaction->user_id = 1;
-      $transaction->tofrom_id = $bid->parent_id;
-      $transaction->debit = $subAdminGet;
-      $transaction->balance = $adminwallet->balance;
-      $transaction->remark = 'Sub admin Cut from Admin';
-      $transaction->created_at = dateTime();
-      $transaction->save();
+      WalletTransactions::create([
+        'user_id' => 1,
+        'tofrom_id' => $bid->user_id,
+        'debit' => $winning_amount,
+        'balance' => $adminwallet->balance,
+        'remark' => 'Win Amount Debited to player',
+        'created_at' => now(),
+      ]);
 
-      $subadminwallet->balance = $subadminwallet->balance + $subAdminGet;
-      $subadminwallet->save();
+      // Handle subadmin share if applicable
+      if ($subadminwallet) {
+        $subAdminGet = $bid->subadminGet - $bid->subadmin_share;
+        $adminwallet->balance -= $subAdminGet;
+        $adminwallet->save();
 
-      $transaction  = new WalletTransactions;
-      $transaction->user_id = $bid->parent_id;
-      $transaction->tofrom_id = 1;
-      $transaction->credit = $subAdminGet;
-      $transaction->balance = $subadminwallet->balance;
-      $transaction->remark = 'Sub admin cut from admin';
-      $transaction->created_at = dateTime();
-      $transaction->save();
+        WalletTransactions::create([
+          'user_id' => 1,
+          'tofrom_id' => $bid->parent_id,
+          'debit' => $subAdminGet,
+          'balance' => $adminwallet->balance,
+          'remark' => 'Sub admin Cut from Admin',
+          'created_at' => now(),
+        ]);
 
+        $subadminwallet->balance += $subAdminGet;
+        $subadminwallet->save();
+
+        WalletTransactions::create([
+          'user_id' => $bid->parent_id,
+          'tofrom_id' => 1,
+          'credit' => $subAdminGet,
+          'balance' => $subadminwallet->balance,
+          'remark' => 'Sub admin cut from admin',
+          'created_at' => now(),
+        ]);
+      }
+
+      \DB::commit();
       return redirect()->back()->with('success', 'Amount Claimed Successfully');
+    } catch (\Exception $e) {
+      \DB::rollBack();
+      return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
     }
-
-    return redirect()->back()->with('error', 'No winnings found.');
   }
 }

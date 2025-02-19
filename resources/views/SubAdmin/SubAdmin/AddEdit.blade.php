@@ -199,10 +199,10 @@
                 type="number"
                 placeholder="Admin Percent"
                 name="admin_cut_jodi"
-                value="{{$user->admin_cut_jodi ?? '9.5'}}"
+                value="{{$user->admin_cut_jodi ?? '95'}}"
                 class="form-control"
                 id="admin_cut_jodi"
-                max="9.5"
+                max="95"
                 step="0.01">
             </div>
           </div>
@@ -258,7 +258,7 @@
   calculateUserCut(adminCutCrossingInput, userCutCrossingInput, 95);
   calculateUserCut(adminCutHarfInput, userCutHarfInput, 9.5);
   calculateUserCut(adminCutOddEvenInput, userCutOddEvenInput, 1.95);
-  calculateUserCut(adminCutJodiInput, userCutJodiInput, 9.5);
+  calculateUserCut(adminCutJodiInput, userCutJodiInput, 95);
 
   // Add event listeners to update user cut when admin cut changes
   adminCutTossGameInput.addEventListener('input', function() {
@@ -274,6 +274,6 @@
     calculateUserCut(adminCutOddEvenInput, userCutOddEvenInput, 1.95);
   });
   adminCutJodiInput.addEventListener('input', function() {
-    calculateUserCut(adminCutJodiInput, userCutJodiInput, 9.5);
+    calculateUserCut(adminCutJodiInput, userCutJodiInput, 95);
   });
 </script>

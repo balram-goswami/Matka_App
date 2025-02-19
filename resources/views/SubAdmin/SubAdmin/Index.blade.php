@@ -2,6 +2,26 @@
 $currentUser = getCurrentUser();
 @endphp
 
+@if($currentUser->status === 'BlockByAdmin')
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="row">
+        <div class="col-lg-12 mb-4 order-0">
+            <div class="card">
+                <div class="d-flex align-items-end row">
+                    <div class="col-sm-7">
+
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">User Name: {{ $currentUser->name }} 🎉</h5>
+                            <h5 class="card-title text-primary">Your account and your all Players account has been blocked by the admin. Please contact the admin for assistance in unblocking it.</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@else
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="row">
         <div class="col-lg-12 mb-4 order-0">
@@ -181,3 +201,5 @@ $currentUser = getCurrentUser();
         </div>
     </div>
 </div>
+
+@endif

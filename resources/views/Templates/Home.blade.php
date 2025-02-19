@@ -106,7 +106,7 @@ $gameStatus = getThemeOptions('betSetting');
 </div>
 
 
-@if(isset($gameStatus['status']) && $gameStatus['status'] === 'on')
+<!-- @if(isset($gameStatus['status']) && $gameStatus['status'] === 'on')
 <div class="weekly-best-seller-area py-3">
     <div class="container">
         <div class="row g-2 rtl-flex-d-row-r">
@@ -123,12 +123,12 @@ $gameStatus = getThemeOptions('betSetting');
         </div>
     </div>
 </div>
-@endisset
+@endisset -->
 
 <div class="weekly-best-seller-area py-3">
     <div class="container">
         <div class="section-heading d-flex align-items-center justify-content-between dir-rtl">
-            <h6>Quiz Games</h6>
+            <h6>Toss Games</h6>
         </div>
         <div class="row g-2">
             <div class="col-12">
@@ -137,10 +137,10 @@ $gameStatus = getThemeOptions('betSetting');
                     $option = count($optionGame);
                     @endphp
                     @if($option >= 1)
-                    <h6 class="vendor-title text-white">Option Games</h6>
+                    <h6 class="vendor-title text-white">Toss Games</h6>
                     <div class="vendor-info">
                         <p class="mb-1 text-white">
-                            <i class="ti ti-map-pin me-1"></i> Option Games: Choose one option and win big! Test your luck,<br>
+                            <i class="ti ti-map-pin me-1"></i> Toss Games: Choose one option and win big! Test your luck,<br>
                             make a choice, and claim your reward. Play now!
                         </p>
                         <a class="btn btn-primary btn-sm mt-3" href="{{ route('optionGameList') }}">
@@ -148,7 +148,7 @@ $gameStatus = getThemeOptions('betSetting');
                         </a>
                     </div>
                     @else
-                    <h6 class="vendor-title text-white">Option Game Coming Soon...</h6>
+                    <h6 class="vendor-title text-white">Toss Game Coming Soon...</h6>
                     @endif
                     <!-- Vendor Profile-->
                     <div class="vendor-profile shadow">

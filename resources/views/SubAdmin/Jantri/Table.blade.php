@@ -25,7 +25,7 @@
                                     <td>{{ $data->answer }}</td>
                                     <td>{{ number_format($data->total_bid, 2) }}</td>
                                     <td>
-                                        @if($data->result_status === 'win')
+                                        @if($data->result_status === 'claimed')
                                             <span class="badge bg-label-primary me-1" style="color: #f41010 !important">
                                                 {{ number_format($data->total_win, 2) }}
                                             </span>

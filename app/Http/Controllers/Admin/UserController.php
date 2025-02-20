@@ -180,6 +180,13 @@ class UserController extends Controller
 
         $user->delete(); // This will soft delete the user
 
+        // If the user is a subadmin, block/unblock their players
+        if ($user->role === 'subadmin') {
+            $players = User::where('role', 'player')->where('parent', $user->user_id)->get();
+            foreach ($players as $player) {
+                $player->delete();
+            }
+        }
         Session::flash('success', "User soft deleted.");
         return Redirect::route("users.index");
     }

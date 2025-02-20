@@ -42,10 +42,10 @@ class UserService
     }
     public function store($request)
     {
-        if ($request->input('role') === 'subadmin') {
-            $pWallet = Wallet::where('user_id', 1)->get()->first();
+        if (in_array($request->input('role'), ['subadmin', 'admin'])) {
+            $pWallet = Wallet::where('user_id', 1)->first();
         } else {
-            $pWallet = Wallet::where('user_id', $request->input('parent'))->get()->first();
+            $pWallet = Wallet::where('user_id', $request->input('parent'))->first();
         }
         
         

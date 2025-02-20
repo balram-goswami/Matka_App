@@ -20,7 +20,7 @@
 <div class="weekly-best-seller-area py-3">
     <div class="container">
         <div class="section-heading d-flex align-items-center justify-content-between dir-rtl">
-            <h6>Quiz Games</h6>
+            <h6>Toss Games</h6>
         </div>
         <div class="row g-2">
             @foreach($optionGame as $index => $quizgame)

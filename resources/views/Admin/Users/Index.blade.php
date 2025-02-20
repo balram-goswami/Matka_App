@@ -30,7 +30,7 @@
                             </button>
                             <div class="dropdown-menu">
                                 
-                                <a class="dropdown-item" href="{{ route('users.edit', $user->user_id) }}"><i class="bx bx-edit-alt me-1"></i>Edit</a>
+                                <a class="dropdown-item btn btn-primary" href="{{ route('users.edit', $user->user_id) }}"><i class="bx bx-edit-alt me-1"></i>Edit</a>
                                 <form action="{{ route('users.destroy', $user->user_id) }}" method="POST" onsubmit="return confirmDelete(event)">
                                     @csrf
                                     @method('DELETE')
@@ -39,9 +39,9 @@
                                     </button>
                                 </form>
                                 @if($user->status === "Active")
-                                <a class="dropdown-item" href="{{ route('blockUserbyadmin', $user->user_id) }}"><i class="bx bx-edit-alt me-1"></i>Block</a>
+                                <a class="dropdown-item btn btn-danger" href="{{ route('blockUserbyadmin', $user->user_id) }}"><i class="bx bx-edit-alt me-1"></i>Block</a>
                                 @else
-                                <a class="dropdown-item" href="{{ route('blockUserbyadmin', $user->user_id) }}"><i class="bx bx-edit-alt me-1"></i>Active</a>
+                                <a class="dropdown-item btn btn-danger" href="{{ route('blockUserbyadmin', $user->user_id) }}"><i class="bx bx-edit-alt me-1"></i>Active</a>
                                 @endif
                             </div>
                         </div>

@@ -51,6 +51,8 @@
                 </div>
               </li>
             </ul>
+            @if($user->status === "BlockByAdmin")
+            @else
             <div class="mt-4">
               <!-- Button trigger modal -->
               <button
@@ -150,6 +152,7 @@
                 </div>
               </div>
             </div>
+            @endif
           </div>
         </div>
       </div>

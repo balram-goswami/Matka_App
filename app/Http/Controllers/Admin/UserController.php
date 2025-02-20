@@ -66,25 +66,25 @@ class UserController extends Controller
 
 
     public function blockUserByAdmin($id)
-{
-    $user = User::findOrFail($id);
-    
-    // Toggle user status
-    $newStatus = ($user->status === 'Active') ? 'BlockByAdmin' : 'Active';
-    $user->status = $newStatus;
-    $user->save();
+    {
+        $user = User::findOrFail($id);
 
-    // If the user is a subadmin, block/unblock their players
-    if ($user->role === 'subadmin') {
-        $players = User::where('role', 'player')->where('parent', $user->user_id)->get();
-        foreach ($players as $player) {
-            $player->status = $newStatus; // Apply the same status change as subadmin
-            $player->save();
+        // Toggle user status
+        $newStatus = ($user->status === 'Active') ? 'BlockByAdmin' : 'Active';
+        $user->status = $newStatus;
+        $user->save();
+
+        // If the user is a subadmin, block/unblock their players
+        if ($user->role === 'subadmin') {
+            $players = User::where('role', 'player')->where('parent', $user->user_id)->get();
+            foreach ($players as $player) {
+                $player->status = $newStatus; // Apply the same status change as subadmin
+                $player->save();
+            }
         }
-    }
 
-    return redirect()->back()->with('success', 'User status updated successfully.');
-}
+        return redirect()->back()->with('success', 'User status updated successfully.');
+    }
 
 
     /**
@@ -169,15 +169,44 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
     public function destroy($id)
     {
         $user = $this->service->get($id);
         if (!$user) {
-            Session::flash('warning', "No Ads found!!!!.");
+            Session::flash('warning', "No User found!!!!.");
             return Redirect::back();
         }
-        $this->service->delete($user);
-        Session::flash('success', "Ads deleted.");
+
+        $user->delete(); // This will soft delete the user
+
+        Session::flash('success', "User soft deleted.");
+        return Redirect::route("users.index");
+    }
+
+    public function restore($id)
+    {
+        $user = User::withTrashed()->find($id);
+        if ($user) {
+            $user->restore();
+            Session::flash('success', "User restored successfully.");
+        } else {
+            Session::flash('warning', "User not found.");
+        }
+
+        return Redirect::route("users.index");
+    }
+
+    public function forceDelete($id)
+    {
+        $user = User::withTrashed()->find($id);
+        if ($user) {
+            $user->forceDelete(); // Permanently deletes the user
+            Session::flash('success', "User permanently deleted.");
+        } else {
+            Session::flash('warning', "User not found.");
+        }
+
         return Redirect::route("users.index");
     }
 

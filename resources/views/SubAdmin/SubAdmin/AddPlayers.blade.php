@@ -41,13 +41,13 @@
                                 @else
                                 <a class="dropdown-item" href="#"><i class="bx bx-edit-alt me-1"></i>Blocked By Admin</a>
                                 @endif
-                                <form action="{{ route('users.destroy', $user->user_id) }}" method="POST" onsubmit="return confirmDelete(event)">
+                                <!-- <form action="{{ route('users.destroy', $user->user_id) }}" method="POST" onsubmit="return confirmDelete(event)">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger">
                                         <i class="bx bx-trash me-1"></i> Delete
                                     </button>
-                                </form>
+                                </form> -->
                             </div>
                         </div>
                     </td>

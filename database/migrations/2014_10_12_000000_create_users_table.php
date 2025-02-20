@@ -16,8 +16,6 @@ class CreateUsersTable extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('user_id');
             $table->string('name')->unique();
-            $table->string('email')->nullable();
-            $table->string('phone')->nullable();
             $table->string('photo')->nullable();
             $table->string('password'); 
             $table->string('role');
@@ -41,6 +39,7 @@ class CreateUsersTable extends Migration
             $table->string('upi_three')->nullable();
             $table->enum("status",["Active","Block","BlockByAdmin"]);
             $table->datetime('email_verified_at');
+            $table->softDeletes();
             $table->rememberToken();
             $table->timestamps();
         });

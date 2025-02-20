@@ -181,7 +181,7 @@ class UserController extends Controller
         $user->delete(); // This will soft delete the user
 
         // If the user is a subadmin, block/unblock their players
-        if (in_array($user->role, ['subadmin', 'admin']))  {
+        if ($user->role === 'subadmin') {
             $players = User::where('role', 'player')->where('parent', $user->user_id)->get();
             foreach ($players as $player) {
                 $player->delete();

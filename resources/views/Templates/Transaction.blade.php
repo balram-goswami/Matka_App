@@ -31,6 +31,7 @@
                                 <th>Credit</th>
                                 <th>Debit</th>
                                 <th>Balance</th>
+                                <th>Remark</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -41,6 +42,7 @@
                                     <td>{{ $item->credit }}</td>
                                     <td>{{ $item->debit }}</td>
                                     <td>{{ $item->balance }}</td>
+                                    <td>{{ $item->remark }}{{$item->tofrom_id}}</td>
                                 </tr>
                             @endforeach
                         </tbody>

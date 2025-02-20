@@ -7,11 +7,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Auth;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes; // Add SoftDeletes trait
 
     protected $primaryKey = 'user_id';
 
@@ -43,10 +43,7 @@ class User extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
         'remember_token',
-        'deleted'
     ];
-
-    protected $dates = ['deleted_at'];
 
     /**
      * The attributes that should be cast.
@@ -55,6 +52,7 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'deleted_at' => 'datetime', // Ensure deleted_at is treated as a date
     ];
 
     public function getJWTIdentifier()
@@ -86,10 +84,12 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(User::class, 'parent', 'user_id');
     }
+
     public function activePlayers()
     {
         return $this->hasMany(User::class, 'parent', 'user_id')->where('status', 'Active');
     }
+
     public function blockPlayers()
     {
         return $this->hasMany(User::class, 'parent', 'user_id')->where('status', 'Block');

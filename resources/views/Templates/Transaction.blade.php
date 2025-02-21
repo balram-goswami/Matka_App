@@ -19,6 +19,19 @@
 
 <div class="page-content-wrapper">
     <div class="container">
+        <div class="row mb-3">
+            <div class="col">
+                <label for="fromDate">From:</label>
+                <input type="date" id="fromDate" class="form-control">
+            </div>
+            <div class="col">
+                <label for="toDate">To:</label>
+                <input type="date" id="toDate" class="form-control">
+            </div>
+            <div class="col">
+                <button id="filterBtn" class="btn btn-primary mt-4">Filter</button>
+            </div>
+        </div>
         <!-- Cart Wrapper-->
         <div class="cart-wrapper-area py-3">
             <div class="cart-table card mb-3">
@@ -55,5 +68,34 @@
         </div>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#filterBtn').click(function() {
+            let fromDate = $('#fromDate').val();
+            let toDate = $('#toDate').val();
+
+            if (!fromDate || !toDate) {
+                alert('Please select both dates');
+                return;
+            }
+
+            $('.cart-table tbody tr').each(function() {
+                let rowDate = $(this).find('td:nth-child(2)').text().trim();
+                let rowDateFormatted = new Date(rowDate);
+                let fromDateFormatted = new Date(fromDate);
+                let toDateFormatted = new Date(toDate);
+
+                if (rowDateFormatted >= fromDateFormatted && rowDateFormatted <= toDateFormatted) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    });
+</script>
+
 
 @include('Include.FooterMenu')

@@ -365,7 +365,7 @@ textarea:invalid {
 
 .card {
   border: 0.063rem solid #52C5FF;
-  background-color: #52C5FF;
+  background-color: #ffffff;
   -webkit-box-shadow: 0 0.125rem 0.25rem 0 rgba(0, 0, 0, 0.04);
           box-shadow: 0 0.125rem 0.25rem 0 rgba(0, 0, 0, 0.04);
   border-radius: 0.5rem;

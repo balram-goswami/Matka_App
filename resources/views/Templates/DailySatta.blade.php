@@ -23,7 +23,7 @@
             <div class="row g-2 rtl-flex-d-row-r">
                 <!-- Catagory Card -->
                 <div class="col-6">
-                    <div class="card catagory-card">
+                    <div class="card catagory-card" style="background-color: #52C5FF;">
                         <div class="card-body px-2">
                             <a href="{{ route('jodiSatta', ['post_id' => $post->post_id]) }}"><img src="{{publicPath('..\themeAssets\img\matka\matka.png')}}"
                                     alt=""><span>Jodi</span>
@@ -33,21 +33,21 @@
                 </div>
                 <!-- Catagory Card -->
                 <div class="col-6">
-                    <div class="card catagory-card">
+                    <div class="card catagory-card" style="background-color: #52C5FF;">
                         <div class="card-body px-2"><a href="{{ route('harfSatta', ['post_id' => $post->post_id]) }}"><img src="{{publicPath('..\themeAssets\img\matka\matka.png')}}"
                                     alt=""><span>HARF</span></a></div>
                     </div>
                 </div>
                 <!-- Catagory Card -->
                 <div class="col-6">
-                    <div class="card catagory-card">
+                    <div class="card catagory-card" style="background-color: #52C5FF;">
                         <div class="card-body px-2"><a href="{{ route('crossingSatta', ['post_id' => $post->post_id]) }}"><img src="{{publicPath('..\themeAssets\img\matka\matka.png')}}"
                                     alt=""><span>CROSSING</span></a></div>
                     </div>
                 </div>
                 <!-- Catagory Card -->
                 <div class="col-6">
-                    <div class="card catagory-card">
+                    <div class="card catagory-card" style="background-color: #52C5FF;">
                         <div class="card-body px-2"><a href="{{ route('oddEvenSatta', ['post_id' => $post->post_id]) }}"><img src="{{publicPath('..\themeAssets\img\matka\matka.png')}}"
                                     alt=""><span>ODD & EVEN</span></a></div>
                     </div>

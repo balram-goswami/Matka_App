@@ -364,7 +364,8 @@ textarea:invalid {
 }
 
 .card {
-  border: 0.063rem solid #f1f2f3;
+  border: 0.063rem solid #52C5FF;
+  background-color: #52C5FF;
   -webkit-box-shadow: 0 0.125rem 0.25rem 0 rgba(0, 0, 0, 0.04);
           box-shadow: 0 0.125rem 0.25rem 0 rgba(0, 0, 0, 0.04);
   border-radius: 0.5rem;
@@ -1060,7 +1061,7 @@ textarea:invalid {
 .header-area {
   -webkit-transition-duration: 500ms;
           transition-duration: 500ms;
-  background-color: #ffffff;
+  background-color: #52C5FF;
   width: 100%;
   height: 3.125rem;
   position: fixed;
@@ -4600,7 +4601,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 [theme-color=dark] .card {
   border-color: #242644;
-  background-color: #242644;
+  background-color: #52C5FF;
 }
 [theme-color=dark] .border,
 [theme-color=dark] .border-start,

@@ -15,16 +15,16 @@ class BidTransaction extends Model
         'parent_id',
         'answer',
         'slot',
+        'harf_digit',
+        'bid_result',
         'bid_amount',
         'win_amount',
-        'subadmin_share',
-        'admin_share',
-        'subadmin_cut',
-        'admin_cut',
-        'subadminGet',
-        'status',
-        'bid_result',
-        'winning_amount',
-        'harf_digit'
+        'subadmin_amount',
+        'player_commission',
+        'winamount_from_admin',
+        'admin_amount',
+        'subadmin_commission',
+        'result_status',
+        'status'
     ];
 }

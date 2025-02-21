@@ -7,8 +7,6 @@ use App\Models\{
     Wallet,
     WalletTransactions
 };
-
-
 class UserService
 {
     protected $service;
@@ -48,7 +46,6 @@ class UserService
             $pWallet = Wallet::where('user_id', $request->input('parent'))->first();
         }
         
-        
         if ($pWallet->balance >= $request->input('balance')) {
 
             $service = $this->service;
@@ -56,17 +53,17 @@ class UserService
             $password = $request->input('password');
 
             $service->parent = $request->input('parent');
-            $service->admin_cut_toss_game = $request->input('admin_cut_toss_game');
-            $service->admin_cut_crossing = $request->input('admin_cut_crossing');
-            $service->admin_cut_harf = $request->input('admin_cut_harf');
-            $service->admin_cut_odd_even = $request->input('admin_cut_odd_even');
-            $service->admin_cut_jodi = $request->input('admin_cut_jodi');
+            $service->toss_game_rate = $request->input('toss_game_rate');
+            $service->crossing_game_rate = $request->input('crossing_game_rate');
+            $service->harf_game_rate = $request->input('harf_game_rate');
+            $service->oddEven_game_rate = $request->input('oddEven_game_rate');
+            $service->jodi_game_rate = $request->input('jodi_game_rate');
 
-            $service->user_cut_toss_game = $request->input('user_cut_toss_game');
-            $service->user_cut_crossing = $request->input('user_cut_crossing');
-            $service->user_cut_harf = $request->input('user_cut_harf');
-            $service->user_cut_odd_even = $request->input('user_cut_odd_even');
-            $service->user_cut_jodi = $request->input('user_cut_jodi');
+            $service->toss_game_commission = $request->input('toss_game_commission');
+            $service->crossing_commission = $request->input('crossing_commission');
+            $service->harf_commission = $request->input('harf_commission');
+            $service->oddEven_commission = $request->input('oddEven_commission');
+            $service->jodi_commission = $request->input('jodi_commission');
             if ($password) {
                 $service->password = bcrypt($password);
             }
@@ -141,16 +138,16 @@ class UserService
         $service->upi_three = $request->input('upi_three');
 
         $service->parent = $request->input('parent');
-        $service->admin_cut_toss_game = $request->input('admin_cut_toss_game');
-        $service->admin_cut_crossing = $request->input('admin_cut_crossing');
-        $service->admin_cut_harf = $request->input('admin_cut_harf');
-        $service->admin_cut_odd_even = $request->input('admin_cut_odd_even');
-        $service->admin_cut_jodi = $request->input('admin_cut_jodi');
-        $service->user_cut_toss_game = $request->input('user_cut_toss_game');
-        $service->user_cut_crossing = $request->input('user_cut_crossing');
-        $service->user_cut_harf = $request->input('user_cut_harf');
-        $service->user_cut_odd_even = $request->input('user_cut_odd_even');
-        $service->user_cut_jodi = $request->input('user_cut_jodi');
+        $service->toss_game_rate = $request->input('toss_game_rate');
+        $service->crossing_game_rate = $request->input('crossing_game_rate');
+        $service->harf_game_rate = $request->input('harf_game_rate');
+        $service->oddEven_game_rate = $request->input('oddEven_game_rate');
+        $service->jodi_game_rate = $request->input('jodi_game_rate');
+        $service->toss_game_commission = $request->input('toss_game_commission');
+        $service->crossing_commission = $request->input('crossing_commission');
+        $service->harf_commission = $request->input('harf_commission');
+        $service->oddEven_commission = $request->input('oddEven_commission');
+        $service->jodi_commission = $request->input('jodi_commission');
         $service->status = $request->input('status');
         if ($password) {
             $service->password = bcrypt($password);

@@ -254,7 +254,7 @@ class SubAdminController extends Controller
 
             $jantriData = BidTransaction::where('game_id', $game_id)
                 ->where('parent_id', $c_user->user_id)
-                ->selectRaw('answer, SUM(subadmin_cut) as total_bid, SUM(win_amount) as total_win, result_status')
+                ->selectRaw('answer, SUM(subadmin_amount) as total_bid, SUM(win_amount) as total_win, result_status')
                 ->groupBy('answer', 'result_status')
                 ->orderBy('answer', 'asc')
                 ->get();
@@ -279,7 +279,7 @@ class SubAdminController extends Controller
                 ->where('parent_id', $c_user->user_id)
                 ->where('updated_at', '>=', $timeLimit) // Only results updated in the last 5 hours
                 ->where('updated_at', '<=', $selectedDateTime) // Ensure records match the selected date-time
-                ->selectRaw('answer, SUM(subadmin_cut) as total_bid, SUM(win_amount + subadminget) as total_win, result_status')
+                ->selectRaw('answer, SUM(subadmin_amount) as total_bid, SUM(win_amount) as total_win, result_status')
                 ->groupBy('answer', 'result_status')
                 ->orderBy('answer', 'asc')
                 ->get();

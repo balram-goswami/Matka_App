@@ -114,10 +114,10 @@ class SattaGameController extends Controller
                 'bid_amount' => 'required',
 
                 'adminrate' => 'nullable',
-                'subadminrate' => 'nullable',
+                'subadmincommission' => 'nullable',
 
-                'adminshare' => 'nullable',
-                'subadminshare' => 'nullable',
+                'userrate' => 'nullable',
+                'usercommission' => 'nullable',
             ]
         );
 
@@ -147,36 +147,31 @@ class SattaGameController extends Controller
         } else {
             $slots = 'evening';
         }
-        $winAmount = $request->bid_amount * $request->adminrate;
 
-        // admin money convert
-        $totalrate = $request->adminshare + $request->subadminshare;
-        $convert = $winAmount * 100 / $totalrate;
-        $adminShare = $request->adminshare / 100 * $convert;
-        $subadminShare = $winAmount - $adminShare;
-        $adminsidewinAmount = $request->bid_amount * $totalrate;
-        $subadminGet = $adminsidewinAmount - $winAmount;
+        $winAmount = $request->userrate * $request->bid_amount;
+        $winamount_from_admin = $request->adminrate * $request->bid_amount;
 
-        // Subadmin money convert
-        $totalprofitrate = $request->adminrate + $request->subadminrate;
-        $convertamount = $request->bid_amount * 100 / $totalprofitrate;
-        $admin_cut = $request->adminrate / 100 * $convertamount;
-        $subadmin_admin_cut = $request->subadminrate / 100 * $convertamount;
+        $player_commission = $request->bid_amount * $request->usercommission / 100;
+        $subadmin_amount = $request->bid_amount - $player_commission;
+
+        $subadmin_commission = $request->bid_amount * $request->subadmincommission / 100;
+        $admin_amount = $request->bid_amount - $subadmin_commission;
 
         foreach ($combinations as $combination) {
             $bid = new BidTransaction;
             $bid->user_id = $request->user_id;
             $bid->game_id = $request->game_id;
+            $bid->parent_id = $parent->parent;
             $bid->answer = $combination;
             $bid->slot = $slots;
+            $bid->harf_digit = $request->harf_digit ?? NULL;
             $bid->bid_amount = $request->bid_amount;
-            $bid->admin_share = $adminShare;
-            $bid->subadmin_share = $subadminShare;
-            $bid->admin_cut = $admin_cut;
-            $bid->subadmin_cut = $subadmin_admin_cut;
-            $bid->subadminGet = $subadminGet;
             $bid->win_amount = $winAmount;
-            $bid->parent_id = $parent->parent;
+            $bid->subadmin_amount = $subadmin_amount;
+            $bid->player_commission = $player_commission;
+            $bid->winamount_from_admin = $winamount_from_admin;
+            $bid->admin_amount = $admin_amount;
+            $bid->subadmin_commission = $subadmin_commission;
             $bid->save();
         }
 
@@ -188,11 +183,13 @@ class SattaGameController extends Controller
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
             'game_id' => 'required',
-            'adminrate' => 'nullable',
-            'subadminrate' => 'nullable',
 
-            'adminshare' => 'nullable',
-            'subadminshare' => 'nullable',
+            'adminrate' => 'nullable',
+            'subadmincommission' => 'nullable',
+
+            'userrate' => 'nullable',
+            'usercommission' => 'nullable',
+
             'ander' => 'nullable|array',
             'baahr' => 'nullable|array',
         ]);
@@ -215,37 +212,31 @@ class SattaGameController extends Controller
             foreach ($request->ander as $digit => $amount) {
                 if (!empty($amount) && is_numeric($amount)) {
 
-                    $winAmount = $amount * $request->adminrate;
 
-                    // admin money convert
-                    $totalrate = $request->adminshare + $request->subadminshare;
-                    $convert = $winAmount * 100 / $totalrate;
-                    $adminShare = $request->adminshare / 100 * $convert;
-                    $subadminShare = $winAmount - $adminShare;
-                    $adminsidewinAmount = $amount * $totalrate;
-                    $subadminGet = $adminsidewinAmount - $winAmount;
+                    $winAmount = $request->userrate * $amount;
+                    $winamount_from_admin = $request->adminrate * $amount;
 
-                    // Subadmin money convert
-                    $totalprofitrate = $request->adminrate + $request->subadminrate;
-                    $convertamount = $amount * 100 / $totalprofitrate;
-                    $admin_cut = $request->adminrate / 100 * $convertamount;
-                    $subadmin_admin_cut = $request->subadminrate / 100 * $convertamount;
+                    $player_commission = $amount * $request->usercommission / 100;
+                    $subadmin_amount = $amount - $player_commission;
 
-                    BidTransaction::create([
-                        'user_id' => $request->user_id,
-                        'game_id' => $request->game_id,
-                        'harf_digit' => 'Ander',
-                        'answer' => $digit,
-                        'slot' => $slots,
-                        'bid_amount' => $amount,
-                        'admin_share' => $adminShare,
-                        'subadmin_share' => $subadminShare,
-                        'admin_cut' => $admin_cut,
-                        'subadmin_cut' => $subadmin_admin_cut,
-                        'subadminGet' => $subadminGet,
-                        'win_amount' => $winAmount,
-                        'parent_id' => $parent->parent,
-                    ]);
+                    $subadmin_commission = $amount * $request->subadmincommission / 100;
+                    $admin_amount = $amount - $subadmin_commission;
+                    
+                    $bid = new BidTransaction;
+                    $bid->user_id = $request->user_id;
+                    $bid->game_id = $request->game_id;
+                    $bid->parent_id = $parent->parent;
+                    $bid->answer = $digit;
+                    $bid->slot = $slots;
+                    $bid->harf_digit = 'Andar';
+                    $bid->bid_amount = $amount;
+                    $bid->win_amount = $winAmount;
+                    $bid->subadmin_amount = $subadmin_amount;
+                    $bid->player_commission = $player_commission;
+                    $bid->winamount_from_admin = $winamount_from_admin;
+                    $bid->admin_amount = $admin_amount;
+                    $bid->subadmin_commission = $subadmin_commission;
+                    $bid->save();
                 }
             }
         }
@@ -255,36 +246,30 @@ class SattaGameController extends Controller
             foreach ($request->bahar as $digit => $amount) {
                 if (!empty($amount) && is_numeric($amount)) {
 
-                    $winAmount = $amount * $request->adminrate;
+                    $winAmount = $request->userrate * $amount;
+                    $winamount_from_admin = $request->adminrate * $amount;
 
-                    // admin money convert
-                    $totalrate = $request->adminshare + $request->subadminshare;
-                    $convert = $winAmount * 100 / $totalrate;
-                    $adminShare = $request->adminshare / 100 * $convert;
-                    $subadminShare = $winAmount - $adminShare;
-                    $adminsidewinAmount = $amount * $totalrate;
-                    $subadminGet = $adminsidewinAmount - $winAmount;
+                    $player_commission = $amount * $request->usercommission / 100;
+                    $subadmin_amount = $amount - $player_commission;
 
-                    // Subadmin money convert
-                    $totalprofitrate = $request->adminrate + $request->subadminrate;
-                    $convertamount = $amount * 100 / $totalprofitrate;
-                    $admin_cut = $request->adminrate / 100 * $convertamount;
-                    $subadmin_admin_cut = $request->subadminrate / 100 * $convertamount;
-                    BidTransaction::create([
-                        'user_id' => $request->user_id,
-                        'game_id' => $request->game_id,
-                        'harf_digit' => 'Bahar',
-                        'answer' => $digit,
-                        'slot' => $slots,
-                        'bid_amount' => $amount,
-                        'admin_share' => $adminShare,
-                        'subadmin_share' => $subadminShare,
-                        'admin_cut' => $admin_cut,
-                        'subadmin_cut' => $subadmin_admin_cut,
-                        'subadminGet' => $subadminGet,
-                        'win_amount' => $winAmount,
-                        'parent_id' => $parent->parent,
-                    ]);
+                    $subadmin_commission = $amount * $request->subadmincommission / 100;
+                    $admin_amount = $amount - $subadmin_commission;
+
+                    $bid = new BidTransaction;
+                    $bid->user_id = $request->user_id;
+                    $bid->game_id = $request->game_id;
+                    $bid->parent_id = $parent->parent;
+                    $bid->answer = $digit;
+                    $bid->slot = $slots;
+                    $bid->harf_digit = 'Bahar';
+                    $bid->bid_amount = $amount;
+                    $bid->win_amount = $winAmount;
+                    $bid->subadmin_amount = $subadmin_amount;
+                    $bid->player_commission = $player_commission;
+                    $bid->winamount_from_admin = $winamount_from_admin;
+                    $bid->admin_amount = $admin_amount;
+                    $bid->subadmin_commission = $subadmin_commission;
+                    $bid->save();
                 }
             }
         }

@@ -310,6 +310,17 @@ class UserController extends Controller
                         'result_status' => DB::raw("CASE WHEN answer = '" . addslashes($bidResult) . "' THEN 'win' ELSE 'loss' END"),
                     ]);
             }
+            // Fetch winning bids
+            $winningBids = BidTransaction::where('game_id', $request->game_id)
+                ->where('result_status', 'win')
+                ->get();
+
+            if ($winningBids->isNotEmpty()) {
+                $claimResult = $this->clameWinAmount();
+                if ($claimResult instanceof \Illuminate\Http\RedirectResponse) {
+                    return $claimResult;
+                }
+            }
 
             // Ensure a single success response after all iterations
             return redirect()->back()->with('success', 'Bid results updated successfully');
@@ -335,8 +346,8 @@ class UserController extends Controller
         }
 
         // Check if result is already declared
-        $games = GameResult::where('game_id', $request->game_id)->get();
-        if ($games->isNotEmpty()) {
+        $games = GameResult::where('game_id', $request->game_id)->exists();
+        if ($games) {
             return redirect()->back()->with('danger', 'Result Already Declared');
         }
 
@@ -347,7 +358,6 @@ class UserController extends Controller
                 'result' => $request->result,
             ]);
 
-
             // Update bid transactions
             BidTransaction::where('game_id', $request->game_id)
                 ->update([
@@ -355,12 +365,25 @@ class UserController extends Controller
                     'result_status' => DB::raw("CASE WHEN answer = '$request->result' THEN 'win' ELSE 'loss' END"),
                 ]);
 
+            // Fetch winning bids
+            $winningBids = BidTransaction::where('game_id', $request->game_id)
+                ->where('result_status', 'win')
+                ->get();
+
+            if ($winningBids->isNotEmpty()) {
+                $claimResult = $this->clameWinAmount();
+                if ($claimResult instanceof \Illuminate\Http\RedirectResponse) {
+                    return $claimResult;
+                }
+            }
+
             return redirect()->back()->with('success', 'Result Saved');
         } catch (\Exception $e) {
             \Log::error('Error saving game result: ' . $e->getMessage());
             return redirect()->back()->with('error', 'An error occurred while saving the result');
         }
     }
+
 
     public function confermPayment($id)
     {
@@ -501,7 +524,7 @@ class UserController extends Controller
             $game = $getgame->where('post_id', $game_id)->first();
 
             $jantriData = BidTransaction::where('game_id', $game_id)
-                ->selectRaw('answer, SUM(admin_cut) as total_bid, SUM(win_amount + subadminget) as total_win, result_status')
+                ->selectRaw('answer, SUM(admin_amount) as total_bid, SUM(winamount_from_admin) as total_win, result_status')
                 ->groupBy('answer', 'result_status')
                 ->orderBy('answer', 'asc')
                 ->get();
@@ -519,7 +542,7 @@ class UserController extends Controller
             $jantriData = BidTransaction::where('game_id', $game_id)
                 ->where('slot', $request->slot)
                 ->where('updated_at', '>=', $dates)
-                ->selectRaw('answer, SUM(admin_cut) as total_bid, SUM(win_amount + subadminget) as total_win, result_status')
+                ->selectRaw('answer, SUM(admin_amount) as total_bid, SUM(winamount_from_admin) as total_win, result_status')
                 ->groupBy('answer', 'result_status')
                 ->orderBy('answer', 'asc')
                 ->get();
@@ -670,7 +693,7 @@ class UserController extends Controller
             'tofrom_id'       => $pUser->user_id,
             'debit'          => $request->balance,
             'balance'          => $account->balance,
-            'remark'          => 'Credited by Admin',
+            'remark'          => 'Debited by Admin',
             'created_at'      => now(),
         ]);
         $walletUpdate = WalletTransactions::create([
@@ -678,11 +701,129 @@ class UserController extends Controller
             'tofrom_id'       => $request->user_id,
             'credit'          => $request->balance,
             'balance'          => $parent->balance,
-            'remark'          => 'Debited by Admin',
+            'remark'          => 'Credited by Admin',
             'created_at'      => now(),
         ]);
         $walletUpdate->save();
 
         return redirect()->back()->with('success', 'Balance transferred successfully.');
+    }
+
+
+    private function clameWinAmount()
+    {
+        $bid = BidTransaction::where('result_status', 'win')->first();
+
+        if (!$bid) {
+            return redirect()->back()->with('error', 'No winning bid found.');
+        }
+
+        \DB::beginTransaction();
+        try {
+            // Update bid status to claimed
+            $bid->result_status = 'claimed';
+            $bid->save();
+
+            $winning_amount = $bid->win_amount;
+            $game = Posts::where('post_id', $bid->game_id)->first();
+            $gameName = $game->post_title;
+
+            // Get wallets
+            $adminwallet = Wallet::where('user_id', 1)->first();
+            $subadminwallet = Wallet::where('user_id', $bid->parent_id)->first();
+            $playerWallet = Wallet::where('user_id', $bid->user_id)->first();
+
+            if (!$adminwallet || !$playerWallet) {
+                throw new \Exception('Required wallet not found.');
+            }
+
+            // Credit to player wallet
+            $playerWallet->balance += $winning_amount;
+            $playerWallet->save();
+
+            WalletTransactions::create([
+                'user_id' => $bid->user_id,
+                'tofrom_id' => 1,
+                'credit' => $winning_amount,
+                'balance' => $playerWallet->balance,
+                'remark' => $gameName . ' Game Win Amount',
+                'created_at' => now(),
+            ]);
+
+            // Debit from admin wallet
+            $adminwallet->balance -= $winning_amount;
+            $adminwallet->save();
+
+            WalletTransactions::create([
+                'user_id' => 1,
+                'tofrom_id' => $bid->user_id,
+                'debit' => $winning_amount,
+                'balance' => $adminwallet->balance,
+                'remark' => $gameName . ' Game Win Amount to ',
+                'created_at' => now(),
+            ]);
+
+            // Handle subadmin share if applicable
+            if ($bid->win_amount > $bid->winamount_from_admin) {
+
+                $subAdminGet = $bid->win_amount - $bid->winamount_from_admin;
+
+                $adminwallet->balance += $subAdminGet;
+                $adminwallet->save();
+
+                WalletTransactions::create([
+                    'user_id' => 1,
+                    'tofrom_id' => $bid->parent_id,
+                    'credit' => $subAdminGet,
+                    'balance' => $adminwallet->balance,
+                    'remark' => $gameName . ' Game Amount From ',
+                    'created_at' => now(),
+                ]);
+
+                $subadminwallet->balance -= $subAdminGet;
+                $subadminwallet->save();
+
+                WalletTransactions::create([
+                    'user_id' => $bid->parent_id,
+                    'tofrom_id' => 1,
+                    'debit' => $subAdminGet,
+                    'balance' => $subadminwallet->balance,
+                    'remark' => $gameName . ' Game Amount Paid to ',
+                    'created_at' => now(),
+                ]);
+            } else {
+                $subAdminGet = $bid->winamount_from_admin - $bid->win_amount;
+
+                $adminwallet->balance -= $subAdminGet;
+                $adminwallet->save();
+
+                WalletTransactions::create([
+                    'user_id' => 1,
+                    'tofrom_id' => $bid->parent_id,
+                    'debit' => $subAdminGet,
+                    'balance' => $adminwallet->balance,
+                    'remark' => $gameName . ' Game Amount Paid to ',
+                    'created_at' => now(),
+                ]);
+
+                $subadminwallet->balance += $subAdminGet;
+                $subadminwallet->save();
+
+                WalletTransactions::create([
+                    'user_id' => $bid->parent_id,
+                    'tofrom_id' => 1,
+                    'credit' => $subAdminGet,
+                    'balance' => $subadminwallet->balance,
+                    'remark' => $gameName . ' Game Amount From ',
+                    'created_at' => now(),
+                ]);
+            }
+
+            \DB::commit();
+            return redirect()->back()->with('success', 'Result Declared Successful and Win Amount Paid Complete');
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
+        }
     }
 }

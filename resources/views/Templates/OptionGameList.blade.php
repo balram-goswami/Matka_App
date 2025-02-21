@@ -23,60 +23,54 @@
             <h6>Toss Games</h6>
         </div>
         <div class="row g-2">
-            @foreach($optionGame as $index => $quizgame)
-            @if($quizgame['extraFields']['close_date'] >= now()->toDateString())
-            <div class="col-12">
-                <div class="single-vendor-wrap bg-img p-4 bg-overlay" style="background-image: url('../themeAssets/img/bg-img/16.jpg')">
-                    <h6 class="vendor-title text-white">{{ $quizgame->post_title }}</h6>
-                    <div class="vendor-info">
-                        <!-- <p class="mb-1 text-white"><i class="ti ti-map-pin me-1"></i>Game Category: {{ $quizgame->post_type }}</p> -->
-                        @php
-                        $closeDate = $quizgame['extraFields']['close_date'] ?? null;
-                        $currentDate = dateonly();
-                        $currentTime = timeonly();
-                        $closeTime = $quizgame['extraFields']['close_time'] ?? null;
-                        $result = DB::table('game_results')->where('game_id', $quizgame->post_id)->get()->first();
-                        @endphp
+            @if($optionGame->isNotEmpty()) 
+                @foreach($optionGame as $index => $quizgame)
+                    @if($quizgame['extraFields']['close_date'] >= now()->toDateString())
+                        <div class="col-12">
+                            <div class="single-vendor-wrap bg-img p-4 bg-overlay" style="background-image: url('../themeAssets/img/bg-img/16.jpg')">
+                                <h6 class="vendor-title text-white">{{ $quizgame->post_title }}</h6>
+                                <div class="vendor-info">
+                                    @php
+                                        $closeDate = $quizgame['extraFields']['close_date'] ?? null;
+                                        $currentDate = dateonly();
+                                        $currentTime = timeonly();
+                                        $closeTime = $quizgame['extraFields']['close_time'] ?? null;
+                                        $result = DB::table('game_results')->where('game_id', $quizgame->post_id)->first();
+                                    @endphp
 
-                        @if($closeDate >= $currentDate)
-                            <p class="product-rating text-white"><i class="ti ti-clock"></i>
-                                <span id="time-left-{{ $index }}" data-end-time="{{ \Carbon\Carbon::parse($quizgame['extraFields']['close_time'])->timestamp }}">
-                                    Loading...
-                                </span>
-                            </p>
-                            @if($closeTime >= $currentTime)
-                            <div class="ratings lh-1 text-white"><i class="ti ti-star-filled"></i>Market <span class="ms-1">( Open )</span></div>
-                            <a class="btn btn-primary btn-sm mt-3" href="{{ route('single.post', ['post_type' => $quizgame->post_type, 'slug' => $quizgame->post_name]) }}">Play Now<i class="ti ti-arrow-right ms-1"></i></a>
-                            @else
-                            <div class="ratings lh-1 text-white"><i class="ti ti-star-filled"></i>Market: <span class="ms-1"> ( Closed )</span></div>
-                            <div class="ratings lh-1 text-white"><i class="ti ti-star-filled"></i>Result: <span class="ms-1"> {{ $result->result ?? 'Waiting for Result' }}</span></div>
-                            @endif
-                        @endif
-                    </div>
-                    <!-- Vendor Profile-->
-                    <div class="vendor-profile shadow">
-                        <figure class="m-0">
-                            @if (isset($quizgame->post_image))
-                            <img src="{{ publicPath($quizgame->post_image) }}" alt="game">
-                            @else
-                            <img src="../themeAssets/img/matka/matka.png" alt="game">
-                            @endif
-                        </figure>
-                    </div>
-                </div>
-            </div>
-            @else
-            <div class="col-12">
-                <div class="single-vendor-wrap bg-img p-4 bg-overlay" style="background-image: url('../themeAssets/img/bg-img/16.jpg')">
-                    <h6 class="vendor-title text-white">Option Game Coming Soon...</h6>
-                </div>
-            </div>
+                                    @if($closeDate >= $currentDate)
+                                        <p class="product-rating text-white"><i class="ti ti-clock"></i>
+                                            <span id="time-left-{{ $index }}" data-end-time="{{ \Carbon\Carbon::parse($quizgame['extraFields']['close_time'])->timestamp }}">
+                                                Loading...
+                                            </span>
+                                        </p>
+                                        @if($closeTime >= $currentTime)
+                                            <div class="ratings lh-1 text-white"><i class="ti ti-star-filled"></i> Market <span class="ms-1">( Open )</span></div>
+                                            <a class="btn btn-primary btn-sm mt-3" href="{{ route('single.post', ['post_type' => $quizgame->post_type, 'slug' => $quizgame->post_name]) }}">Play Now<i class="ti ti-arrow-right ms-1"></i></a>
+                                        @else
+                                            <div class="ratings lh-1 text-white"><i class="ti ti-star-filled"></i> Market: <span class="ms-1">( Closed )</span></div>
+                                            <div class="ratings lh-1 text-white"><i class="ti ti-star-filled"></i> Result: <span class="ms-1"> {{ $result->result ?? 'Waiting for Result' }}</span></div>
+                                        @endif
+                                    @endif
+                                </div>
+                                <div class="vendor-profile shadow">
+                                    <figure class="m-0">
+                                        @if(isset($quizgame->post_image))
+                                            <img src="{{ publicPath($quizgame->post_image) }}" alt="game">
+                                        @else
+                                            <img src="../themeAssets/img/matka/matka.png" alt="game">
+                                        @endif
+                                    </figure>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                @endforeach
             @endif
-            @endforeach
         </div>
-
     </div>
 </div>
+
 
 <div class="weekly-best-seller-area py-3">
     <div class="container">

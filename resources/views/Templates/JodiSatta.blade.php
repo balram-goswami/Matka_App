@@ -35,7 +35,7 @@ $betPrice = getThemeOptions('betSetting');
                     </a>
                 </div>
                 <div class="card-body d-flex align-items-center justify-content-between">
-                    <h6>Win Rate:- {{$user->admin_cut_jodi}}X </h6>
+                    <h6>Win Rate:- {{$user->jodi_game_rate}}X </h6>
                     <h6>Min Bet Amount:- {{$betPrice['jodiGame'] ?? 'NA'}} </h6>
                 </div>
 
@@ -48,10 +48,11 @@ $betPrice = getThemeOptions('betSetting');
                                 <input type="text" name="user_id" value="{{ $user->user_id }}" hidden>
                                 <input type="text" name="game_id" value="{{ $post->post_id }}" hidden>
 
-                                <input type="text" name="adminshare" value="{{ $parentDetails->admin_cut_jodi }}" hidden>
-                                <input type="text" name="subadminshare" value="{{ $parentDetails->user_cut_jodi }}" hidden>
-                                <input type="text" name="adminrate" value="{{ $user->admin_cut_jodi }}" hidden>
-                                <input type="text" name="subadminrate" value="{{ $user->user_cut_jodi }}" hidden>
+                                <input type="text" name="adminrate" value="{{ $parentDetails->jodi_game_rate }}" hidden>
+                                <input type="text" name="subadmincommission" value="{{ $parentDetails->jodi_commission }}" hidden>
+                                <input type="text" name="userrate" value="{{ $user->jodi_game_rate }}" hidden>
+                                <input type="text" name="usercommission" value="{{ $user->jodi_commission }}" hidden>
+
                                 <input class="form-control border mb-1" id="answer" name="answer" type="number"
                                     placeholder="Enter Number" min="0" max="99" required>
                             </div>
@@ -90,7 +91,7 @@ $betPrice = getThemeOptions('betSetting');
                             <tr>
                                 <td>{{ $bid->answer }}</td>
                                 <td>{{ $bid->bid_amount }}</td>
-                                <td>{{ $bid->bid_amount*$user->admin_cut_jodi }}</td>
+                                <td>{{ $bid->bid_amount*$user->jodi_game_rate }}</td>
                                 <th scope="row">
                                     <form action="{{ route('deleteBid', ['id' => $bid->id]) }}" method="POST">
                                         @csrf
@@ -123,8 +124,8 @@ $betPrice = getThemeOptions('betSetting');
                         <input type="text" name="user_id" value="{{ $user->user_id }}" hidden>
                         <input type="text" name="game_id" value="{{ $post->post_id }}" hidden>
                         <input type="text" name="parent_id" value="{{ $user->parent }}" hidden>
-                        <input type="text" name="admin_cut" value="{{ $user->admin_cut_jodi}}" hidden>
-                        <input type="text" name="subadmin_cut" value="{{ $user->user_cut_jodi}}" hidden>
+                        <input type="text" name="admin_cut" value="{{ $user->jodi_game_rate}}" hidden>
+                        <input type="text" name="subadmin_cut" value="{{ $user->jodi_commission}}" hidden>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>

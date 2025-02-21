@@ -618,7 +618,7 @@ function getMenus()
 			'role' => [User::ADMIN],
 		], 
 		[
-			'title' => 'Users',
+			'title' => 'Sub Admins',
 			'route' => 'users.index',
 			'icon' => 'menu-icon tf-icons bx bx-group',
 			'role' => [User::ADMIN],

@@ -31,8 +31,8 @@ $betPrice = getThemeOptions('betSetting');
                         id="time-left">{{ \Carbon\Carbon::parse($post['extraFields']['close_time'])->diffInSeconds(now()) }}</a>
                 </div>
                 <div class="card-body d-flex align-items-center justify-content-between">
-                    <h6>Win Rate:- {{$user->admin_cut_toss_game}}X </h6>
-                    <h6>Min Bet Amount:- {{$betPrice['choiceGame'] ?? 'NA'}} </h6>
+                    <h6>Win Rate:- {{$user->toss_game_rate}}X </h6>
+                    <h6>Min Bet Amount:- {{$betPrice['choiceGameMin'] ?? 'NA'}} </h6>
                 </div>
 
                 <div class="card-body d-flex align-items-center justify-content-between">
@@ -42,11 +42,11 @@ $betPrice = getThemeOptions('betSetting');
                             <div class="col-md-6 col-6">
                                 <input type="text" name="user_id" value="{{ $user->user_id }}" hidden>
                                 <input type="text" name="game_id" value="{{ $post->post_id }}" hidden>
-                                
-                                <input type="text" name="adminshare" value="{{ $parentDetails->admin_cut_toss_game }}" hidden>
-                                <input type="text" name="subadminshare" value="{{ $parentDetails->user_cut_toss_game }}" hidden>
-                                <input type="text" name="adminrate" value="{{ $user->admin_cut_toss_game }}" hidden>
-                                <input type="text" name="subadminrate" value="{{ $user->user_cut_toss_game }}" hidden>
+
+                                <input type="text" name="adminrate" value="{{ $parentDetails->toss_game_rate }}" hidden>
+                                <input type="text" name="subadmincommission" value="{{ $parentDetails->toss_game_commission }}" hidden>
+                                <input type="text" name="userrate" value="{{ $user->toss_game_rate }}" hidden>
+                                <input type="text" name="usercommission" value="{{ $user->toss_game_commission }}" hidden>
                                 <select class="form-control border mb-1" id="answer" name="answer" required>
                                     <option value="">Select Your Answer</option>
                                     <option value="{{ $post['extraFields']['answer_one'] }}">
@@ -63,7 +63,7 @@ $betPrice = getThemeOptions('betSetting');
                                 $availableBalance = $balance - $totalAmount;
                                 @endphp
                                 <input class="form-control border mb-1" id="bid_amount" name="bid_amount" type="number"
-                                    placeholder="Bid Amount" min="{{$betPrice['choiceGameMin'] ?? '100'}}"  max="{{ $betPrice['choiceGameMax'] ?? $availableBalance }}" step="0.01" required>
+                                    placeholder="Bid Amount" min="{{$betPrice['choiceGameMin'] ?? '10'}}" max="{{ $betPrice['choiceGameMax'] ?? $availableBalance }}" step="0.01" required>
                             </div>
                             <br>
                             <div class="col-md-6">
@@ -89,7 +89,7 @@ $betPrice = getThemeOptions('betSetting');
                             <tr>
                                 <td>{{ $bid->answer }}</td>
                                 <td>{{ $bid->bid_amount }}</td>
-                                <td>{{ $bid->bid_amount*$user->admin_cut_toss_game }}</td>
+                                <td>{{ $bid->bid_amount*$user->toss_game_rate }}</td>
                                 <th scope="row">
                                     <form action="{{ route('deleteBid', ['id' => $bid->id]) }}" method="POST">
                                         @csrf
@@ -122,8 +122,8 @@ $betPrice = getThemeOptions('betSetting');
                         <input type="text" name="user_id" value="{{ $user->user_id }}" hidden>
                         <input type="text" name="game_id" value="{{ $post->post_id }}" hidden>
                         <input type="text" name="parent_id" value="{{ $user->parent }}" hidden>
-                        <input type="text" name="admin_cut" value="{{ $user->admin_cut_toss_game}}" hidden>
-                        <input type="text" name="subadmin_cut" value="{{ $user->user_cut_toss_game}}" hidden>
+                        <input type="text" name="admin_cut" value="{{ $user->toss_game_rate}}" hidden>
+                        <input type="text" name="subadmin_cut" value="{{ $user->toss_game_commission}}" hidden>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
@@ -131,21 +131,6 @@ $betPrice = getThemeOptions('betSetting');
         </div>
     </div>
 </div>
-
-<script>
-    document.getElementById('bid_amount').addEventListener('input', function() {
-        const bidAmount = parseFloat(this.value);
-        const minAmount = parseFloat(this.min);
-        const maxAmount = parseFloat(this.max);
-
-        if (bidAmount < minAmount || bidAmount > maxAmount) {
-            this.setCustomValidity(`Avilable Balance ${maxAmount}.`);
-        } else {
-            this.setCustomValidity('');
-        }
-    });
-</script>
-
 
 <script>
     let remainingTime = parseInt(document.getElementById('time-left').innerText);

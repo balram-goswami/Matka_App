@@ -36,14 +36,17 @@
                         </thead>
                         <tbody>
                             @foreach ($list as $item)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $item->updated_at }}</td>
-                                    <td>{{ $item->credit }}</td>
-                                    <td>{{ $item->debit }}</td>
-                                    <td>{{ $item->balance }}</td>
-                                    <td>{{ $item->remark }}{{$item->tofrom_id}}</td>
-                                </tr>
+                            @php
+                            $userName = getUserName($item->tofrom_id);
+                            @endphp
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $item->updated_at }}</td>
+                                <td>{{ $item->credit }}</td>
+                                <td>{{ $item->debit }}</td>
+                                <td>{{ $item->balance }}</td>
+                                <td>{{ $item->remark }} {{$userName->name}}</td>
+                            </tr>
                             @endforeach
                         </tbody>
                     </table>

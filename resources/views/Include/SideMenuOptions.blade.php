@@ -9,7 +9,7 @@
             <div class="user-profile"><img src="../themeAssets/img/bg-img/9.jpg" alt=""></div>
             <div class="user-info">
                 <h5 class="user-name mb-1 text-white">{{ $user->name }}</h5>
-                <p class="available-balance text-white">Balance :-
+                <p class="available-balance text-white">Balance :
                     @if (isset($wallet->balance))
                     <span class="counter">{{ $wallet->balance }}</span>
                     @endif
@@ -18,7 +18,7 @@
             <div class="user-info">
 
                 @if(isset($exposer))
-                <p class="available-balance text-white">Exposer :-
+                <p class="available-balance text-white">Exposer :
                     <span class="counter">{{ $exposer->sum('bid_amount') }}</span>
                 </p>
                 @endif

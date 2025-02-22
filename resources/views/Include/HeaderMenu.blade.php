@@ -20,11 +20,11 @@ $homePage = getThemeOptions('homePage');
                     @endif
                 </div>
 
-                    @if($exposer->sum('bid_amount') > '0')
-                    <div class="cart-icon-wrap"><i class="ti ti-wallet"></i>
-                        <span>EXP: {{ $exposer->sum('bid_amount') }}</span>
-                    </div>
-                    @endif
+                @if(isset($exposer) && $exposer->sum('bid_amount') > 0)
+    <div class="cart-icon-wrap"><i class="ti ti-wallet"></i>
+        <span>EXP: {{ $exposer->sum('bid_amount') }}</span>
+    </div>
+@endif
                     <!-- User Profile Icon -->
                     <div class="user-profile-icon ms-2"><a href="{{ route('profile')}}"><img src="../themeAssets/img/bg-img/9.jpg" alt=""></a>
                     </div>

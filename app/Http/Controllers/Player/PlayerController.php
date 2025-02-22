@@ -285,10 +285,12 @@ class PlayerController extends Controller
       $view = "Templates.Welcome";
       return view('Front', compact('view'));
     }
+    
     $exposer = BidTransaction::where('user_id', $user->user_id)
       ->where('status', 'submitted')
       ->whereNull('bid_result')
       ->get();
+
     $wallet = Wallet::where('user_id', $user->user_id)->first();
     $view = 'Templates.Profile';
     return view('Front', compact('view', 'user', 'wallet', 'exposer'));
@@ -520,8 +522,12 @@ class PlayerController extends Controller
   {
     $user = getCurrentUser();
     $view = 'Templates.PasswordUpdate';
+    $exposer = BidTransaction::where('user_id', $user->user_id)
+      ->where('status', 'submitted')
+      ->whereNull('bid_result')
+      ->get();
 
-    return view('Front', compact('view', 'user'));
+    return view('Front', compact('view', 'user', 'exposer'));
   }
 
 }

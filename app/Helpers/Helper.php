@@ -226,6 +226,7 @@ function getImgAltName($imgUrl)
 		return 'Image';
 	}
 }
+
 function getApiCurrentUser()
 {
 	if (Request()->get('Authorization')) {
@@ -264,7 +265,10 @@ function getUser($user_id)
 
 function getUserName($user_id)
 {
-	return DB::table('users')->where('user_id', $user_id)->select('name')->get()->first();
+	if ($user_id === 1) {
+		return 'Admin';
+	}
+	return DB::table('users')->where('user_id', $user_id)->value('name') ?? 'Unknown User';
 }
 
 function postName($post_id)
@@ -509,8 +513,6 @@ function getSettings()
 	global $settings;
 }
 
-//getSettings();
-
 function calculateDaysAccTime($days, $start_time, $end_time)
 {
 	$start_time_h = strtotime($start_time);
@@ -578,7 +580,8 @@ function priceFormat($price)
 	return '$ ' . number_format($price, 2);
 }
 
-function generateUsername() {
+function generateUsername()
+{
 	$randomNumber = rand(100000, 999999);
 	return "MG" . $randomNumber;
 }
@@ -596,18 +599,7 @@ function filterData(&$str)
 	$str = preg_replace("/\r?\n/", "\\n", $str);
 	if (strstr($str, '"')) $str = '"' . str_replace('"', '""', $str) . '"';
 }
-function getCountryName($countryId)
-{
-	return Countries::where('id', $countryId)->get()->pluck('name')->first();
-}
-function getStateName($stateId)
-{
-	return States::where('id', $stateId)->get()->pluck('name')->first();
-}
-function getCityName($cityId)
-{
-	return Cities::where('id', $cityId)->get()->pluck('name')->first();
-}
+
 function getMenus()
 {
 	return [
@@ -616,7 +608,7 @@ function getMenus()
 			'route' => 'dashboard.index',
 			'icon' => 'tf-icons bx bx-home-circle',
 			'role' => [User::ADMIN],
-		], 
+		],
 		[
 			'title' => 'Sub Admins',
 			'route' => 'users.index',
@@ -653,14 +645,14 @@ function getMenus()
 			'icon' => 'tf-icons bx bx-cog',
 			'role' => [User::ADMIN],
 		],
-		
+
 		// Sub Admin
 		[
 			'title' => 'Dashboard',
 			'route' => 'subadminDashboard',
 			'icon' => 'tf-icons bx bx-home-circle',
 			'role' => [User::SUBADMIN],
-		], 
+		],
 		[
 			'title' => 'My Players',
 			'route' => 'viewPlayers',
@@ -699,7 +691,7 @@ function postTypes()
 		// 	],
 		// 	'taxonomy' => []
 		// ],
-		
+
 		'optiongame' => [
 			'area' => 'Admin',
 			'title' => 'Toss Games',
@@ -952,7 +944,7 @@ function addPostMetaBox($post_type,  $post_id)
 		case 'numberGame':
 			$postBoxHtml = postnumberGameMetaBox($post_id);
 			break;
-		
+
 		default:
 			$postBoxHtml = '';
 			break;
@@ -993,7 +985,7 @@ function postoptiongameMetaBox($post_id)
 {
 	ob_start();
 ?>
-<br>
+	<br>
 	<div class="input-group row">
 		<h5 style="color: red;">Game Details</h5>
 		<div class="col-md-6">
@@ -1033,7 +1025,7 @@ function postnumberGameMetaBox($post_id)
 {
 	ob_start();
 ?>
-<br>
+	<br>
 	<div class="input-group row">
 		<h5 style="color: red;">Morning Game</h5>
 		<div class="col-md-6">

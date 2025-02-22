@@ -52,16 +52,37 @@ class UserController extends Controller
             ->with(['wallet', 'players'])
             ->get();
 
-        // Fetch all bid transactions for these players in one query
-        $exposer = BidTransaction::whereIn('user_id', $players->pluck('user_id'))
-            ->where('status', 'submitted')
-            ->whereNull('bid_result')
-            ->get();
+        $exposers = []; // Store exposer amounts for each user
+
+        foreach ($players as $list) {
+            $exposers[$list->user_id] = BidTransaction::where('user_id', $list->user_id)
+                ->where('status', 'submitted')
+                ->whereNull('bid_result')
+                ->sum('subadmin_amount'); // Sum directly in the query
+        }
 
         $payment = WalletTransactions::all();
 
         $view = 'Admin.Users.ViewSubAdminDetails';
-        return view('Admin', compact('view', 'players', 'user', 'exposer', 'payment'));
+        return view('Admin', compact('view', 'players', 'user', 'exposers', 'payment'));
+    }
+
+    public function viewSubadminplayer($id)
+    {
+        $players = User::where('user_id', $id)
+            ->with(['wallet', 'players'])
+            ->get()->first();
+        
+        $exposers = BidTransaction::where('user_id', $id)
+            ->where('status', 'submitted')
+            ->whereNull('bid_result')
+            ->get(); 
+
+
+        $payment = WalletTransactions::all();
+
+        $view = 'Admin.Users.ViewSubAdminPlayer';
+        return view('Admin', compact('view', 'players', 'exposers', 'payment'));
     }
 
 

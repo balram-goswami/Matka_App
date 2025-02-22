@@ -40,20 +40,20 @@ class SubAdminController extends Controller
     {
         $pId = getCurrentUser();
         $users = User::where('parent', $pId->user_id)->get();
-
-        $exposer = []; // Initialize an empty array
+        $exposers = []; // Store exposer amounts for each user
 
         foreach ($users as $user) {
-            $exposer[$user->user_id] = BidTransaction::where('user_id', $user->user_id)
+            $exposers[$user->user_id] = BidTransaction::where('user_id', $user->user_id)
                 ->where('status', 'submitted')
                 ->whereNull('bid_result')
-                ->get();
+                ->sum('subadmin_amount'); // Sum directly in the query
         }
 
         $view = 'SubAdmin.SubAdmin.AddPlayers';
 
-        return view('Admin', compact('view', 'users', 'exposer'));
+        return view('Admin', compact('view', 'users', 'exposers'));
     }
+
 
     public function subadminAddUsers($id)
     {

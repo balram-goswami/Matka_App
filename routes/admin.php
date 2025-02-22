@@ -37,6 +37,7 @@ Route::post('withdralRequest', [UserController::class, 'withdralRequest'])->name
 Route::get('jantriTable', [UserController::class, 'jantriTable'])->name('jantriTable');
 Route::post('jantri', [UserController::class, 'jantri'])->name('jantri.view');
 Route::get('viewSubadmin/{id}', [UserController::class, 'viewSubadmin'])->name('viewSubadmin');
+Route::get('viewSubadminplayer/{id}', [UserController::class, 'viewSubadminplayer'])->name('viewSubadminplayer');
 Route::get('blockUserbyadmin/{id}', [UserController::class, 'blockUserbyadmin'])->name('blockUserbyadmin');
 Route::get('changePassword', [UserController::class, 'changePassword'])->name('changePassword');
 Route::post('balanceToAdmin', [UserController::class, 'balanceToAdmin'])->name('balanceToAdmin');

@@ -17,9 +17,9 @@
             </div>
             <div class="user-info">
 
-                @if(isset($exposer))
+                @if(isset($exposer) && $exposer->sum('subadmin_amount') > 0)
                 <p class="available-balance text-white">Exposer :
-                    <span class="counter">{{ $exposer->sum('bid_amount') }}</span>
+                    <span class="counter">{{ $exposer->sum('subadmin_amount') }}</span>
                 </p>
                 @endif
             </div>

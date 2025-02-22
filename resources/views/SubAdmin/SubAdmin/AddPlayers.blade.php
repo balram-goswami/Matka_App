@@ -21,11 +21,8 @@
                     <td><a class="dropdown-item" href="{{ route('subadminAddUsers', $user->user_id) }}">{{ $user->name }}</a></td>
                     <td>{{ $user->wallet->balance}}</td>
                     <td>
-                        {{ empty($exposer) ? 'NA' : collect($exposer)->sum('bid_amount') }}
+                        {{ $exposers[$user->user_id] ?? 0 }}
                     </td>
-
-
-
                     <td>{{ $user->status}}</td>
                     <td>
                         <div class="dropdown">

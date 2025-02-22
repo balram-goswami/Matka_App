@@ -58,7 +58,7 @@
                                 <td>{{ $item->credit }}</td>
                                 <td>{{ $item->debit }}</td>
                                 <td>{{ $item->balance }}</td>
-                                <td>{{ $item->remark }} {{$userName->name}}</td>
+                                <td>{{ $item->remark }} {{$userName}}</td>
                             </tr>
                             @endforeach
                         </tbody>

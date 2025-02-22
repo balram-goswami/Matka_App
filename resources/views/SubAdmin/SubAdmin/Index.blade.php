@@ -46,6 +46,7 @@ $currentUser = getCurrentUser();
                     <div class="col-sm-7">
                         <div class="card-body">
                             <h5 class="card-title text-primary">Welcome {{ $currentUser->name }} 🎉</h5>
+                            <h5 class="card-title text-primary">Balance: {{ number_format($wallet->balance, 2) ?? 'NA' }}</h5>
                         </div>
                     </div>
                     <div class="col-sm-5 text-center text-sm-left">

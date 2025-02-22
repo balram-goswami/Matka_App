@@ -38,7 +38,7 @@
                             <td>{{ number_format($list->credit, 2)}}</td>
                             <td>{{ number_format($list->debit, 2)}}</td>
                             <td>{{ $list->balance ?? 'NA'}}</td>
-                            <td>{{ $list->remark }} {{$userName->name}}</td>
+                            <td>{{ $list->remark }} {{$userName}}</td>
                         </tr>
                         @endforeach
                     </tbody>

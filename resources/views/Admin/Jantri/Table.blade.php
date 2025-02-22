@@ -37,11 +37,11 @@
                             @php $bid=$jantriData->where('answer', $i)->first(); @endphp
                             <tr>
                                 <td>{{ $i }}</td>
-                                <td>{{ number_format($bid ? $bid->total_bid : 0, 2) }}</td>
+                                <td>{{ $bid->total_bid ?? '-' }}</td>
                                 <td>
                                     <span class="badge bg-label-primary me-1"
                                         style="color: {{ ($bid && $bid->result_status === 'win') ? '#f41010' : '#000' }} !important">
-                                        {{ ($bid && $bid->result_status === 'win') ? number_format($bid->total_win, 2) : '00' }}
+                                        {{ ($bid && $bid->result_status === 'win') ? number_format($bid->total_win, 2) : '-' }}
                                     </span>
                                 </td>
                             </tr>

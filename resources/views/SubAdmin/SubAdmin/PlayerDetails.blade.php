@@ -368,14 +368,19 @@
                         <tr>
                             <th>Sr No.</th>
                             <th>Game</th>
+                            <th>Bid On</th>
                             <th>Bid Amount</th>
                         </tr>
                     </thead>
                     <tbody class="table-border-bottom-0">
                         @foreach($panding as $open)
+                        @php 
+                        $game = postName($open->game_id);
+                        @endphp
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $open->game_id}}</td>
+                            <td>{{ $game->post_title }}</td>
+                            <td>{{ $open->answer }}</td>
                             <td>{{ $open->bid_amount }}</td>
                         </tr>
                         @endforeach
@@ -413,7 +418,7 @@
                             <td>{{ number_format($list->credit, 2)}}</td>
                             <td>{{ number_format($list->debit, 2)}}</td>
                             <td>{{ $list->balance ?? 'NA'}}</td>
-                            <td>{{ $list->remark }} {{$userName->name}}</td>
+                            <td>{{ $list->remark }} {{$userName}}</td>
                         </tr>
                         @endforeach
                     </tbody>

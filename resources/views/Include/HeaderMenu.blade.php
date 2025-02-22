@@ -20,22 +20,22 @@ $homePage = getThemeOptions('homePage');
                     @endif
                 </div>
 
-                @if(isset($exposer) && $exposer->sum('bid_amount') > 0)
-    <div class="cart-icon-wrap"><i class="ti ti-wallet"></i>
-        <span>EXP: {{ $exposer->sum('bid_amount') }}</span>
-    </div>
-@endif
-                    <!-- User Profile Icon -->
-                    <div class="user-profile-icon ms-2"><a href="{{ route('profile')}}"><img src="../themeAssets/img/bg-img/9.jpg" alt=""></a>
-                    </div>
-                    <!-- Navbar Toggler -->
-                    <div class="suha-navbar-toggler ms-2" data-bs-toggle="offcanvas" data-bs-target="#suhaOffcanvas"
-                        aria-controls="suhaOffcanvas">
-                        <div><span></span><span></span><span></span></div>
-                    </div>
+                @if(isset($exposer) && $exposer->sum('subadmin_amount') > 0)
+                <div class="cart-icon-wrap"><i class="ti ti-wallet"></i>
+                    <span>EXP: {{ $exposer->sum('subadmin_amount') }}</span>
+                </div>
+                @endif
+                <!-- User Profile Icon -->
+                <div class="user-profile-icon ms-2"><a href="{{ route('profile')}}"><img src="../themeAssets/img/bg-img/9.jpg" alt=""></a>
+                </div>
+                <!-- Navbar Toggler -->
+                <div class="suha-navbar-toggler ms-2" data-bs-toggle="offcanvas" data-bs-target="#suhaOffcanvas"
+                    aria-controls="suhaOffcanvas">
+                    <div><span></span><span></span><span></span></div>
                 </div>
             </div>
         </div>
+    </div>
 
 
-        @include('Include.SideMenuOptions')
+    @include('Include.SideMenuOptions')

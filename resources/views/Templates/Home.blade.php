@@ -23,6 +23,18 @@ $gameStatus = getThemeOptions('betSetting');
         animation: ticker 15s linear infinite;
     }
 
+    .news-label {
+        font-weight: bold;
+        color: #ff0000;
+        /* Red color for visibility */
+        margin-right: 10px;
+    }
+
+    .news-section {
+        display: flex;
+        align-items: center;
+    }
+
     /* Animation for Scrolling Effect */
     @keyframes ticker {
         from {
@@ -43,14 +55,18 @@ $gameStatus = getThemeOptions('betSetting');
 <div class="container">
     <div class="page-content-wrapper">
         @if($news->isNotEmpty())
-        <div class="news-ticker">
-            <div class="ticker-content">
-                {{ implode(' || ', $news->pluck('post_excerpt')->toArray()) }}
+        <div class="news-section">
+            <strong class="news-label">News:</strong>
+            <div class="news-ticker">
+                <div class="ticker-content">
+                    {{ implode(' || ', $news->pluck('post_excerpt')->toArray()) }}
+                </div>
             </div>
         </div>
         @endif
     </div>
 </div>
+
 
 <div class="container">
     <div>

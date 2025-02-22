@@ -35,8 +35,8 @@ $betPrice = getThemeOptions('betSetting');
                     </a>
                 </div>
                 <div class="card-body d-flex align-items-center justify-content-between">
-                    <h6>Win Rate:- {{$user->oddEven_game_rate}}X </h6>
-                    <h6>Min Bet Amount:- {{$betPrice['oddevenGame'] ?? 'NA'}} </h6>
+                    <h6>Win Rate: {{$user->oddEven_game_rate}}X </h6>
+                    <h6>Min Bet Amount: {{$betPrice['oddevenGame'] ?? 'NA'}} </h6>
                 </div>
 
                 <div class="card-body d-flex align-items-center justify-content-between">
@@ -130,7 +130,11 @@ $betPrice = getThemeOptions('betSetting');
                         <input type="text" name="parent_id" value="{{ $user->parent }}" hidden>
                         <input type="text" name="admin_cut" value="{{ $user->oddEven_game_rate}}" hidden>
                         <input type="text" name="subadmin_cut" value="{{ $user->oddEven_commission}}" hidden>
+                        @if($wallet->balance >= $totalAmount)
                         <button type="submit" class="btn btn-primary">Submit</button>
+                        @else
+                        <label class="text-danger mt-2">Insufficient Balance</label>
+                        @endif
                     </form>
                 </div>
             </div>

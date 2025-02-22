@@ -34,8 +34,8 @@ $betPrice = getThemeOptions('betSetting');
                     </a>
                 </div>
                 <div class="card-body d-flex align-items-center justify-content-between">
-                <h6>Win Rate:- {{$user->crossing_game_rate}}X </h6>
-                <h6>Min Bet Amount:- {{$betPrice['crossingGameMin'] ?? 'NA'}} </h6>
+                <h6>Win Rate: {{$user->crossing_game_rate}}X </h6>
+                <h6>Min Bet Amount: {{$betPrice['crossingGameMin'] ?? 'NA'}} </h6>
                 </div>
 
                 <div class="card-body d-flex align-items-center justify-content-between">
@@ -53,7 +53,7 @@ $betPrice = getThemeOptions('betSetting');
                                 <input type="text" name="usercommission" value="{{ $user->crossing_commission }}" hidden>
 
                                 <label class="text-danger mt-2">Enter Bid Amount</label>
-                                <input type="text" name="bid_amount" min="{{ $betPrice['crossingGameMin'] ?? '100'}}" max="{{ $betPrice['crossingGamemax'] }}" placeholder="Bid Amount" value="{{ old('bid_amount') }}" required>
+                                <input type="text" name="bid_amount" min="{{ $betPrice['crossingGameMin'] ?? '100'}}" max="{{ $betPrice['crossingGamemax'] ?? $wallet->balance }}" placeholder="Bid Amount" value="{{ old('bid_amount') }}" required>
                             </div>
 
                             <!-- Number Buttons -->
@@ -137,7 +137,11 @@ $betPrice = getThemeOptions('betSetting');
                         <input type="text" name="parent_id" value="{{ $user->parent }}" hidden>
                         <input type="text" name="admin_cut" value="{{ $user->crossing_game_rate}}" hidden>
                         <input type="text" name="subadmin_cut" value="{{ $user->crossing_commission}}" hidden>
+                        @if($wallet->balance >= $totalAmount)
                         <button type="submit" class="btn btn-primary">Submit</button>
+                        @else
+                        <label class="text-danger mt-2">Insufficient Balance</label>
+                        @endif
                     </form>
                 </div>
             </div>

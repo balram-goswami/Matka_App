@@ -54,6 +54,13 @@ class SubAdminController extends Controller
         return view('Admin', compact('view', 'users', 'exposers'));
     }
 
+    public function chartSubAdmin()
+    {
+        $view = 'SubAdmin.SubAdmin.Chart';
+
+        return view('Admin', compact('view'));  
+    }
+
 
     public function subadminAddUsers($id)
     {

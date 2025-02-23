@@ -9,6 +9,7 @@ use App\Http\Controllers\SubAdmin\{
 
 Route::get('subadminDashboard', [SubAdminController::class, 'subadminDashboard'])->name('subadminDashboard');
 Route::get('viewPlayers', [SubAdminController::class, 'viewPlayers'])->name('viewPlayers');
+Route::get('chartSubAdmin', [SubAdminController::class, 'chartSubAdmin'])->name('chartSubAdmin');
 Route::get('addeditplayer', [SubAdminController::class, 'addeditplayer'])->name('addeditplayer');
 Route::get('subadminplayers', [SubAdminController::class, 'subadminplayers'])->name('subadmin.players');
 Route::get('subadminAddUsers/{id}', [SubAdminController::class, 'subadminAddUsers'])->name('subadminAddUsers');

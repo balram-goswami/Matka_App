@@ -677,6 +677,12 @@ function getMenus()
 			'icon' => 'tf-icons bx bx-cog',
 			'role' => [User::SUBADMIN],
 		],
+		[
+			'title' => 'Chart',
+			'route' => 'chartSubAdmin',
+			'icon' => 'tf-icons bx bx-cog',
+			'role' => [User::SUBADMIN],
+		],
 	];
 }
 function postTypes()

@@ -167,6 +167,13 @@ function themeFieldArray()
                     'placeholder' =>'Banner Text',
                     'default' => '',
                 ], 
+                [
+                    'title' =>'Chart Website URL',
+                    'id' => 'chartUrl',
+                    'type' => 'text',
+                    'placeholder' =>'URL',
+                    'default' => '',
+                ], 
                 
             ]
         ],

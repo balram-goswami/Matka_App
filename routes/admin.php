@@ -1,6 +1,7 @@
 <?php
+
 use Illuminate\Support\Facades\{
-    Route, 
+    Route,
     Artisan
 };
 use App\Http\Controllers\Admin\{
@@ -32,9 +33,10 @@ Route::post('sattaResult', [UserController::class, 'sattaResult'])->name('sattaR
 Route::get('paymentRequest', [UserController::class, 'paymentRequest'])->name('paymentRequest');
 Route::get('confermPayment/{id}', [UserController::class, 'confermPayment'])->name('confermPayment');
 Route::post('/gameOptions', [UserController::class, 'gameOptions'])->name('gameOptions');
-Route::get('viewPayment/{id}',[UserController::class, 'viewPayment'])->name('viewPayment');
+Route::get('viewPayment/{id}', [UserController::class, 'viewPayment'])->name('viewPayment');
 Route::post('withdralRequest', [UserController::class, 'withdralRequest'])->name('withdralRequest');
 Route::get('jantriTable', [UserController::class, 'jantriTable'])->name('jantriTable');
+Route::get('chart', [UserController::class, 'chart'])->name('chart');
 Route::post('jantri', [UserController::class, 'jantri'])->name('jantri.view');
 Route::get('viewSubadmin/{id}', [UserController::class, 'viewSubadmin'])->name('viewSubadmin');
 Route::get('viewSubadminplayer/{id}', [UserController::class, 'viewSubadminplayer'])->name('viewSubadminplayer');
@@ -83,4 +85,3 @@ Route::get('/taxonomy/configure/terms/{postType?}/{taxonomy?}', [TaxonomyControl
 Route::get('/menus', [MenuController::class, 'index'])->name('menus');
 Route::post('/add/menu', [MenuController::class, 'addMenuItems'])->name('add.menu');
 Route::get('/delete/menu', [MenuController::class, 'deleteMenuItems'])->name('delete.menu');
-

@@ -26,7 +26,7 @@
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="addMoneyTitle">Diposit Balance</h5>
+                            <h5 class="modal-title" id="addMoneyTitle">Deposite Balance</h5>
                             <button
                                 type="button"
                                 class="btn-close"
@@ -56,7 +56,7 @@
                                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                                     Close
                                 </button>
-                                <button type="submit" class="btn btn-primary">Diposit Now</button>
+                                <button type="submit" class="btn btn-primary">Deposite Now</button>
                             </div>
                         </form>
                     </div>
@@ -108,7 +108,7 @@
             <table class="table">
                 <thead class="table-light">
                     <tr>
-                        <th>Sub Admn User Id </th>
+                        <th>Sub Admin User Id </th>
                         <th>{{$user->name}} </th>
                     </tr>
                     <tr>
@@ -138,7 +138,7 @@
                     <tr>
                         <th>Player Name </th>
                         <th>Wallet Balance </th>
-                        <th>Exposer Balance </th>
+                        <th>Exposure Balance </th>
                         <th>Status </th>
                         <th>Action</th>
                     </tr>

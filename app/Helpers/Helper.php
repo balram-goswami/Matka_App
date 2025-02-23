@@ -634,7 +634,7 @@ function getMenus()
 			'role' => [User::ADMIN],
 		],
 		[
-			'title' => 'Tansactions',
+			'title' => 'Account Statement',
 			'route' => 'paymentRequest',
 			'icon' => 'tf-icons bx bx-cog',
 			'role' => [User::ADMIN],
@@ -642,6 +642,12 @@ function getMenus()
 		[
 			'title' => 'Jantri Table',
 			'route' => 'jantriTable',
+			'icon' => 'tf-icons bx bx-cog',
+			'role' => [User::ADMIN],
+		],
+		[
+			'title' => 'Chart',
+			'route' => 'chart',
 			'icon' => 'tf-icons bx bx-cog',
 			'role' => [User::ADMIN],
 		],
@@ -660,7 +666,7 @@ function getMenus()
 			'role' => [User::SUBADMIN],
 		],
 		[
-			'title' => 'Tansactions',
+			'title' => 'Account Statement',
 			'route' => 'userPayment',
 			'icon' => 'tf-icons bx bx-cog',
 			'role' => [User::SUBADMIN],

@@ -266,6 +266,12 @@ class UserController extends Controller
         return view('Admin', compact('view', 'user', 'payment'));
     }
 
+    public function chart()
+    {
+        $view = 'Admin.Users.Chart';
+        return view('Admin', compact('view'));
+    }
+
     public function sattaResult(Request $request)
     {
         $validator = Validator::make(

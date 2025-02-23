@@ -526,7 +526,7 @@ class PlayerController extends Controller
       ->where('status', 'submitted')
       ->whereNull('bid_result')
       ->get();
-
+      
     return view('Front', compact('view', 'user', 'exposer'));
   }
 

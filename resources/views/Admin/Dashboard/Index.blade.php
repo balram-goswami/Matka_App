@@ -1,5 +1,6 @@
 @php
 $currentUser = getCurrentUser();
+$homePage = getThemeOptions('header');
 @endphp
 
 <div class="container-xxl flex-grow-1 container-p-y">
@@ -16,9 +17,15 @@ $currentUser = getCurrentUser();
                     </div>
                     <div class="col-sm-5 text-center text-sm-left">
                         <div class="card-body pb-0 px-0 px-md-4" style="margin-bottom: 10px;">
+                            @if(isset($homePage['headerlogo']))
+                            <img src="{{ publicPath($homePage['headerlogo']) }}" height="140" alt="View Badge User"
+                                data-app-dark-img="{{ publicPath($homePage['headerlogo']) }}"
+                                data-app-light-img="{{ publicPath($homePage['headerlogo']) }}" />
+                            @else
                             <img src="..\themeAssets\img\matka\matka.png" height="140" alt="View Badge User"
                                 data-app-dark-img="..\themeAssets\img\matka\matka.png"
                                 data-app-light-img="..\themeAssets\img\matka\matka.png" />
+                            @endif
                         </div>
                     </div>
                     <div class="mt-4">

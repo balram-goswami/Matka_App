@@ -124,8 +124,8 @@
                                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);"
                                     data-bs-toggle="dropdown">
                                     <div class="avatar avatar-online">
-                                        @if ($currentUser->photo)
-                                        <img src="<?php echo asset($currentUser->photo); ?>" alt class="w-px-40 h-auto rounded-circle" />
+                                        @if (isset($setting['headerlogo']))
+                                        <img src="{{ publicPath($setting['headerlogo']) }}" alt class="w-px-40 h-auto rounded-circle" />
                                         @else
                                         <img src="<?php echo assetPath('..\themeAssets\img\matka\matka.png'); ?>" alt class="w-px-40 h-auto rounded-circle" />
                                         @endif
@@ -137,8 +137,8 @@
                                             <div class="d-flex">
                                                 <div class="flex-shrink-0 me-3">
                                                     <div class="avatar avatar-online">
-                                                        @if ($currentUser->photo)
-                                                        <img src="<?php echo asset($currentUser->photo); ?>" alt
+                                                        @if (isset($setting['headerlogo']))
+                                                        <img src="{{ publicPath($setting['headerlogo']) }}" alt
                                                             class="w-px-40 h-auto rounded-circle" />
                                                         @else
                                                         <img src="<?php echo assetPath('img/avatars/1.png'); ?>" alt

@@ -11,14 +11,14 @@
                 class="btn btn-primary"
                 data-bs-toggle="modal"
                 data-bs-target="#addMoney">
-                Credit Balance
+                Diposit
             </button>
             <button
                 type="button"
                 class="btn btn-primary"
                 data-bs-toggle="modal"
                 data-bs-target="#deleteMoney">
-                Debit Balance
+                Withdrawl
             </button>
         </div>
         <div class="mt-4">
@@ -26,7 +26,7 @@
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="addMoneyTitle">Credit Balance</h5>
+                            <h5 class="modal-title" id="addMoneyTitle">Diposit Balance</h5>
                             <button
                                 type="button"
                                 class="btn-close"
@@ -56,7 +56,7 @@
                                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                                     Close
                                 </button>
-                                <button type="submit" class="btn btn-primary">Credit Balance Now</button>
+                                <button type="submit" class="btn btn-primary">Diposit Now</button>
                             </div>
                         </form>
                     </div>
@@ -66,7 +66,7 @@
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="deleteMoneyTitle">Debit Balance</h5>
+                            <h5 class="modal-title" id="deleteMoneyTitle">Withdrawl Balance</h5>
                             <button
                                 type="button"
                                 class="btn-close"
@@ -96,7 +96,7 @@
                                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                                     Close
                                 </button>
-                                <button type="submit" class="btn btn-primary">Debit Balance Now</button>
+                                <button type="submit" class="btn btn-primary">Withdrawl Balance Now</button>
                             </div>
                         </form>
                     </div>
@@ -145,7 +145,7 @@
                 </thead>
                 <tbody class="table-border-bottom-0">
                     @foreach($players as $list)
-                    <td><a class="dropdown-item" href="{{ route('viewSubadminplayer', $list->user_id) }}">{{ $list->name }}</a></td>
+                    <td><a class="dropdown-item" style="color: blue;" href="{{ route('viewSubadminplayer', $list->user_id) }}">{{ $list->name }}</a></td>
                     <td>{{ $list->wallet->balance ?? 'No wallet found' }}</td>
                     <td>{{ $exposers[$list->user_id] ?? 0 }}</td>
                     <td>{{ $list->status }}</td>
@@ -204,9 +204,9 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $list->updated_at}}</td>
-                            <td>{{ number_format($list->credit, 2)}}</td>
-                            <td>{{ number_format($list->debit, 2)}}</td>
-                            <td>{{ $list->balance ?? 'NA'}}</td>
+                            <td style="color: green;">{{ number_format($list->credit, 2)}}</td>
+                            <td style="color: red;">{{ number_format($list->debit, 2)}}</td>
+                            <td style="color: green;">{{ $list->balance ?? 'NA'}}</td>
                             <td>{{ $list->remark }} {{$userName}}</td>
                         </tr>
                         @endforeach

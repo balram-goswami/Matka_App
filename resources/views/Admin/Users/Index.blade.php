@@ -18,7 +18,7 @@
                 </thead>
                 <tbody class="table-border-bottom-0">
                     @foreach($users as $user)
-                    <td><a class="dropdown-item" href="{{ route('viewSubadmin', $user->user_id) }}">{{ $user->name }}</a></td>
+                    <td><a class="dropdown-item" style="color: blue;" href="{{ route('viewSubadmin', $user->user_id) }}">{{ $user->name }}</a></td>
                     <td>{{ number_format($user->wallet->balance, 2) ?? 'No wallet found' }}</td>
                     <td>{{ $user->players->count() }}</td>
                     <td>{{ $user->status }}</td>

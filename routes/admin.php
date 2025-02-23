@@ -43,6 +43,9 @@ Route::get('changePassword', [UserController::class, 'changePassword'])->name('c
 Route::post('balanceToAdmin', [UserController::class, 'balanceToAdmin'])->name('balanceToAdmin');
 Route::post('addbalancebyadmin', [UserController::class, 'addbalancebyadmin'])->name('addbalancebyadmin');
 Route::post('deletebalancebyadmin', [UserController::class, 'deletebalancebyadmin'])->name('deletebalancebyadmin');
+Route::post('/player/deleteBidByAdmin/{id}', [UserController::class, 'deleteBidByAdmin'])->name('deleteBidByAdmin');
+
+
 
 // Media
 Route::resource('/media', MediaController::class, ['names' => 'media']);

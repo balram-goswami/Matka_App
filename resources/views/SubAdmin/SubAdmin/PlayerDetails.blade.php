@@ -1,8 +1,8 @@
 <div class="content-wrapper">
   <!-- Content -->
   <div class="card-header d-flex justify-content-between align-items-center">
-            <a class="btn btn-primary" href="{{ route('viewPlayers')}}">Back</a>
-        </div>
+    <a class="btn btn-primary" href="{{ route('viewPlayers')}}">Back</a>
+  </div>
 
   <div class="container-xxl flex-grow-1 container-p-y">
     <div class="row">
@@ -60,14 +60,14 @@
                 class="btn btn-primary"
                 data-bs-toggle="modal"
                 data-bs-target="#addMoney">
-                Add Money
+                Deposit
               </button>
               <button
                 type="button"
                 class="btn btn-primary"
                 data-bs-toggle="modal"
                 data-bs-target="#deleteMoney">
-                Cut Money
+                Withdrawl
               </button>
 
               <!-- Modal -->
@@ -75,7 +75,7 @@
                 <div class="modal-dialog modal-dialog-centered" role="document">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title" id="addMoneyTitle">Add Money</h5>
+                      <h5 class="modal-title" id="addMoneyTitle">Deposit Money</h5>
                       <button
                         type="button"
                         class="btn-close"
@@ -98,6 +98,14 @@
                               name="user_id"
                               value="{{ $user->user_id }}"
                               placeholder="Enter Amount" />
+
+                            <textarea
+                              class="form-control"
+                              id="deleteReason"
+                              name="delete_reason"
+                              placeholder="Enter Reason"
+                              required
+                              rows="3"></textarea>
                           </div>
                         </div>
                       </div>
@@ -105,7 +113,7 @@
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                           Close
                         </button>
-                        <button type="submit" class="btn btn-primary">Add Now</button>
+                        <button type="submit" class="btn btn-primary">Deposit Now</button>
                       </div>
                     </form>
                   </div>
@@ -115,7 +123,7 @@
                 <div class="modal-dialog modal-dialog-centered" role="document">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title" id="deleteMoneyTitle">Cut Money</h5>
+                      <h5 class="modal-title" id="deleteMoneyTitle">Withdrawl Money</h5>
                       <button
                         type="button"
                         class="btn-close"
@@ -138,6 +146,14 @@
                               name="user_id"
                               value="{{ $user->user_id }}"
                               placeholder="Enter Amount" />
+
+                            <textarea
+                              class="form-control"
+                              id="deleteReason"
+                              name="delete_reason"
+                              placeholder="Enter Reason"
+                              required
+                              rows="3"></textarea>
                           </div>
                         </div>
                       </div>
@@ -145,7 +161,7 @@
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                           Close
                         </button>
-                        <button type="submit" class="btn btn-primary">Cut Now</button>
+                        <button type="submit" class="btn btn-primary">Withdrawl Now</button>
                       </div>
                     </form>
                   </div>
@@ -213,7 +229,7 @@
                     <h6 class="mb-0">Commission %</h6>
                   </div>
                   <div class="user-progress">
-                  <h6 class="mb-0">{{ $user->harf_game_rate ?? 'NA' }} X</h6>
+                    <h6 class="mb-0">{{ $user->harf_game_rate ?? 'NA' }} X</h6>
                     <h6 class="mb-0">{{ $user->harf_commission ?? 'NA' }} %</h6>
                   </div>
                 </div>
@@ -228,7 +244,7 @@
                     <h6 class="mb-0">Commission %</h6>
                   </div>
                   <div class="user-progress">
-                  <h6 class="mb-0">{{ $user->jodi_game_rate ?? 'NA' }} X</h6>
+                    <h6 class="mb-0">{{ $user->jodi_game_rate ?? 'NA' }} X</h6>
                     <h6 class="mb-0">{{ $user->jodi_commission ?? 'NA' }} %</h6>
                   </div>
                 </div>
@@ -243,7 +259,7 @@
                     <h6 class="mb-0">Commission %</h6>
                   </div>
                   <div class="user-progress">
-                  <h6 class="mb-0">{{ $user->oddEven_game_rate ?? 'NA' }} X</h6>
+                    <h6 class="mb-0">{{ $user->oddEven_game_rate ?? 'NA' }} X</h6>
                     <h6 class="mb-0">{{ $user->oddEven_commission ?? 'NA' }} %</h6>
                   </div>
                 </div>
@@ -359,71 +375,71 @@
   </div>
 </div>
 <div class="container-xxl flex-grow-1 container-p-y">
-    <div class="card mb-4">
-        <div class="card">
-            <h5 class="card-header">Player Open Bids</h5>
-            <div class="table-responsive text-nowrap">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Sr No.</th>
-                            <th>Game</th>
-                            <th>Bid On</th>
-                            <th>Bid Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody class="table-border-bottom-0">
-                        @foreach($panding as $open)
-                        @php 
-                        $game = postName($open->game_id);
-                        @endphp
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $game->post_title }}</td>
-                            <td>{{ $open->answer }}</td>
-                            <td>{{ $open->bid_amount }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
+  <div class="card mb-4">
+    <div class="card">
+      <h5 class="card-header">Player Open Bids</h5>
+      <div class="table-responsive text-nowrap">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Sr No.</th>
+              <th>Game</th>
+              <th>Bid On</th>
+              <th>Bid Amount</th>
+            </tr>
+          </thead>
+          <tbody class="table-border-bottom-0">
+            @foreach($panding as $open)
+            @php
+            $game = postName($open->game_id);
+            @endphp
+            <tr>
+              <td>{{ $loop->iteration }}</td>
+              <td>{{ $game->post_title }}</td>
+              <td>{{ $open->answer }}</td>
+              <td>{{ $open->bid_amount }}</td>
+            </tr>
+            @endforeach
+          </tbody>
+        </table>
+      </div>
     </div>
+  </div>
 </div>
 
 <div class="container-xxl flex-grow-1 container-p-y">
-    <div class="card mb-4">
-        <div class="card">
-            <h5 class="card-header">Player Wallet Transactions</h5>
-            <div class="table-responsive text-nowrap">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Sr No.</th>
-                            <th>Date</th>
-                            <th>Credit</th>
-                            <th>Debit</th>
-                            <th>Balance</th>
-                            <th>Remark</th>
-                        </tr>
-                    </thead>
-                    <tbody class="table-border-bottom-0">
-                        @foreach($payment as $list)
-                        @php
-                        $userName = getUserName($list->tofrom_id);
-                        @endphp
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $list->updated_at}}</td>
-                            <td>{{ number_format($list->credit, 2)}}</td>
-                            <td>{{ number_format($list->debit, 2)}}</td>
-                            <td>{{ $list->balance ?? 'NA'}}</td>
-                            <td>{{ $list->remark }} {{$userName}}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
+  <div class="card mb-4">
+    <div class="card">
+      <h5 class="card-header">Player Wallet Transactions</h5>
+      <div class="table-responsive text-nowrap">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Sr No.</th>
+              <th>Date</th>
+              <th>Credit</th>
+              <th>Debit</th>
+              <th>Balance</th>
+              <th>Remark</th>
+            </tr>
+          </thead>
+          <tbody class="table-border-bottom-0">
+            @foreach($payment as $list)
+            @php
+            $userName = getUserName($list->tofrom_id);
+            @endphp
+            <tr>
+              <td>{{ $loop->iteration }}</td>
+              <td>{{ $list->updated_at}}</td>
+              <td>{{ number_format($list->credit, 2)}}</td>
+              <td>{{ number_format($list->debit, 2)}}</td>
+              <td>{{ $list->balance ?? 'NA'}}</td>
+              <td>{{ $list->remark }} {{$userName}}</td>
+            </tr>
+            @endforeach
+          </tbody>
+        </table>
+      </div>
     </div>
+  </div>
 </div>

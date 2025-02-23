@@ -18,7 +18,7 @@
                 </thead>
                 <tbody class="table-border-bottom-0">
                     @foreach($users as $user)
-                    <td><a class="dropdown-item" href="{{ route('subadminAddUsers', $user->user_id) }}">{{ $user->name }}</a></td>
+                    <td><a class="dropdown-item" style="color: blue;" href="{{ route('subadminAddUsers', $user->user_id) }}">{{ $user->name }}</a></td>
                     <td>{{ $user->wallet->balance}}</td>
                     <td>
                         {{ $exposers[$user->user_id] ?? 0 }}

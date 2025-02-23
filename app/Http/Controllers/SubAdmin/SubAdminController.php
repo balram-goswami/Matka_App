@@ -88,6 +88,7 @@ class SubAdminController extends Controller
             [
                 'user_id' => 'required|exists:wallets,user_id',
                 'balance' => 'required|numeric|min:1',
+                'delete_reason' => 'nullable',
             ]
         );
 
@@ -129,7 +130,7 @@ class SubAdminController extends Controller
             'tofrom_id'       => $pUser->user_id,
             'credit'          => $request->balance,
             'balance'          => $account->balance,
-            'remark'          => 'Credited by Sub Admin ',
+            'remark'          => $request->delete_reason ?? 'Credited by Sub Admin ',
             'created_at'      => now(),
         ]);
         $walletUpdate = WalletTransactions::create([
@@ -137,7 +138,7 @@ class SubAdminController extends Controller
             'tofrom_id'       => $request->user_id,
             'debit'          => $request->balance,
             'balance'          => $parent->balance,
-            'remark'          => 'Debited by Sub Admin ',
+            'remark'          => $request->delete_reason ?? 'Debited by Sub Admin ',
             'created_at'      => now(),
         ]);
         $walletUpdate->save();
@@ -152,6 +153,7 @@ class SubAdminController extends Controller
             [
                 'user_id' => 'required|exists:wallets,user_id',
                 'balance' => 'required|numeric|min:1',
+                'delete_reason' => 'nullable',
             ]
         );
 
@@ -189,7 +191,7 @@ class SubAdminController extends Controller
             'tofrom_id'       => $pUser->user_id,
             'debit'          => $request->balance,
             'balance'          => $account->balance,
-            'remark'          => 'Credited by Sub Admin',
+            'remark'          => $request->delete_reason ?? 'Credited by Sub Admin',
             'created_at'      => now(),
         ]);
         $walletUpdate = WalletTransactions::create([
@@ -197,7 +199,7 @@ class SubAdminController extends Controller
             'tofrom_id'       => $request->user_id,
             'credit'          => $request->balance,
             'balance'          => $parent->balance,
-            'remark'          => 'Debited by Sub Admin',
+            'remark'          => $request->delete_reason ?? 'Debited by Sub Admin',
             'created_at'      => now(),
         ]);
         $walletUpdate->save();

@@ -431,11 +431,11 @@ class PlayerController extends Controller
       $adminWallet = Wallet::where('user_id', 1)->first(); // Assuming Admin ID is 1
 
       if (!$userWallet || !$parentWallet || !$adminWallet) {
-        return redirect()->route('myBids')->with('error', 'Wallet not found.');
+        return redirect()->route('myBids')->with('danger', 'Wallet not found.');
       }
 
       if ($userWallet->balance < $totalBidAmount) {
-        return redirect()->route('myBids')->with('error', 'Insufficient balance.');
+        return redirect()->route('myBids')->with('danger', 'Insufficient balance.');
       }
 
       // Debit from user & credit to parent
@@ -460,7 +460,7 @@ class PlayerController extends Controller
       return redirect()->route('myBids')->with('success', 'All Bids Submitted Successfully');
     } catch (\Exception $e) {
       DB::rollBack();
-      return redirect()->route('myBids')->with('error', 'An error occurred: ' . $e->getMessage());
+      return redirect()->route('myBids')->with('danger', 'An error occurred: ' . $e->getMessage());
     }
   }
 

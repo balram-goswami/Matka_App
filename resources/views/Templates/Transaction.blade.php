@@ -55,9 +55,9 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $item->updated_at }}</td>
-                                <td>{{ $item->credit }}</td>
-                                <td>{{ $item->debit }}</td>
-                                <td>{{ $item->balance }}</td>
+                                <td style="color: green;">{{ $item->credit }}</td>
+                                <td style="color: red;">{{ $item->debit }}</td>
+                                <td style="color: green;">{{ $item->balance }}</td>
                                 <td>{{ $item->remark }} {{$userName}}</td>
                             </tr>
                             @endforeach

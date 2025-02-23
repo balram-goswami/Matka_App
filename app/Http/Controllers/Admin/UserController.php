@@ -72,11 +72,11 @@ class UserController extends Controller
         $players = User::where('user_id', $id)
             ->with(['wallet', 'players'])
             ->get()->first();
-        
+
         $exposers = BidTransaction::where('user_id', $id)
             ->where('status', 'submitted')
             ->whereNull('bid_result')
-            ->get(); 
+            ->get();
 
 
         $payment = WalletTransactions::all();
@@ -613,6 +613,7 @@ class UserController extends Controller
             [
                 'user_id' => 'required|exists:wallets,user_id',
                 'balance' => 'required|numeric|min:1',
+                'delete_reason' => 'nullable'
             ]
         );
 
@@ -654,7 +655,7 @@ class UserController extends Controller
             'tofrom_id'       => $pUser->user_id,
             'credit'          => $request->balance,
             'balance'          => $account->balance,
-            'remark'          => 'Credited by Admin',
+            'remark'          => $request->delete_reason ?? 'Credited by Admin',
             'created_at'      => now(),
         ]);
         $walletUpdate = WalletTransactions::create([
@@ -662,7 +663,7 @@ class UserController extends Controller
             'tofrom_id'       => $request->user_id,
             'debit'          => $request->balance,
             'balance'          => $parent->balance,
-            'remark'          => 'Debited by Admin',
+            'remark'          => $request->delete_reason ?? 'Debited by Admin',
             'created_at'      => now(),
         ]);
         $walletUpdate->save();
@@ -677,6 +678,7 @@ class UserController extends Controller
             [
                 'user_id' => 'required|exists:wallets,user_id',
                 'balance' => 'required|numeric|min:1',
+                'delete_reason' => 'nullable'
             ]
         );
 
@@ -714,7 +716,7 @@ class UserController extends Controller
             'tofrom_id'       => $pUser->user_id,
             'debit'          => $request->balance,
             'balance'          => $account->balance,
-            'remark'          => 'Debited by Admin',
+            'remark'          => $request->delete_reason ?? 'Debited by Admin',
             'created_at'      => now(),
         ]);
         $walletUpdate = WalletTransactions::create([
@@ -722,7 +724,7 @@ class UserController extends Controller
             'tofrom_id'       => $request->user_id,
             'credit'          => $request->balance,
             'balance'          => $parent->balance,
-            'remark'          => 'Credited by Admin',
+            'remark'          => $request->delete_reason ?? 'Credited by Admin',
             'created_at'      => now(),
         ]);
         $walletUpdate->save();
@@ -845,6 +847,100 @@ class UserController extends Controller
         } catch (\Exception $e) {
             \DB::rollBack();
             return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
+        }
+    }
+
+
+    public function deleteBidByAdmin(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'delete_reason' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+        
+        $bid = BidTransaction::find($id);
+
+        if (!$bid) {
+            return redirect()->back()->with('danger', 'Bid not found.');
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Delete the bid
+            $bid->delete();
+
+            // Fetch wallets in advance to reduce queries
+            $adminWallet = Wallet::where('user_id', 1)->first();
+            $parentWallet = Wallet::where('user_id', $bid->parent_id)->first();
+            $playerWallet = Wallet::where('user_id', $bid->user_id)->first();
+
+            // Ensure wallets exist before modifying balances
+            if (!$adminWallet || !$parentWallet || !$playerWallet) {
+                DB::rollBack();
+                return redirect()->back()->with('danger', 'Wallet not found.');
+            }
+
+            // Update Admin Wallet
+            $adminWallet->balance -= $bid->admin_amount;
+            $adminWallet->save();
+
+            WalletTransactions::create([
+                'user_id' => 1,
+                'tofrom_id' => $bid->parent_id,
+                'debit' => $bid->admin_amount,
+                'balance' => $adminWallet->balance,
+                'remark' => 'Bid Delete Due To - ' . $request->delete_reason,
+                'created_at' => now(),
+            ]);
+
+            // Update Parent Wallet
+            $parentWallet->balance += $bid->parent_amount;
+            $parentWallet->save();
+
+            WalletTransactions::create([
+                'user_id' => $bid->parent_id,
+                'tofrom_id' => 1,
+                'credit' => $bid->admin_amount,
+                'balance' => $parentWallet->balance,
+                'remark' => 'Bid Delete Due To - ' . $request->delete_reason,
+                'created_at' => now(),
+            ]);
+
+            // Deduct Subadmin Amount from Parent Wallet
+            $parentWallet->balance -= $bid->subadmin_amount;
+            $parentWallet->save();
+
+            WalletTransactions::create([
+                'user_id' => $bid->parent_id,
+                'tofrom_id' => $bid->user_id,
+                'debit' => $bid->subadmin_amount,
+                'balance' => $parentWallet->balance,
+                'remark' => 'Bid Delete Due To - ' . $request->delete_reason,
+                'created_at' => now(),
+            ]);
+
+            // Update Player Wallet
+            $playerWallet->balance += $bid->subadmin_amount;
+            $playerWallet->save();
+
+            WalletTransactions::create([
+                'user_id' => $bid->user_id,
+                'tofrom_id' => $bid->parent_id,
+                'credit' => $bid->subadmin_amount,
+                'balance' => $playerWallet->balance,
+                'remark' => 'Bid Delete Due To - ' . $request->delete_reason,
+                'created_at' => now(),
+            ]);
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Bid deleted successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('danger', 'Failed to delete bid: ' . $e->getMessage());
         }
     }
 }

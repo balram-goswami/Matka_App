@@ -35,9 +35,9 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $list->updated_at}}</td>
-                            <td>{{ number_format($list->credit, 2)}}</td>
-                            <td>{{ number_format($list->debit, 2)}}</td>
-                            <td>{{ $list->balance ?? 'NA'}}</td>
+                            <td style="color: green;">{{ number_format($list->credit, 2)}}</td>
+                            <td style="color: red;">{{ number_format($list->debit, 2)}}</td>
+                            <td style="color: green;">{{ $list->balance ?? 'NA'}}</td>
                             <td>{{ $list->remark }} {{$userName}}</td>
                         </tr>
                         @endforeach

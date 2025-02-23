@@ -660,7 +660,7 @@ function getMenus()
 			'role' => [User::SUBADMIN],
 		],
 		[
-			'title' => 'My Players',
+			'title' => 'My Users',
 			'route' => 'viewPlayers',
 			'icon' => 'tf-icons bx bx-home-circle',
 			'role' => [User::SUBADMIN],

@@ -305,7 +305,7 @@
                 </div>
                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                   <div class="me-2">
-                    <h6 class="mb-0">Exposer Balance</h6>
+                    <h6 class="mb-0">Exposure Balance</h6>
                   </div>
                   <div class="user-progress">
                     <h6 class="mb-0">{{ $exposer->sum('bid_amount') }}</h6>

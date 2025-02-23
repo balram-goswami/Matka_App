@@ -18,18 +18,21 @@
             <div class="user-info">
 
                 @if(isset($exposer) && $exposer->sum('subadmin_amount') > 0)
-                <p class="available-balance text-white">Exposer :
+                <p class="available-balance text-white">Exposure :
                     <span class="counter">{{ $exposer->sum('subadmin_amount') }}</span>
                 </p>
                 @endif
             </div>
         </div>
+        @php
+        $homePage = getThemeOptions('homePage');
+        @endphp
         <!-- Sidenav Nav-->
         <ul class="sidenav-nav ps-0">
             <li><a href="{{ route('profile') }}"><i class="ti ti-user"></i>My Profile</a></li>
             <li><a href="{{ route('myBids') }}"><i class="ti ti-bell-ringing lni-tada-effect"></i>My Bids</a></li>
             <li><a href="{{ route('transaction') }}"><i class="ti ti-adjustments-horizontal"></i>Transaction</a></li>
-            <li><a href="{{ route('resultPage') }}"><i class="ti ti-adjustments-horizontal"></i>Results</a></li>
+            <li><a href="{{ $homePage['chartUrl'] ?? '#'}}"><i class="ti ti-adjustments-horizontal"></i>Results</a></li>
             <li>
                 <div class="card settings-card">
                     <div class="card-body">

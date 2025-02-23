@@ -72,7 +72,7 @@
                         <th>{{ $players->wallet->balance }} </th>
                     </tr>
                     <tr>
-                        <th>Exposer Balance </th>
+                        <th>Exposure Balance </th>
                         <th>{{ $exposers->sum('subadmin_amount') }} </th>
                     </tr>
                 </thead>

@@ -7,7 +7,7 @@ $homePage = getThemeOptions('homePage');
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="fw-bold py-3 mb-0 pull-left">Game Chart</h4>
             @if(isset($homePage['chartUrl']))
-            <a class="text-muted float-end" href="{{$homePage['chartUrl']}}"><button type="button"
+            <a class="text-muted float-end" href="{{$homePage['chartUrl']}}" target="_blank"><button type="button"
                     class="btn btn-primary">Go To Chart Website</button></a>
                     @endif
         </div>

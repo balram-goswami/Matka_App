@@ -44,6 +44,10 @@
                     </tbody>
                 </table>
             </div>
+            
+      <div class="pagination mt-3">
+        {{$payment->links()}}
+      </div>
         </div>
     </div>
 </div>

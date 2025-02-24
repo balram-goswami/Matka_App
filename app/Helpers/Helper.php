@@ -45,6 +45,7 @@ function pagination($per_page = 20)
 {
 	return $per_page ?? 20;
 }
+
 function adminBasePath()
 {
 	return 'admin';

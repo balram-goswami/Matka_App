@@ -39,7 +39,7 @@ class SubAdminController extends Controller
     public function viewPlayers()
     {
         $pId = getCurrentUser();
-        $users = User::where('parent', $pId->user_id)->get();
+        $users = User::where('parent', $pId->user_id)->paginate(25);
         $exposers = []; // Store exposer amounts for each user
 
         foreach ($users as $user) {
@@ -69,8 +69,8 @@ class SubAdminController extends Controller
         $bids = BidTransaction::where('user_id', $id)->get();
         $win = BidTransaction::where('user_id', $id)->where('result_status', 'claimed')->get();
         $loss = BidTransaction::where('user_id', $id)->where('result_status', 'loss')->get();
-        $panding = BidTransaction::where('user_id', $id)->where('result_status', NULL)->get();
-        $payment = WalletTransactions::where('user_id', $id)->get();
+        $panding = BidTransaction::where('user_id', $id)->where('result_status', NULL)->paginate(25);
+        $payment = WalletTransactions::where('user_id', $id)->paginate(25);
         $exposer = BidTransaction::where('user_id', $id)
             ->where('status', 'submitted')
             ->whereNull('bid_result')
@@ -219,7 +219,7 @@ class SubAdminController extends Controller
         $user = $this->service->select();
         $puser = getCurrentUser();
         $view = 'SubAdmin.SubAdmin.PaymentPage';
-        $payment = WalletTransactions::where('user_id', $puser->user_id)->get();
+        $payment = WalletTransactions::where('user_id', $puser->user_id)->paginate(25);
         return view('Admin', compact('view', 'user', 'payment'));
     }
 

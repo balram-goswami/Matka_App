@@ -37,13 +37,16 @@
                             $gameName = postName($results->game_id);
                             @endphp
                             <tr>
-                                <td>{{ $gameName->post_title }}</td>
+                                <td>{{ $gameName->post_title }} ({{ $results->slot ?? ''}})</td>
                                 <td>{{ $results->result }}</td>
                                 <td>{{ $results->updated_at }}</td>
                             </tr>
                             @endforeach
                         </tbody>
                     </table>
+                </div>
+                <div class="pagination mt-3">
+                    {{$result->links()}}
                 </div>
             </div>
         </div>

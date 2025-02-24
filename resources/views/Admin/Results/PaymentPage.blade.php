@@ -28,23 +28,27 @@
                         </tr>
                     </thead>
                     <tbody class="table-border-bottom-0">
-                        @foreach($payment->where('user_id', 1) as $list)
+                        @foreach($payment as $list)
                         @php
                         $userName = getUserName($list->tofrom_id);
                         @endphp
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $list->updated_at}}</td>
-                            <td style="color: green;">{{ number_format($list->credit, 2)}}</td>
-                            <td style="color: red;">{{ number_format($list->debit, 2)}}</td>
-                            <td style="color: green;">{{ $list->balance ?? 'NA'}}</td>
-                            <td>{{ $list->remark }} {{$userName}}</td>
+                            <td>{{ $list->updated_at }}</td>
+                            <td style="color: green;">{{ number_format($list->credit, 2) }}</td>
+                            <td style="color: red;">{{ number_format($list->debit, 2) }}</td>
+                            <td style="color: green;">{{ $list->balance ?? 'NA' }}</td>
+                            <td>{{ $list->remark }} {{ $userName }}</td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
+            <div class="pagination mt-3">
+                {{$payment->links()}}
+            </div>
         </div>
+
     </div>
 </div>
 

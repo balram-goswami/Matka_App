@@ -26,11 +26,10 @@ class PlayerController extends Controller
   {
     $view = "Templates.Home";
     $user = getCurrentUser();
-    if ($user && $user->status === 'Block') {
+    if ($user && ($user->status === 'Block' || $user->status === 'BlockByAdmin')) {
       $view = "Templates.Block";
       return view('Front', compact('view'));
     }
-
     // Fetch the user's wallet and theme options
     $wallet = Wallet::where('user_id', $user->user_id)->first();
     $homePage = getThemeOptions('homePage');
@@ -285,7 +284,7 @@ class PlayerController extends Controller
       $view = "Templates.Welcome";
       return view('Front', compact('view'));
     }
-    
+
     $exposer = BidTransaction::where('user_id', $user->user_id)
       ->where('status', 'submitted')
       ->whereNull('bid_result')
@@ -314,7 +313,7 @@ class PlayerController extends Controller
     $bids = BidTransaction::where('user_id', $user->user_id)
       ->where('status', 'submitted')
       ->orderBy('created_at', 'DESC')
-      ->get();
+      ->paginate(25);
 
     $wallet = Wallet::where('user_id', $user->user_id)->first();
 
@@ -503,7 +502,7 @@ class PlayerController extends Controller
   {
     $user = getCurrentUser();
     $wallet = Wallet::where('user_id', $user->user_id)->first();
-    $list = WalletTransactions::where('user_id', $user->user_id)->get();
+    $list = WalletTransactions::where('user_id', $user->user_id)->paginate(25);
 
     $view = 'Templates.Transaction';
     return view('Front', compact('view', 'list', 'user', 'wallet'));
@@ -512,7 +511,7 @@ class PlayerController extends Controller
   public function resultPage()
   {
     $user = getCurrentUser();
-    $result = GameResult::all();
+    $result = GameResult::paginate(10);
     $view = 'Templates.ResultPage';
 
     return view('Front', compact('view', 'result', 'user'));
@@ -526,8 +525,7 @@ class PlayerController extends Controller
       ->where('status', 'submitted')
       ->whereNull('bid_result')
       ->get();
-      
+
     return view('Front', compact('view', 'user', 'exposer'));
   }
-
 }

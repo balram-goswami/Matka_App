@@ -403,6 +403,9 @@
           </tbody>
         </table>
       </div>
+      <div class="pagination mt-3">
+        {{$panding->links()}}
+      </div>
     </div>
   </div>
 </div>
@@ -439,6 +442,10 @@
             @endforeach
           </tbody>
         </table>
+      </div>
+      
+      <div class="pagination mt-3">
+        {{$payment->links()}}
       </div>
     </div>
   </div>

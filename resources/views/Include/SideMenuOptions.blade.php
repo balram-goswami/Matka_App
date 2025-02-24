@@ -32,7 +32,7 @@
             <li><a href="{{ route('profile') }}"><i class="ti ti-user"></i>My Profile</a></li>
             <li><a href="{{ route('myBids') }}"><i class="ti ti-bell-ringing lni-tada-effect"></i>My Bids</a></li>
             <li><a href="{{ route('transaction') }}"><i class="ti ti-adjustments-horizontal"></i>Transaction</a></li>
-            <li><a href="{{ $homePage['chartUrl'] ?? '#'}}"><i class="ti ti-adjustments-horizontal"></i>Results</a></li>
+            <li><a href="{{ $homePage['chartUrl'] ?? '#'}}" target="_blank"><i class="ti ti-adjustments-horizontal"></i>Results</a></li>
             <li>
                 <div class="card settings-card">
                     <div class="card-body">

@@ -32,6 +32,7 @@
                                 class="btn-close"
                                 data-bs-dismiss="modal"
                                 aria-label="Close"></button>
+
                         </div>
                         <form method="post" action="{{ route('addbalancebyadmin') }}">
                             @csrf
@@ -49,6 +50,13 @@
                                             name="user_id"
                                             value="{{ $user->user_id }}"
                                             placeholder="Enter Amount" />
+                                        <textarea
+                                            class="form-control"
+                                            id="deleteReason"
+                                            name="delete_reason"
+                                            placeholder="Enter Reason"
+                                            required
+                                            rows="3"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -89,6 +97,13 @@
                                             name="user_id"
                                             value="{{ $user->user_id }}"
                                             placeholder="Enter Amount" />
+                                        <textarea
+                                            class="form-control"
+                                            id="deleteReason"
+                                            name="delete_reason"
+                                            placeholder="Enter Reason"
+                                            required
+                                            rows="3"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -177,6 +192,9 @@
 
             </table>
         </div>
+        <div class="pagination mt-3">
+        {{$players->links()}}
+    </div>
     </div>
 </div>
 
@@ -212,6 +230,9 @@
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+            <div class="pagination mt-3">
+                {{$payment->links()}}
             </div>
         </div>
     </div>

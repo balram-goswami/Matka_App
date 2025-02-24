@@ -64,6 +64,9 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="pagination mt-3">
+                    {{$list->links()}}
+                </div>
             </div>
         </div>
     </div>

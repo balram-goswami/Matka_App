@@ -36,7 +36,7 @@ class UserController extends Controller
     {
         $users = User::where('role', 'subadmin')
             ->with(['wallet', 'players'])
-            ->get();
+            ->paginate(25);
 
         $view = 'Admin.Users.Index';
         return view('Admin', compact('view', 'users'));
@@ -50,7 +50,7 @@ class UserController extends Controller
         // Fetch Players with Wallets and Players (Eager Loading)
         $players = User::where('parent', $id)
             ->with(['wallet', 'players'])
-            ->get();
+            ->paginate(25);
 
         $exposers = []; // Store exposer amounts for each user
 
@@ -61,7 +61,7 @@ class UserController extends Controller
                 ->sum('subadmin_amount'); // Sum directly in the query
         }
 
-        $payment = WalletTransactions::all();
+        $payment = WalletTransactions::where('user_id', $id)->paginate(25);
 
         $view = 'Admin.Users.ViewSubAdminDetails';
         return view('Admin', compact('view', 'players', 'user', 'exposers', 'payment'));
@@ -76,7 +76,7 @@ class UserController extends Controller
         $exposers = BidTransaction::where('user_id', $id)
             ->where('status', 'submitted')
             ->whereNull('bid_result')
-            ->get();
+            ->paginate(25);
 
 
         $payment = WalletTransactions::all();
@@ -262,9 +262,11 @@ class UserController extends Controller
     {
         $user = $this->service->select();
         $view = 'Admin.Results.PaymentPage';
-        $payment = WalletTransactions::all();
+        $payment = WalletTransactions::where('user_id', 1)->paginate(25);
+
         return view('Admin', compact('view', 'user', 'payment'));
     }
+
 
     public function chart()
     {
@@ -300,8 +302,6 @@ class UserController extends Controller
             return redirect()->back()->with('danger', 'Result Already Declared');
         }
 
-
-
         try {
             // Save the game result
             GameResult::create([
@@ -312,6 +312,7 @@ class UserController extends Controller
 
             $bidTable = BidTransaction::where('game_id', $request->game_id)
                 ->where('bid_result', NULL)
+                ->where('slot', $request->slot)
                 ->get();
 
             foreach ($bidTable as $table) {
@@ -340,6 +341,7 @@ class UserController extends Controller
             // Fetch winning bids
             $winningBids = BidTransaction::where('game_id', $request->game_id)
                 ->where('result_status', 'win')
+                ->where('slot', $request->slot)
                 ->get();
 
             if ($winningBids->isNotEmpty()) {
@@ -581,7 +583,7 @@ class UserController extends Controller
         return redirect()->back()->with('danger', 'No Jantri Found.');
     }
 
-    public function balanceToAdmin(Request $request)
+    public function depositToAdmin(Request $request)
     {
         $validator = Validator::make(
             $request->all(),
@@ -609,7 +611,38 @@ class UserController extends Controller
         $TransactionsUser->created_at = dateTime();
         $TransactionsUser->save();
 
-        return redirect()->back()->with('success', 'Balance transferred successfully.');
+        return redirect()->back()->with('success', 'Balance Deposit successfully.');
+    }
+
+    public function withdrawalToAdmin(Request $request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'user_id' => 'required|exists:wallets,user_id',
+                'balance' => 'required|numeric|min:1',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $adminWallet = Wallet::where('user_id', $request->user_id)->first();
+        $adminWallet->balance = $adminWallet->balance - $request->balance;
+        $adminWallet->created_at = dateTime();
+        $adminWallet->save();
+
+        $TransactionsUser = new WalletTransactions();
+        $TransactionsUser->user_id = $request->user_id;
+        $TransactionsUser->tofrom_id = 1;
+        $TransactionsUser->debit = $request->balance;
+        $TransactionsUser->balance = $adminWallet->balance;
+        $TransactionsUser->remark = 'Withdrawl Balance from self account';
+        $TransactionsUser->created_at = dateTime();
+        $TransactionsUser->save();
+
+        return redirect()->back()->with('success', 'Balance Withdrawl successfully.');
     }
 
     public function addbalancebyadmin(Request $request)
@@ -866,7 +899,7 @@ class UserController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
-        
+
         $bid = BidTransaction::find($id);
 
         if (!$bid) {
@@ -875,8 +908,6 @@ class UserController extends Controller
 
         try {
             DB::beginTransaction();
-
-            // Delete the bid
             $bid->delete();
 
             // Fetch wallets in advance to reduce queries
@@ -904,7 +935,7 @@ class UserController extends Controller
             ]);
 
             // Update Parent Wallet
-            $parentWallet->balance += $bid->parent_amount;
+            $parentWallet->balance += $bid->admin_amount;
             $parentWallet->save();
 
             WalletTransactions::create([

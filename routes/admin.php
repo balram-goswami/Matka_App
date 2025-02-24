@@ -42,12 +42,11 @@ Route::get('viewSubadmin/{id}', [UserController::class, 'viewSubadmin'])->name('
 Route::get('viewSubadminplayer/{id}', [UserController::class, 'viewSubadminplayer'])->name('viewSubadminplayer');
 Route::get('blockUserbyadmin/{id}', [UserController::class, 'blockUserbyadmin'])->name('blockUserbyadmin');
 Route::get('changePassword', [UserController::class, 'changePassword'])->name('changePassword');
-Route::post('balanceToAdmin', [UserController::class, 'balanceToAdmin'])->name('balanceToAdmin');
+Route::post('depositToAdmin', [UserController::class, 'depositToAdmin'])->name('depositToAdmin');
+Route::post('withdrawalToAdmin', [UserController::class, 'withdrawalToAdmin'])->name('withdrawalToAdmin');
 Route::post('addbalancebyadmin', [UserController::class, 'addbalancebyadmin'])->name('addbalancebyadmin');
 Route::post('deletebalancebyadmin', [UserController::class, 'deletebalancebyadmin'])->name('deletebalancebyadmin');
 Route::post('/player/deleteBidByAdmin/{id}', [UserController::class, 'deleteBidByAdmin'])->name('deleteBidByAdmin');
-
-
 
 // Media
 Route::resource('/media', MediaController::class, ['names' => 'media']);

@@ -35,25 +35,28 @@
                         </thead>
                         <tbody>
                             @foreach ($bids as $bid)
-                            @php 
+                            @php
                             $gameName = postName($bid->game_id);
                             @endphp
-                                <tr>
-                                    <td>{{ $bid->updated_at }}</td>
-                                    <td>{{ $gameName->post_title }}</td>
-                                    <td>{{ $bid->answer }}</td>
-                                    <td>{{ $bid->bid_amount }}</td>
-                                    @if($bid->result_status === 'claimed')
-                                        <td style="color: green">Win</td>
-                                    @elseif($bid->bid_result == NULL)
-                                        <td style="color: Red">Wait For Result</td>
-                                    @else
-                                        <td style="color: red">{{$bid->result_status}}</td>
-                                    @endif
-                                </tr>
+                            <tr>
+                                <td>{{ $bid->updated_at }}</td>
+                                <td>{{ $gameName->post_title }}</td>
+                                <td>{{ $bid->answer }}</td>
+                                <td>{{ $bid->bid_amount }}</td>
+                                @if($bid->result_status === 'claimed')
+                                <td style="color: green">Win</td>
+                                @elseif($bid->bid_result == NULL)
+                                <td style="color: Red">Wait For Result</td>
+                                @else
+                                <td style="color: red">{{$bid->result_status}}</td>
+                                @endif
+                            </tr>
                             @endforeach
                         </tbody>
                     </table>
+                </div>
+                <div class="pagination mt-3">
+                    {{$bids->links()}}
                 </div>
             </div>
         </div>

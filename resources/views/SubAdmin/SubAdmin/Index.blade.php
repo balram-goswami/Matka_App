@@ -68,7 +68,7 @@ $currentUser = getCurrentUser();
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="row">
             <!-- Order Statistics -->
-            <div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-6">
+            <div class="col-md-6 col-lg-6 col-xl-6 order-0 mb-6">
                 <div class="card h-100">
                     <div class="card-header d-flex justify-content-between">
                         <div class="card-title mb-0">
@@ -114,7 +114,7 @@ $currentUser = getCurrentUser();
                                 </div>
                                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                     <div class="me-2">
-                                        <h6 class="mb-0">Total Players</h6>
+                                        <h6 class="mb-0"><a href="{{ route('viewPlayers') }}">Total Players</a></h6>
                                     </div>
                                     <div class="user-progress">
                                         <h6 class="mb-0">{{ count($players) }}</h6>
@@ -130,108 +130,11 @@ $currentUser = getCurrentUser();
                 </div>
             </div>
 
-            <div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-6">
-        <div class="card h-100">
-          <div class="card-header d-flex justify-content-between">
-            <div class="card-title mb-0">
-              <h3 class="mb-1">Game Ratio</h3>
-            </div>
-          </div>
-
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-6">
-              <div class="d-flex flex-column align-items-center gap-1">
-                <h3 class="mb-1"></h3>
-              </div>
-              <br>
-            </div>
-            <ul class="p-0 m-0">
-              <li class="d-flex align-items-center mb-5">
-                <div class="avatar flex-shrink-0 me-3">
-                  <span class="avatar-initial rounded bg-label-primary"><i class="bx bx-mobile-alt"></i></span>
-                </div>
-                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                  <div class="me-2">
-                    <h6 class="mb-0">Toss Game Rate</h6>
-                    <h6 class="mb-0">Commission %</h6>
-                  </div>
-                  <div class="user-progress">
-                    <h6 class="mb-0">{{ $currentUser->toss_game_rate ?? 'NA' }} X</h6>
-                    <h6 class="mb-0">{{ $currentUser->toss_game_commission ?? 'NA' }} %</h6>
-                  </div>
-                </div>
-              </li>
-              <li class="d-flex align-items-center mb-5">
-                <div class="avatar flex-shrink-0 me-3">
-                  <span class="avatar-initial rounded bg-label-success"><i class="bx bx-closet"></i></span>
-                </div>
-                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                  <div class="me-2">
-                    <h6 class="mb-0">Crossing Rate</h6>
-                    <h6 class="mb-0">Commission %</h6>
-                  </div>
-                  <div class="user-progress">
-                    <h6 class="mb-0">{{ $currentUser->crossing_game_rate ?? 'NA' }} X</h6>
-                    <h6 class="mb-0">{{ $currentUser->crossing_commission ?? 'NA' }} %</h6>
-                  </div>
-                </div>
-              </li>
-              <li class="d-flex align-items-center mb-5">
-                <div class="avatar flex-shrink-0 me-3">
-                  <span class="avatar-initial rounded bg-label-info"><i class="bx bx-home-alt"></i></span>
-                </div>
-                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                  <div class="me-2">
-                    <h6 class="mb-0">Harf Rate</h6>
-                    <h6 class="mb-0">Commission %</h6>
-                  </div>
-                  <div class="user-progress">
-                  <h6 class="mb-0">{{ $currentUser->harf_game_rate ?? 'NA' }} X</h6>
-                    <h6 class="mb-0">{{ $currentUser->harf_commission ?? 'NA' }} %</h6>
-                  </div>
-                </div>
-              </li>
-              <li class="d-flex align-items-center mb-5">
-                <div class="avatar flex-shrink-0 me-3">
-                  <span class="avatar-initial rounded bg-label-info"><i class="bx bx-home-alt"></i></span>
-                </div>
-                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                  <div class="me-2">
-                    <h6 class="mb-0">Jodi Rate</h6>
-                    <h6 class="mb-0">Commission %</h6>
-                  </div>
-                  <div class="user-progress">
-                  <h6 class="mb-0">{{ $currentUser->jodi_game_rate ?? 'NA' }} X</h6>
-                    <h6 class="mb-0">{{ $currentUser->jodi_commission ?? 'NA' }} %</h6>
-                  </div>
-                </div>
-              </li>
-              <li class="d-flex align-items-center">
-                <div class="avatar flex-shrink-0 me-3">
-                  <span class="avatar-initial rounded bg-label-secondary"><i class="bx bx-football"></i></span>
-                </div>
-                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                  <div class="me-2">
-                    <h6 class="mb-0">ODD EVEN Rate</h6>
-                    <h6 class="mb-0">Commission %</h6>
-                  </div>
-                  <div class="user-progress">
-                  <h6 class="mb-0">{{ $currentUser->oddEven_game_rate ?? 'NA' }} X</h6>
-                    <h6 class="mb-0">{{ $currentUser->oddEven_commission ?? 'NA' }} %</h6>
-                  </div>
-                </div>
-              </li>
-
-            </ul>
-          </div>
-        </div>
-      </div>
-
-            <div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-6">
+            <div class="col-md-6 col-lg-6 col-xl-6 order-0 mb-6">
                 <div class="card h-100">
                     <div class="card-header d-flex justify-content-between">
                         <div class="card-title mb-0">
-                            <h3 class="mb-1">Wallet Details</h3>
+                            <h3 class="mb-1">Game Ratio</h3>
                         </div>
                     </div>
 
@@ -249,10 +152,12 @@ $currentUser = getCurrentUser();
                                 </div>
                                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                     <div class="me-2">
-                                        <h6 class="mb-0">Wallet Balance</h6>
+                                        <h6 class="mb-0">Toss Game Rate</h6>
+                                        <h6 class="mb-0">Commission %</h6>
                                     </div>
                                     <div class="user-progress">
-                                        <h6 class="mb-0">Rs: {{ number_format($wallet->balance, 2) ?? 'NA' }}</h6>
+                                        <h6 class="mb-0">{{ $currentUser->toss_game_rate ?? 'NA' }} X</h6>
+                                        <h6 class="mb-0">{{ $currentUser->toss_game_commission ?? 'NA' }} %</h6>
                                     </div>
                                 </div>
                             </li>
@@ -262,20 +167,65 @@ $currentUser = getCurrentUser();
                                 </div>
                                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                     <div class="me-2">
-                                        <h6 class="mb-0">Total Players</h6>
+                                        <h6 class="mb-0">Crossing Rate</h6>
+                                        <h6 class="mb-0">Commission %</h6>
                                     </div>
                                     <div class="user-progress">
-                                        <h6 class="mb-0">{{ count($players) }}</h6>
+                                        <h6 class="mb-0">{{ $currentUser->crossing_game_rate ?? 'NA' }} X</h6>
+                                        <h6 class="mb-0">{{ $currentUser->crossing_commission ?? 'NA' }} %</h6>
                                     </div>
                                 </div>
                             </li>
-
+                            <li class="d-flex align-items-center mb-5">
+                                <div class="avatar flex-shrink-0 me-3">
+                                    <span class="avatar-initial rounded bg-label-info"><i class="bx bx-home-alt"></i></span>
+                                </div>
+                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                    <div class="me-2">
+                                        <h6 class="mb-0">Harf Rate</h6>
+                                        <h6 class="mb-0">Commission %</h6>
+                                    </div>
+                                    <div class="user-progress">
+                                        <h6 class="mb-0">{{ $currentUser->harf_game_rate ?? 'NA' }} X</h6>
+                                        <h6 class="mb-0">{{ $currentUser->harf_commission ?? 'NA' }} %</h6>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="d-flex align-items-center mb-5">
+                                <div class="avatar flex-shrink-0 me-3">
+                                    <span class="avatar-initial rounded bg-label-info"><i class="bx bx-home-alt"></i></span>
+                                </div>
+                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                    <div class="me-2">
+                                        <h6 class="mb-0">Jodi Rate</h6>
+                                        <h6 class="mb-0">Commission %</h6>
+                                    </div>
+                                    <div class="user-progress">
+                                        <h6 class="mb-0">{{ $currentUser->jodi_game_rate ?? 'NA' }} X</h6>
+                                        <h6 class="mb-0">{{ $currentUser->jodi_commission ?? 'NA' }} %</h6>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <div class="avatar flex-shrink-0 me-3">
+                                    <span class="avatar-initial rounded bg-label-secondary"><i class="bx bx-football"></i></span>
+                                </div>
+                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                    <div class="me-2">
+                                        <h6 class="mb-0">ODD EVEN Rate</h6>
+                                        <h6 class="mb-0">Commission %</h6>
+                                    </div>
+                                    <div class="user-progress">
+                                        <h6 class="mb-0">{{ $currentUser->oddEven_game_rate ?? 'NA' }} X</h6>
+                                        <h6 class="mb-0">{{ $currentUser->oddEven_commission ?? 'NA' }} %</h6>
+                                    </div>
+                                </div>
+                            </li>
 
                         </ul>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

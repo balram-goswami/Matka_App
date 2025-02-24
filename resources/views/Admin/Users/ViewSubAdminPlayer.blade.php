@@ -7,7 +7,7 @@
                 class="btn btn-primary"
                 data-bs-toggle="modal"
                 data-bs-target="#deleteMoney">
-                Withdrawl
+                Withdrawal
             </button>
         </div>
         <div class="mt-4">
@@ -15,7 +15,7 @@
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="deleteMoneyTitle">Withdrawl Balance</h5>
+                            <h5 class="modal-title" id="deleteMoneyTitle">Withdrawal Balance</h5>
                             <button
                                 type="button"
                                 class="btn-close"
@@ -64,7 +64,7 @@
             <table class="table">
                 <thead class="table-light">
                     <tr>
-                        <th>Sub Admn User Id </th>
+                        <th>Sub Admin User Id </th>
                         <th>{{ $players->name }} </th>
                     </tr>
                     <tr>
@@ -154,8 +154,10 @@
                     </tr>
                     @endforeach
                 </tbody>
-
             </table>
+            <div class="pagination mt-3">
+                {{$exposers->links()}}
+            </div>
         </div>
     </div>
 </div>

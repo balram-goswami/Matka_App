@@ -52,6 +52,9 @@
 
             </table>
         </div>
+        <div class="pagination mt-3">
+        {{$users->links()}}
+    </div>
     </div>
 </div>
 

@@ -18,7 +18,7 @@
                     </div>
                 </div>
 
-                <div class="row mb-3">
+                <div class="row mb-3" hidden>
                     <label class="col-sm-2 col-form-label" for="basic-default-email">Password</label>
                     <div class="col-sm-10">
                         <div class="input-group input-group-merge">

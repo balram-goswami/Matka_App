@@ -34,23 +34,30 @@ $homePage = getThemeOptions('header');
                             type="button"
                             class="btn btn-primary"
                             data-bs-toggle="modal"
-                            data-bs-target="#addMoney">
-                            Add Money to self
+                            data-bs-target="#Deposit">
+                            Deposit To Admin
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#withdrawal">
+                            Withdrawal from Admin
                         </button>
 
                         <!-- Modal -->
-                        <div class="modal fade" id="addMoney" tabindex="-1" aria-hidden="true">
+                        <div class="modal fade" id="Deposit" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="addMoneyTitle">Add Money</h5>
+                                        <h5 class="modal-title" id="DepositTitle">Deposit Money</h5>
                                         <button
                                             type="button"
                                             class="btn-close"
                                             data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                     </div>
-                                    <form method="post" action="{{ route('balanceToAdmin') }}">
+                                    <form method="post" action="{{ route('depositToAdmin') }}">
                                         @csrf
                                         <div class="modal-body">
                                             <div class="row">
@@ -79,7 +86,46 @@ $homePage = getThemeOptions('header');
                                 </div>
                             </div>
                         </div>
-                        
+                        <div class="modal fade" id="withdrawal" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="withdrawalTitle">Withdrawal Money</h5>
+                                        <button
+                                            type="button"
+                                            class="btn-close"
+                                            data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <form method="post" action="{{ route('withdrawalToAdmin') }}">
+                                        @csrf
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col mb-6">
+                                                    <label for="nameWithTitle" class="form-label">Enter Amount</label>
+                                                    <input
+                                                        type="text"
+                                                        class="form-control"
+                                                        name="balance"
+                                                        placeholder="Enter Amount" />
+                                                    <input
+                                                        hidden
+                                                        name="user_id"
+                                                        value="1"
+                                                        placeholder="Enter Amount" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                                Close
+                                            </button>
+                                            <button type="submit" class="btn btn-primary">Withdrawal Now</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

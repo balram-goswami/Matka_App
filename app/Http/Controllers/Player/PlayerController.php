@@ -360,6 +360,20 @@ class PlayerController extends Controller
       }
     }
 
+    if ($request->userrate <= 10) {
+      $adminRate = ($request->adminrate - 1) * 100;
+      $subAdminrate = ($request->userrate - 1) * 100;
+
+      $diff = $subAdminrate - $adminRate;
+      $subadminDiff = $request->bid_amount / 100 * $diff;
+      $adminDiff = $request->bid_amount / 100 * $adminRate;
+
+    } else {
+      $diff = $request->userrate - $request->adminrate;
+      $subadminDiff = $request->bid_amount / 100 * $diff;
+      $adminDiff = $request->bid_amount / 100 * $request->adminrate;
+    }
+
     $user = getCurrentUser();
     $parent = User::where('user_id', $user->user_id)->get()->first();
 
@@ -385,6 +399,8 @@ class PlayerController extends Controller
     $bid->player_commission = $player_commission;
     $bid->winamount_from_admin = $winamount_from_admin;
     $bid->admin_amount = $admin_amount;
+    $bid->admin_dif = $adminDiff;
+    $bid->subadmin_dif = $subadminDiff;
     $bid->subadmin_commission = $subadmin_commission;
     $bid->save();
 

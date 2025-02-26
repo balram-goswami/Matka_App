@@ -29,6 +29,8 @@ return new class extends Migration
             $table->string('winamount_from_admin')->nullable();
             $table->string('admin_amount')->nullable();
             $table->string('subadmin_commission')->nullable();
+            $table->string('admin_dif')->nullable();
+            $table->string('subadmin_dif')->nullable();
             $table->string('result_status')->nullable();
             $table->string('status')->default('pending');
             $table->timestamps();

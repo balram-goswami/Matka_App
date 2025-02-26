@@ -99,7 +99,7 @@
                     @php
                     $gameName = postName($list->game_id);
                     @endphp
-                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $exposers->firstItem() + $loop->index }}</td>
                     <td>{{ $gameName->post_title ?? 'NA' }}</td>
                     <td>{{ $list->answer }}</td>
                     <td>{{ $list->bid_amount }}</td>

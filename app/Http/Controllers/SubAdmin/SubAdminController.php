@@ -58,7 +58,7 @@ class SubAdminController extends Controller
     {
         $view = 'SubAdmin.SubAdmin.Chart';
 
-        return view('Admin', compact('view'));  
+        return view('Admin', compact('view'));
     }
 
 
@@ -263,7 +263,7 @@ class SubAdminController extends Controller
 
             $jantriData = BidTransaction::where('game_id', $game_id)
                 ->where('parent_id', $c_user->user_id)
-                ->selectRaw('answer, SUM(subadmin_amount) as total_bid, SUM(win_amount) as total_win, result_status')
+                ->selectRaw('answer, SUM(subadmin_dif) as total_bid, SUM(win_amount) as total_win, result_status')
                 ->groupBy('answer', 'result_status')
                 ->orderBy('answer', 'asc')
                 ->get();
@@ -271,30 +271,57 @@ class SubAdminController extends Controller
             $view = 'SubAdmin.Jantri.Table';
             return view('Admin', compact('view', 'jantriData', 'gameType', 'game', 'gameResult'));
         } else {
+
             $game_id = $request->sattaGame;
             $time = $request->sattaGameTime;
             $date = $request->date;
 
             $gameType = 'satta';
-            $gameResult = GameResult::where('game_id', $game_id)->first(['result']); // Using first() to avoid collections
+            $gameResult = GameResult::where('game_id', $game_id)
+                ->where('slot', $request->slot)
+                ->first(['result']);
 
-            // Merge date and time into a DateTime format
-            $selectedDateTime = Carbon::parse("$date $time");
+            $dates = Carbon::parse($request->gamedate)->startOfDay();  // 00:00:00
+            $enddates = Carbon::parse($request->gamedate)->endOfDay(); // 23:59:59
 
-            // Get the timestamp for 5 hours before the updated_at field
-            $timeLimit = Carbon::now()->subHours(5);
-            $c_user = getCurrentUser();
             $jantriData = BidTransaction::where('game_id', $game_id)
-                ->where('parent_id', $c_user->user_id)
-                ->where('updated_at', '>=', $timeLimit) // Only results updated in the last 5 hours
-                ->where('updated_at', '<=', $selectedDateTime) // Ensure records match the selected date-time
-                ->selectRaw('answer, SUM(subadmin_amount) as total_bid, SUM(win_amount) as total_win, result_status')
+                ->where('slot', $request->slot)
+                ->where('harf_digit', NULL)
+                ->whereBetween('updated_at', [$dates, $enddates])  // Corrected condition
+                ->selectRaw('answer, SUM(subadmin_dif) as total_bid, SUM(win_amount) as total_win, result_status')
+                ->groupBy('answer', 'result_status')
+                ->orderBy('answer', 'asc')
+                ->get();
+
+            $jantriOddEven = BidTransaction::where('game_id', $game_id)
+                ->where('slot', $request->slot)
+                ->where('harf_digit', 'oddEven')
+                ->whereBetween('updated_at', [$dates, $enddates])  // Corrected condition
+                ->selectRaw('answer, SUM(subadmin_dif) as total_bid, SUM(win_amount) as total_win, result_status')
+                ->groupBy('answer', 'result_status')
+                ->orderBy('answer', 'asc')
+                ->get();
+
+            $jantriandar = BidTransaction::where('game_id', $game_id)
+                ->where('slot', $request->slot)
+                ->where('harf_digit', 'Andar')
+                ->whereBetween('updated_at', [$dates, $enddates])  // Corrected condition
+                ->selectRaw('answer, SUM(subadmin_dif) as total_bid, SUM(win_amount) as total_win, result_status')
+                ->groupBy('answer', 'result_status')
+                ->orderBy('answer', 'asc')
+                ->get();
+
+            $jantribahar = BidTransaction::where('game_id', $game_id)
+                ->where('slot', $request->slot)
+                ->where('harf_digit', 'Bahar')
+                ->whereBetween('updated_at', [$dates, $enddates])  // Corrected condition
+                ->selectRaw('answer, SUM(subadmin_dif) as total_bid, SUM(win_amount) as total_win, result_status')
                 ->groupBy('answer', 'result_status')
                 ->orderBy('answer', 'asc')
                 ->get();
 
             $view = 'SubAdmin.Jantri.Table';
-            return view('Admin', compact('view', 'jantriData', 'gameType', 'gameResult'));
+            return view('Admin', compact('view', 'jantriData', 'gameType', 'gameResult', 'jantriOddEven', 'jantriandar', 'jantribahar'));
         }
 
         return redirect()->back()->with('danger', 'No Jantri Found.');

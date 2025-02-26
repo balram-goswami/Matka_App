@@ -53,7 +53,7 @@
                             $userName = getUserName($item->tofrom_id);
                             @endphp
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $list->firstItem() + $loop->index }}</td>
                                 <td>{{ $item->updated_at }}</td>
                                 <td style="color: green;">{{ $item->credit }}</td>
                                 <td style="color: red;">{{ $item->debit }}</td>

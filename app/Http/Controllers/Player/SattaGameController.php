@@ -157,6 +157,11 @@ class SattaGameController extends Controller
         $subadmin_commission = $request->bid_amount * $request->subadmincommission / 100;
         $admin_amount = $request->bid_amount - $subadmin_commission;
 
+        $diff = $request->userrate - $request->adminrate;
+        $subadminDiff = $request->bid_amount / 100 * $diff;
+        $adminDiff = $request->bid_amount / 100 * $request->adminrate;
+
+
         foreach ($combinations as $combination) {
             $bid = new BidTransaction;
             $bid->user_id = $request->user_id;
@@ -171,6 +176,8 @@ class SattaGameController extends Controller
             $bid->player_commission = $player_commission;
             $bid->winamount_from_admin = $winamount_from_admin;
             $bid->admin_amount = $admin_amount;
+            $bid->admin_dif = $adminDiff;
+            $bid->subadmin_dif = $subadminDiff;
             $bid->subadmin_commission = $subadmin_commission;
             $bid->save();
         }
@@ -221,7 +228,13 @@ class SattaGameController extends Controller
 
                     $subadmin_commission = $amount * $request->subadmincommission / 100;
                     $admin_amount = $amount - $subadmin_commission;
-                    
+
+                    $diff = $request->userrate - $request->adminrate;
+                    $getDiff = $diff * 10;
+                    $adminrate = $request->adminrate*10;
+                    $subadminDiff = $amount / 100 * $getDiff;
+                    $adminDiff = $amount / 100 * $adminrate;
+
                     $bid = new BidTransaction;
                     $bid->user_id = $request->user_id;
                     $bid->game_id = $request->game_id;
@@ -235,6 +248,8 @@ class SattaGameController extends Controller
                     $bid->player_commission = $player_commission;
                     $bid->winamount_from_admin = $winamount_from_admin;
                     $bid->admin_amount = $admin_amount;
+                    $bid->admin_dif = $adminDiff;
+                    $bid->subadmin_dif = $subadminDiff;
                     $bid->subadmin_commission = $subadmin_commission;
                     $bid->save();
                 }
@@ -255,6 +270,12 @@ class SattaGameController extends Controller
                     $subadmin_commission = $amount * $request->subadmincommission / 100;
                     $admin_amount = $amount - $subadmin_commission;
 
+                    $diff = $request->userrate - $request->adminrate;
+                    $getDiff = $diff * 10;
+                    $adminrate = $request->adminrate*10;
+                    $subadminDiff = $amount / 100 * $getDiff;
+                    $adminDiff = $amount / 100 * $adminrate;
+
                     $bid = new BidTransaction;
                     $bid->user_id = $request->user_id;
                     $bid->game_id = $request->game_id;
@@ -268,6 +289,8 @@ class SattaGameController extends Controller
                     $bid->player_commission = $player_commission;
                     $bid->winamount_from_admin = $winamount_from_admin;
                     $bid->admin_amount = $admin_amount;
+                    $bid->admin_dif = $adminDiff;
+                    $bid->subadmin_dif = $subadminDiff;
                     $bid->subadmin_commission = $subadmin_commission;
                     $bid->save();
                 }

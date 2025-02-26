@@ -24,6 +24,8 @@ class BidTransaction extends Model
         'winamount_from_admin',
         'admin_amount',
         'subadmin_commission',
+        'admin_dif',
+        'subadmin_dif',
         'result_status',
         'status'
     ];

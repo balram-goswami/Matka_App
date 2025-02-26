@@ -1,6 +1,6 @@
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="card mb-4">
-    <div class="row mb-3 d-flex align-items-end">
+        <div class="row mb-3 d-flex align-items-end">
             <div class="col">
                 <label for="fromDate">From:</label>
                 <input type="date" id="fromDate" class="form-control">
@@ -33,7 +33,7 @@
                         $userName = getUserName($list->tofrom_id);
                         @endphp
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $payment->firstItem() + $loop->index  }}</td>
                             <td>{{ $list->updated_at}}</td>
                             <td style="color: green;">{{ number_format($list->credit, 2)}}</td>
                             <td style="color: red;">{{ number_format($list->debit, 2)}}</td>
@@ -44,10 +44,10 @@
                     </tbody>
                 </table>
             </div>
-            
-      <div class="pagination mt-3">
-        {{$payment->links()}}
-      </div>
+
+            <div class="pagination mt-3">
+                {{$payment->links()}}
+            </div>
         </div>
     </div>
 </div>

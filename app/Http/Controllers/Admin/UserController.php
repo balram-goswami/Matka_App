@@ -307,7 +307,7 @@ class UserController extends Controller
             GameResult::create([
                 'game_id' => $request->game_id,
                 'slot' => $request->slot ?? NULL,
-                'result' => $formattedResult, // Use formatted result
+                'result' => $formattedResult,
             ]);
 
             $bidTable = BidTransaction::where('game_id', $request->game_id)
@@ -322,7 +322,7 @@ class UserController extends Controller
 
                 if ($table->harf_digit === 'oddEven') {
                     $bidResult = ($result % 2 === 0) ? 'EVEN' : 'ODD';
-                } elseif ($table->harf_digit === 'Ander') {
+                } elseif ($table->harf_digit === 'Andar') {
                     $bidResult = intval(substr($result, 0, 1)); // First digit
                 } elseif ($table->harf_digit === 'Bahar') {
                     $bidResult = intval(substr($result, 1, 1)); // Second digit
@@ -546,6 +546,7 @@ class UserController extends Controller
         if ($request->tossGame == !NULL) {
             $game_id = $request->tossGame;
             $gameType = 'option';
+            $c_user = getCurrentUser();
 
             $gameResult = GameResult::where('game_id', $game_id)->get('result')->first();
 
@@ -553,7 +554,8 @@ class UserController extends Controller
             $game = $getgame->where('post_id', $game_id)->first();
 
             $jantriData = BidTransaction::where('game_id', $game_id)
-                ->selectRaw('answer, SUM(admin_amount) as total_bid, SUM(winamount_from_admin) as total_win, result_status')
+                ->where('parent_id', $c_user->user_id)
+                ->selectRaw('answer, SUM(admin_dif) as total_bid, SUM(winamount_from_admin) as total_win, result_status')
                 ->groupBy('answer', 'result_status')
                 ->orderBy('answer', 'asc')
                 ->get();
@@ -561,25 +563,58 @@ class UserController extends Controller
             $view = 'Admin.Jantri.Table';
             return view('Admin', compact('view', 'jantriData', 'gameType', 'game', 'gameResult'));
         } else {
+
             $game_id = $request->sattaGame;
             $time = $request->sattaGameTime;
+            $date = $request->date;
 
             $gameType = 'satta';
-            $gameResult = GameResult::where('game_id', $game_id)->where('slot', $request->slot)->first(['result']);
-            $dates = $request->gamedate . ' 00:00:00';
+            $gameResult = GameResult::where('game_id', $game_id)
+                ->where('slot', $request->slot)
+                ->first(['result']);
+
+            $dates = Carbon::parse($request->gamedate)->startOfDay();  // 00:00:00
+            $enddates = Carbon::parse($request->gamedate)->endOfDay(); // 23:59:59
 
             $jantriData = BidTransaction::where('game_id', $game_id)
                 ->where('slot', $request->slot)
-                ->where('updated_at', '>=', $dates)
-                ->selectRaw('answer, SUM(admin_amount) as total_bid, SUM(winamount_from_admin) as total_win, result_status')
+                ->where('harf_digit', NULL)
+                ->whereBetween('updated_at', [$dates, $enddates])  // Corrected condition
+                ->selectRaw('answer, SUM(admin_dif) as total_bid, SUM(winamount_from_admin) as total_win, result_status')
+                ->groupBy('answer', 'result_status')
+                ->orderBy('answer', 'asc')
+                ->get();
+
+            $jantriOddEven = BidTransaction::where('game_id', $game_id)
+                ->where('slot', $request->slot)
+                ->where('harf_digit', 'oddEven')
+                ->whereBetween('updated_at', [$dates, $enddates])  // Corrected condition
+                ->selectRaw('answer, SUM(admin_dif) as total_bid, SUM(winamount_from_admin) as total_win, result_status')
+                ->groupBy('answer', 'result_status')
+                ->orderBy('answer', 'asc')
+                ->get();
+
+            $jantriandar = BidTransaction::where('game_id', $game_id)
+                ->where('slot', $request->slot)
+                ->where('harf_digit', 'Andar')
+                ->whereBetween('updated_at', [$dates, $enddates])  // Corrected condition
+                ->selectRaw('answer, SUM(admin_dif) as total_bid, SUM(winamount_from_admin) as total_win, result_status')
+                ->groupBy('answer', 'result_status')
+                ->orderBy('answer', 'asc')
+                ->get();
+
+            $jantribahar = BidTransaction::where('game_id', $game_id)
+                ->where('slot', $request->slot)
+                ->where('harf_digit', 'Bahar')
+                ->whereBetween('updated_at', [$dates, $enddates])  // Corrected condition
+                ->selectRaw('answer, SUM(admin_dif) as total_bid, SUM(winamount_from_admin) as total_win, result_status')
                 ->groupBy('answer', 'result_status')
                 ->orderBy('answer', 'asc')
                 ->get();
 
             $view = 'Admin.Jantri.Table';
-            return view('Admin', compact('view', 'jantriData', 'gameType', 'gameResult'));
+            return view('Admin', compact('view', 'jantriData', 'gameType', 'gameResult', 'jantriOddEven', 'jantriandar', 'jantribahar'));
         }
-
         return redirect()->back()->with('danger', 'No Jantri Found.');
     }
 

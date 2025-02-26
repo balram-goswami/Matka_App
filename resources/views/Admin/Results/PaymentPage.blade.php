@@ -33,7 +33,7 @@
                         $userName = getUserName($list->tofrom_id);
                         @endphp
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $payment->firstItem() + $loop->index }}</td>
                             <td>{{ $list->updated_at }}</td>
                             <td style="color: green;">{{ number_format($list->credit, 2) }}</td>
                             <td style="color: red;">{{ number_format($list->debit, 2) }}</td>

@@ -394,7 +394,7 @@
             $game = postName($open->game_id);
             @endphp
             <tr>
-              <td>{{ $loop->iteration }}</td>
+              <td>{{ $panding->firstItem() + $loop->index }}</td>
               <td>{{ $game->post_title }}</td>
               <td>{{ $open->answer }}</td>
               <td>{{ $open->bid_amount }}</td>
@@ -432,11 +432,11 @@
             $userName = getUserName($list->tofrom_id);
             @endphp
             <tr>
-              <td>{{ $loop->iteration }}</td>
+              <td>{{ $payment->firstItem() + $loop->index }}</td>
               <td>{{ $list->updated_at}}</td>
-              <td>{{ number_format($list->credit, 2)}}</td>
-              <td>{{ number_format($list->debit, 2)}}</td>
-              <td>{{ $list->balance ?? 'NA'}}</td>
+              <td style="color: green;">{{ number_format($list->credit, 2)}}</td>
+              <td style="color: red;">{{ number_format($list->debit, 2)}}</td>
+              <td style="color: green;">{{ $list->balance ?? 'NA'}}</td>
               <td>{{ $list->remark }} {{$userName}}</td>
             </tr>
             @endforeach

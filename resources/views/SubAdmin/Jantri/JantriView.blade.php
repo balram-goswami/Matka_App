@@ -84,24 +84,3 @@
         }
     });
 </script>
-
-<script>
-    let sattaGames = @json($sattaGame);
-
-    document.getElementById('sattaGameType').addEventListener('change', function() {
-        let selectedGameId = this.value;
-        let sattaGameTimeDropdown = document.getElementById('sattaGameTime');
-
-        sattaGameTimeDropdown.innerHTML = '<option value="">Select Game Time</option>'; // Reset dropdown
-
-        let selectedGame = sattaGames.find(game => game.post_id == selectedGameId);
-        if (selectedGame && selectedGame.extraFields) {
-            if (selectedGame.extraFields.close_time_morning) {
-                sattaGameTimeDropdown.innerHTML += `<option value="${selectedGame.extraFields.close_time_morning}">Morning Game</option>`;
-            }
-            if (selectedGame.extraFields.close_time_evening) {
-                sattaGameTimeDropdown.innerHTML += `<option value="${selectedGame.extraFields.close_time_evening}">Evening Game</option>`;
-            }
-        }
-    });
-</script>

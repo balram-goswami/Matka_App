@@ -11,7 +11,7 @@
                 class="btn btn-primary"
                 data-bs-toggle="modal"
                 data-bs-target="#addMoney">
-                Diposit
+                Deposit
             </button>
             <button
                 type="button"
@@ -26,7 +26,7 @@
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="addMoneyTitle">Deposite Balance</h5>
+                            <h5 class="modal-title" id="addMoneyTitle">Deposit Balance</h5>
                             <button
                                 type="button"
                                 class="btn-close"
@@ -64,7 +64,7 @@
                                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                                     Close
                                 </button>
-                                <button type="submit" class="btn btn-primary">Deposite Now</button>
+                                <button type="submit" class="btn btn-primary">Deposit Now</button>
                             </div>
                         </form>
                     </div>
@@ -220,7 +220,7 @@
                         $userName = getUserName($list->tofrom_id);
                         @endphp
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $payment->firstItem() + $loop->index }}</td>
                             <td>{{ $list->updated_at}}</td>
                             <td style="color: green;">{{ number_format($list->credit, 2)}}</td>
                             <td style="color: red;">{{ number_format($list->debit, 2)}}</td>

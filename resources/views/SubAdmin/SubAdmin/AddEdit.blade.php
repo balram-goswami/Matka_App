@@ -6,7 +6,11 @@
     </div>
     <div class="card-body">
       <div class="table-responsive text-nowrap">
+      @if($user->user_id)
+      {{Form::open(array('route' => array('users.update', $user->user_id), 'method' => 'PUT'))}}
+      @else
         {{Form::open(array('route' => 'users.store', 'method' => 'POST'))}}
+        @endif
         @php
         $username = generateUsername();
         @endphp

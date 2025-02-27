@@ -5,38 +5,41 @@ $gameStatus = getThemeOptions('betSetting');
 @endphp
 
 <style>
-    /* News Ticker Container */
     .news-ticker {
+        display: flex;
+        align-items: center;
         width: 100%;
-        background: black;
+        background: #111;
         color: white;
-        padding: 10px 0;
+        padding: 12px 15px;
+        font-size: 16px;
+        font-weight: 500;
+        border-radius: 5px;
         overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         white-space: nowrap;
+    }
+
+    .news-icon {
+        font-size: 22px;
+        color: #FFC107;
+        margin-right: 25px;
+        animation: pulse 1.5s infinite alternate;
+    }
+
+    .ticker-wrapper {
+        flex: 1;
+        overflow: hidden;
         position: relative;
     }
 
-    /* Scrolling Content */
     .ticker-content {
         display: inline-block;
         white-space: nowrap;
-        animation: ticker 15s linear infinite;
+        animation: scroll 15s linear infinite;
     }
 
-    .news-label {
-        font-weight: bold;
-        color: #ff0000;
-        /* Red color for visibility */
-        margin-right: 10px;
-    }
-
-    .news-section {
-        display: flex;
-        align-items: center;
-    }
-
-    /* Animation for Scrolling Effect */
-    @keyframes ticker {
+    @keyframes scroll {
         from {
             transform: translateX(100%);
         }
@@ -46,25 +49,50 @@ $gameStatus = getThemeOptions('betSetting');
         }
     }
 
-    /* Space between news items */
-    .ticker-content p {
-        margin-right: 50px;
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+            opacity: 0.8;
+        }
+
+        100% {
+            transform: scale(1.1);
+            opacity: 1;
+        }
+    }
+
+    .stripSize {
+        margin-top: 3%;
+    }
+
+    @media only screen and (max-width: 767px) {
+        .stripSize {
+            margin-top: 10%;
+        }
+
     }
 </style>
 
-<div class="container">
-    <div class="page-content-wrapper">
-        @if($news->isNotEmpty())
-        <div class="news-section">
-            <strong class="news-label">News:</strong>
-            <div class="news-ticker">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+<div class="weekly-best-seller-area py-3 stripSize">
+@if($news->count() > 1)
+    <div class="container">
+        <div class="news-ticker">
+            <i class="fa-solid fa-bullhorn news-icon"></i>
+            <div class="ticker-wrapper">
                 <div class="ticker-content">
-                    {{ implode(' || ', $news->pluck('post_excerpt')->toArray()) }}
+                    @foreach($news as $index => $newsItem)
+                    <span>{{ $newsItem->post_excerpt }}</span>
+                    @if(!$loop->last)
+                    <span> || </span>
+                    @endif
+                    @endforeach
                 </div>
             </div>
         </div>
-        @endif
     </div>
+    @endif
 </div>
 
 

@@ -65,7 +65,7 @@
                     <tbody class="table-border-bottom-0">
                         @for ($i = 0; $i < 100; $i++)
                             @php
-                            $bid=$jantriData->where('answer', $i)->first();
+                            $bid = $jantriData->where('answer', $i)->first();
                             @endphp
                             <tr>
                                 <td>{{ $i }}</td>

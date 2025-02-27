@@ -183,17 +183,17 @@ function themeFieldArray()
             'icon' => '<i class="fa fa-cog" aria-hidden="true"></i>',
             'fields' =>
             [
-                [
-                    'title' => 'Game Status',
-                    'id' => 'status',
-                    'type' => 'select',
-                    'placeholder' => 'Game Status',
-                    'default' => '',
-                    'options' => [
-                        'on' => 'Game On',
-                        'off' => 'Game Off',
-                    ],
-                ],
+                // [
+                //     'title' => 'Game Status',
+                //     'id' => 'status',
+                //     'type' => 'select',
+                //     'placeholder' => 'Game Status',
+                //     'default' => '',
+                //     'options' => [
+                //         'on' => 'Game On',
+                //         'off' => 'Game Off',
+                //     ],
+                // ],
                 [
                     'title' =>'Choice Game min Bet',
                     'id' => 'choiceGameMin',

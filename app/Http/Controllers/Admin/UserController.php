@@ -257,7 +257,6 @@ class UserController extends Controller
         return view('Admin', compact('view', 'user', 'numberGame', 'sattaGame', 'results', 'gameNames'));
     }
 
-
     public function paymentRequest()
     {
         $user = $this->service->select();
@@ -289,12 +288,12 @@ class UserController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        // Format the result (Ensure it's a number and pad if between 1-9)
         $formattedResult = str_pad($request->result, 2, '0', STR_PAD_LEFT);
+        $date = dateOnly();
 
-        // Check if result is already declared
         $gameResult = GameResult::where('game_id', $request->game_id)
             ->where('slot', $request->slot)
+            ->whereDate('created_at', $date)
             ->latest()
             ->first();
 
@@ -344,12 +343,16 @@ class UserController extends Controller
                 ->where('slot', $request->slot)
                 ->get();
 
-            if ($winningBids->isNotEmpty()) {
-                $claimResult = $this->clameWinAmount();
-                if ($claimResult instanceof \Illuminate\Http\RedirectResponse) {
-                    return $claimResult;
+            foreach ($winningBids as $winningBid) {
+                if ($winningBid->isNotEmpty()) {
+                    $claimResult = $this->clameWinAmount();
+                    if ($claimResult instanceof \Illuminate\Http\RedirectResponse) {
+                        return $claimResult;
+                    }
                 }
             }
+
+
 
             // Ensure a single success response after all iterations
             return redirect()->back()->with('success', 'Bid results updated successfully');
@@ -374,7 +377,6 @@ class UserController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        // Check if result is already declared
         $games = GameResult::where('game_id', $request->game_id)->exists();
         if ($games) {
             return redirect()->back()->with('danger', 'Result Already Declared');
@@ -399,10 +401,12 @@ class UserController extends Controller
                 ->where('result_status', 'win')
                 ->get();
 
-            if ($winningBids->isNotEmpty()) {
-                $claimResult = $this->clameWinAmount();
-                if ($claimResult instanceof \Illuminate\Http\RedirectResponse) {
-                    return $claimResult;
+            foreach ($winningBids as $winningBid) {
+                if ($winningBid->isNotEmpty()) {
+                    $claimResult = $this->clameWinAmount();
+                    if ($claimResult instanceof \Illuminate\Http\RedirectResponse) {
+                        return $claimResult;
+                    }
                 }
             }
 
@@ -554,7 +558,6 @@ class UserController extends Controller
             $game = $getgame->where('post_id', $game_id)->first();
 
             $jantriData = BidTransaction::where('game_id', $game_id)
-                ->where('parent_id', $c_user->user_id)
                 ->selectRaw('answer, SUM(admin_dif) as total_bid, SUM(winamount_from_admin) as total_win, result_status')
                 ->groupBy('answer', 'result_status')
                 ->orderBy('answer', 'asc')

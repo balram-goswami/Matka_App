@@ -69,6 +69,14 @@
                 data-bs-target="#deleteMoney">
                 Withdrawl
               </button>
+              <br>
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#changePwd">
+                Password
+              </button>
 
               <!-- Modal -->
               <div class="modal fade" id="addMoney" tabindex="-1" aria-hidden="true">
@@ -163,6 +171,57 @@
                         </button>
                         <button type="submit" class="btn btn-primary">Withdrawl Now</button>
                       </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <div class="modal fade" id="changePwd" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="changePwdTitle">Password Update</h5>
+                      <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                    </div>
+                    {{Form::open(array('route' => array('users.update', $user->user_id), 'method' => 'PUT'))}}
+                    @csrf
+                    <div class="modal-body">
+                      <div class="row">
+                        <div class="col mb-6">
+                          <label for="nameWithTitle" class="form-label">Enter New Password</label>
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="password"
+                            placeholder="Enter Amount" />
+                          <input hidden
+                            type="text"
+                            class="form-control"
+                            name="name"
+                            value="{{ $user->name}}" />
+                          <input hidden
+                            type="text"
+                            class="form-control"
+                            name="role"
+                            value="{{ $user->role}}" />
+                          <input hidden
+                            type="text"
+                            class="form-control"
+                            name="status"
+                            value="{{ $user->status}}" />
+
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        Close
+                      </button>
+                      <button type="submit" class="btn btn-primary">Update Now</button>
+                    </div>
                     </form>
                   </div>
                 </div>
@@ -443,7 +502,7 @@
           </tbody>
         </table>
       </div>
-      
+
       <div class="pagination mt-3">
         {{$payment->links()}}
       </div>

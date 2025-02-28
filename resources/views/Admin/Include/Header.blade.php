@@ -18,8 +18,6 @@
     <!-- Favicon -->
     @if (isset($setting['headerfavicon']) && $setting['headerfavicon'])
     <link rel="icon" type="image/x-icon" href="<?php echo asset($setting['headerfavicon']); ?>" />
-    @else
-    <link rel="icon" type="image/x-icon" href="<?php echo assetPath('img/favicon/favicon.ico'); ?>" />
     @endif
 
     @Include('Common.Style')

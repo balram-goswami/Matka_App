@@ -17,6 +17,7 @@ use App\Models\{
 };
 
 use Illuminate\Support\Facades\Http;
+use LDAP\Result;
 use Validator, DateTime, Config, Helpers, Hash, DB, Session, Auth, Redirect;
 
 class PlayerController extends Controller
@@ -36,6 +37,7 @@ class PlayerController extends Controller
     $headerOption = getThemeOptions('header');
     $optionGame = getPostsByPostType('optiongame', 0, 'new', true);
     $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
+    
 
     // Get the current time and today's date
     $now = \Carbon\Carbon::now('Asia/Kolkata');  // Ensure the correct timezone
@@ -72,6 +74,7 @@ class PlayerController extends Controller
       // Log the result of the open checks
       \Log::info("Is Morning Open: {$satta['isMorningOpen']}");
       \Log::info("Is Evening Open: {$satta['isEveningOpen']}");
+      $result = GameResult::where('game_id', $satta->post_id)->latest()->first();
     }
 
     $exposer = BidTransaction::where('user_id', $user->user_id)
@@ -88,7 +91,8 @@ class PlayerController extends Controller
       'wallet',
       'user',
       'sattaGame',
-      'exposer'
+      'exposer',
+      'result'
     ));
   }
 

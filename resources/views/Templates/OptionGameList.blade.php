@@ -1,3 +1,54 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    .custom-card {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-header {
+        background: white;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .card-header img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .play-btn {
+        background: red;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: bold;
+    }
+
+    .market-status {
+        color: red;
+        font-weight: bold;
+    }
+
+    .card-footer {
+        background: #FFB80C;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+    }
+
+    a {
+        text-decoration: none;
+    }
+</style>
+
 <!-- Header Area-->
 <div class="header-area" id="headerArea">
     <div class="container h-100 d-flex align-items-center justify-content-between rtl-flex-d-row-r">
@@ -16,75 +67,74 @@
 </div>
 
 @include('Include.SideMenuOptions')
-<br><br><br>
-<div class="weekly-best-seller-area py-3">
-    <div class="container">
-        <div class="section-heading d-flex align-items-center justify-content-between dir-rtl">
-            <h6>Toss Games</h6>
-        </div>
-        <div class="row g-2">
-            @if($optionGame->isNotEmpty())
-            @foreach($optionGame as $index => $quizgame)
-            @if($quizgame['extraFields']['close_date'] >= now()->toDateString())
-            <div class="col-12">
-                <div class="single-vendor-wrap bg-img p-4 bg-overlay" style="background-image: url('../themeAssets/img/bg-img/16.jpg')">
-                    <h6 class="vendor-title text-white">{{ $quizgame->post_title }}</h6>
-                    <div class="vendor-info">
-                        @php
-                        $closeDate = $quizgame['extraFields']['close_date'] ?? null;
-                        $currentDate = dateonly();
-                        $currentTime = timeonly();
-                        $closeTime = $quizgame['extraFields']['close_time'] ?? null;
-                        $result = DB::table('game_results')->where('game_id', $quizgame->post_id)->first();
-                        @endphp
+<br>
 
-                        @if($closeDate >= $currentDate)
-                        <p class="product-rating text-white"><i class="ti ti-clock"></i>
-                            <span id="time-left-{{ $index }}"
-                                data-end-time="{{ \Carbon\Carbon::parse($quizgame['extraFields']['close_date'] . ' ' . $quizgame['extraFields']['close_time'])->timestamp }}"
-                                data-market-id="market-status-{{ $index }}">
-                                Loading...
-                            </span>
-                        </p>
-                        @php
-                        // Convert close_date and close_time into a single timestamp
-                        $closeDateTime = strtotime($quizgame['extraFields']['close_date'] . ' ' . $quizgame['extraFields']['close_time']);
-                        $currentTimestamp = time(); // Current timestamp
-                        @endphp
-
-                        @if($closeDateTime >= $currentTimestamp)
-                        <div class="ratings lh-1 text-white" id="market-status-{{ $index }}">
-                            <i class="ti ti-star-filled"></i> Market <span class="ms-1">( Open )</span>
-                        </div>
-                        <a class="btn btn-primary btn-sm mt-3" href="{{ route('single.post', ['post_type' => $quizgame->post_type, 'slug' => $quizgame->post_name]) }}">
-                            Play Now<i class="ti ti-arrow-right ms-1"></i>
-                        </a>
-                        @else
-                        <div class="ratings lh-1 text-white">
-                            <i class="ti ti-star-filled"></i> Market: <span class="ms-1">( Closed )</span>
-                        </div>
-                        <div class="ratings lh-1 text-white">
-                            <i class="ti ti-star-filled"></i> Result: <span class="ms-1"> {{ $result->result ?? 'Waiting for Result' }}</span>
-                        </div>
-                        @endif
-                        @endif
-                    </div>
-                    <div class="vendor-profile shadow">
-                        <figure class="m-0">
-                            @if(isset($quizgame->post_image))
-                            <img src="{{ publicPath($quizgame->post_image) }}" alt="game">
-                            @else
-                            <img src="../themeAssets/img/matka/matka.png" alt="game">
-                            @endif
-                        </figure>
-                    </div>
+<div class="container mt-5">
+    @php
+    $option = count($optionGame);
+    @endphp
+    @if($option >= 1)
+    @foreach($optionGame as $index => $quizgame)
+    @if($quizgame['extraFields']['close_date'] >= now()->toDateString())
+    @php
+    $closeDateTime = strtotime($quizgame['extraFields']['close_date'] . ' ' . $quizgame['extraFields']['close_time']);
+    $currentTimestamp = time();
+    $result = DB::table('game_results')->where('game_id', $quizgame->post_id)->first();
+    @endphp
+    <div class="card custom-card">
+        <div class="card-header">
+            <div class="d-flex align-items-center">
+                <img src="{{ isset($quizgame->post_image) ? publicPath($quizgame->post_image) : '../themeAssets/img/matka/matka.png' }}" alt="Game Logo">
+                <div class="ms-3">
+                    <h5 class="mb-0" style="color: #FFC107;">{{ $quizgame->post_title }}</h5>
+                    @if($closeDateTime >= $currentTimestamp)
+                    <p class="market-status mb-0" style="color: green;">MARKET OPEN</p>
+                    @else
+                    <p class="market-status mb-0" style="color: red;">MARKET CLOSED</p>
+                    <p class="market-status mb-0" style="color: black;">Result: {{ $result->result ?? 'Waiting for Result' }}</p>
+                    @endif
                 </div>
             </div>
-            @endif
-            @endforeach
+            @if($closeDateTime >= $currentTimestamp)
+            <button class="play-btn">
+                <a href="{{ route('single.post', ['post_type' => $quizgame->post_type, 'slug' => $quizgame->post_name]) }}">PLAY NOW</a>
+            </button>
             @endif
         </div>
+        @if($closeDateTime >= $currentTimestamp)
+        <div class="card-footer">
+            <strong style="color: black;">XX</strong>
+            <span style="color: black;" id="time-left-{{ $index }}"
+                data-end-time="{{ \Carbon\Carbon::parse($quizgame['extraFields']['close_date'] . ' ' . $quizgame['extraFields']['close_time'])->timestamp }}"
+                data-market-id="market-status-{{ $index }}">
+                Loading...
+            </span>
+        </div>
+        @else
+        <div class="card-footer">
+            <strong style="color: black;">{{$result->result }}</strong>
+        </div>
+        @endif
     </div>
+    <br>
+    @endif
+    @endforeach
+    @else
+    <div class="card custom-card">
+        <div class="card-header">
+            <div class="d-flex align-items-center">
+                <img src="../themeAssets/img/matka/matka.png" alt="Game Logo">
+                <div class="ms-3">
+                    <h5 class="mb-0" style="color: #FFC107;">TOSS GAME</h5>
+                    <p class="market-status mb-0" style="color: green;">Toss Game Coming Soon...</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <span style="color: black;">Test your luck, make a choice, and claim your reward. Play now!</span>
+        </div>
+    </div>
+    @endif
 </div>
 
 

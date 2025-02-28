@@ -7,23 +7,15 @@
     <meta name="description" content="Matka App - Login Page">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="theme-color" content="#625AFA">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <!-- The above tags *must* come first in the head, any other head content must come *after* these tags -->
-    <!-- Title -->
     <title>Matka App - Login Page</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet">
-    <!-- Favicon -->
     <link rel="icon" href="img/icons/icon-72x72.png">
-    <!-- Apple Touch Icon -->
-    <link rel="apple-touch-icon" href="img/icons/icon-96x96.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="img/icons/icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="167x167" href="img/icons/icon-167x167.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="img/icons/icon-180x180.png">
     <!-- CSS Libraries -->
     @include('Include.Style')
+    @php
+    $homePage = getThemeOptions('homePage');
+    $logo = getThemeOptions('header');
+    @endphp
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 
 <body>
@@ -39,7 +31,13 @@
         <div class="background-shape"></div>
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-10 col-lg-8"><img class="big-logo" src="..\themeAssets\img\matka\matka.png" alt="" >
+                <div class="col-10 col-lg-8">
+                    @if(isset($logo['headerlogo']))
+                    <img class="big-logo" src="{{ publicPath($logo['headerlogo']) }}" alt="">
+                    @else
+                    <img class="big-logo" src="..\themeAssets\img\matka\matka.png" alt="">
+                    @endif
+
                     <!-- Register Form-->
                     <div class="register-form mt-5">
                         <form action="{{ route('login.store') }}" method="POST" class="login mb-3"
@@ -53,9 +51,15 @@
                                 <label for="password"><i class="ti ti-key"></i></label>
                                 <input class="form-control" id="password" type="password" name="password" placeholder="Password">
                             </div>
-                            <button class="btn btn-warning btn-lg w-100" type="submit">Log In</button>
+                            <button class="btn btn-warning btn-lg w-100" style="background-color: #FFB80C; color: white;" type="submit">Log In</button>
                         </form>
                     </div>
+
+                    @isset($homePage['waLink'])
+                    <a href="{{ $homePage['waLink'] }}" class="btn btn-warning btn-lg w-100" style="background-color: #30A844; color: white;">
+                        <i class="fa-brands fa-whatsapp"></i> Sign Up With WhatsApp Id
+                    </a>
+                    @endisset
                     <!-- Login Meta-->
                     <!-- <div class="login-meta-data"><a class="forgot-password d-block mt-3 mb-1" href="{{ ('forgot-password.index') }}">Forgot Password?</a>
                         <p class="mb-0">Don’t have any account?<a class="mx-1" href="{{ route('registerpage') }}">SignUp</a></p>
@@ -64,6 +68,17 @@
             </div>
         </div>
     </div>
+
+    @isset($homePage['copyright'])
+    <footer class="text-center" style="background-color: black;">
+        @if(isset($logo['headerlogo']))
+        <img src="{{ publicPath($logo['headerlogo']) }}" alt="Website Logo" style="width: 50px; height: auto;">
+        @else
+        <img src="..\themeAssets\img\matka\matka.png" alt="Website Logo" style="width: 50px; height: auto;">
+        @endif
+        <p class="mt-2" style="color: #fff;">&copy; {{ $homePage['copyright'] }}</p>
+    </footer>
+    @endisset
     <!-- All JavaScript Files-->
     @include('Include.Script')
 </body>

@@ -174,6 +174,20 @@ function themeFieldArray()
                     'placeholder' =>'URL',
                     'default' => '',
                 ], 
+                [
+                    'title' =>'Whats App Login',
+                    'id' => 'waLink',
+                    'type' => 'text',
+                    'placeholder' =>'Whats App Login',
+                    'default' => '',
+                ], 
+                [
+                    'title' =>'Copyright Text',
+                    'id' => 'copyright',
+                    'type' => 'text',
+                    'placeholder' =>'Copyright Text',
+                    'default' => '',
+                ], 
                 
             ]
         ],

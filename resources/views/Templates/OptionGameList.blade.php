@@ -1,54 +1,3 @@
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-    .custom-card {
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .card-header {
-        background: white;
-        padding: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .card-header img {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    }
-
-    .play-btn {
-        background: red;
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 8px;
-        font-weight: bold;
-    }
-
-    .market-status {
-        color: red;
-        font-weight: bold;
-    }
-
-    .card-footer {
-        background: #FFB80C;
-        color: white;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 15px;
-    }
-
-    a {
-        text-decoration: none;
-    }
-</style>
-
 <!-- Header Area-->
 <div class="header-area" id="headerArea">
     <div class="container h-100 d-flex align-items-center justify-content-between rtl-flex-d-row-r">
@@ -91,7 +40,7 @@
                     <p class="market-status mb-0" style="color: green;">MARKET OPEN</p>
                     @else
                     <p class="market-status mb-0" style="color: red;">MARKET CLOSED</p>
-                    <p class="market-status mb-0" style="color: black;">Result: {{ $result->result ?? 'Waiting for Result' }}</p>
+                    <p class="market-status mb-0" style="color: black;">{{ $result->result ?? 'Waiting for Result' }}</p>
                     @endif
                 </div>
             </div>
@@ -112,7 +61,7 @@
         </div>
         @else
         <div class="card-footer">
-            <strong style="color: black;">{{$result->result }}</strong>
+            <strong style="color: black;">{{$result->result ?? 'NA' }}</strong>
         </div>
         @endif
     </div>

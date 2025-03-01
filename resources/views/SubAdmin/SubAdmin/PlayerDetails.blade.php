@@ -192,27 +192,21 @@
                       <div class="row">
                         <div class="col mb-6">
                           <label for="nameWithTitle" class="form-label">Enter New Password</label>
-                          <input
-                            type="text"
-                            class="form-control"
-                            name="password"
-                            placeholder="Enter Amount" />
-                          <input hidden
-                            type="text"
-                            class="form-control"
-                            name="name"
-                            value="{{ $user->name}}" />
-                          <input hidden
-                            type="text"
-                            class="form-control"
-                            name="role"
-                            value="{{ $user->role}}" />
-                          <input hidden
-                            type="text"
-                            class="form-control"
-                            name="status"
-                            value="{{ $user->status}}" />
-
+                          <input type="text" class="form-control" name="password" placeholder="Enter Amount" />
+                          <input type="text" name="name" value="{{$user->name}}" hidden />
+                          <input type="text" name="role" value="{{$user->role}}" hidden />
+                          <input type="text" name="status" value="{{$user->status}}" hidden />
+                          <input type="text" name="parent" value="{{$user->parent}}" hidden />
+                          <input type="text" name="toss_game_rate" value="{{$user->toss_game_rate}}" hidden />
+                          <input type="text" name="crossing_game_rate" value="{{$user->crossing_game_rate}}" hidden />
+                          <input type="text" name="harf_game_rate" value="{{$user->harf_game_rate}}" hidden />
+                          <input type="text" name="oddEven_game_rate" value="{{$user->oddEven_game_rate}}" hidden />
+                          <input type="text" name="jodi_game_rate" value="{{$user->jodi_game_rate}}" hidden />
+                          <input type="text" name="toss_game_commission" value="{{$user->toss_game_commission}}" hidden />
+                          <input type="text" name="crossing_commission" value="{{$user->crossing_commission}}" hidden />
+                          <input type="text" name="harf_commission" value="{{$user->harf_commission}}" hidden />
+                          <input type="text" name="oddEven_commission" value="{{$user->oddEven_commission}}" hidden />
+                          <input type="text" name="jodi_commission" value="{{$user->jodi_commission}}" hidden />
                         </div>
                       </div>
                     </div>

@@ -713,7 +713,7 @@ function postTypes()
 			'role' => [User::ADMIN],
 			'showMenu' => false,
 			'multilng' => false,
-			'support' => [],
+			'support' => ['featured'],
 			'templateOption' => [
 				'OptionGame' => 'Option Games',
 			],
@@ -728,7 +728,7 @@ function postTypes()
 			'role' => [User::ADMIN],
 			'showMenu' => false,
 			'multilng' => false,
-			'support' => [],
+			'support' => ['featured'],
 			'templateOption' => [
 				'DailySatta' => 'Number Games',
 			],

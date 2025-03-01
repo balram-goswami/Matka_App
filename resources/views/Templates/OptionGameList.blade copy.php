@@ -64,7 +64,7 @@
                             <i class="ti ti-star-filled"></i> Market: <span class="ms-1">( Closed )</span>
                         </div>
                         <div class="ratings lh-1 text-white">
-                            <i class="ti ti-star-filled"></i> Result: <span class="ms-1"> {{ $result->result ?? 'Waiting for Result' }}</span>
+                            <i class="ti ti-star-filled"></i><span class="ms-1"> {{ $result->result ?? 'Waiting for Result' }}</span>
                         </div>
                         @endif
                         @endif

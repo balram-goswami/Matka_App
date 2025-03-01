@@ -27,8 +27,14 @@ $betPrice = getThemeOptions('betSetting');
         <div class="cart-wrapper-area py-3">
             <div class="card cart-amount-area">
                 <div class="card-body d-flex align-items-center justify-content-between">
-                    <h5 class="total-price mb-0">Closed In</h5><a class="btn btn-primary" href=""
-                        id="time-left">{{ \Carbon\Carbon::parse($post['extraFields']['close_time'])->diffInSeconds(now()) }}</a>
+                    <h5 class="total-price mb-0">Closed In</h5>
+                    <a class="btn btn-primary"
+                        id="time-left-1"
+                        data-end-time="{{ \Carbon\Carbon::parse($post['extraFields']['close_date'] . ' ' .$post['extraFields']['close_time'])->timestamp }}"
+                        data-market-id="market-status">
+                        --
+                    </a>
+
                 </div>
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <h6>Win Rate: {{$user->toss_game_rate}}X </h6>
@@ -125,7 +131,7 @@ $betPrice = getThemeOptions('betSetting');
                         <input type="text" name="admin_cut" value="{{ $user->toss_game_rate}}" hidden>
                         <input type="text" name="subadmin_cut" value="{{ $user->toss_game_commission}}" hidden>
                         @if($wallet->balance >= $totalAmount)
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" id="submit-btn" class="btn btn-primary">Submit</button>
                         @else
                         <label class="text-danger mt-2">Insufficient Balance</label>
                         @endif
@@ -137,26 +143,40 @@ $betPrice = getThemeOptions('betSetting');
 </div>
 
 <script>
-    let remainingTime = parseInt(document.getElementById('time-left').innerText);
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll("[id^='time-left']").forEach(timer => {
+            let endTime = parseInt(timer.dataset.endTime, 10);
+            let marketStatus = document.getElementById(timer.dataset.marketId);
+            let submitButton = document.getElementById(`submit-btn-${timer.id.split('-').pop()}`);
 
-    const updateTimer = () => {
-        if (remainingTime > 0) {
-            remainingTime--;
+            if (isNaN(endTime)) return; // Skip if no valid end time
 
-            // Calculate hours, minutes, and seconds
-            let hours = Math.floor(remainingTime / 3600); // 3600 seconds in an hour
-            let minutes = Math.floor((remainingTime % 3600) / 60); // Remaining minutes
-            let seconds = remainingTime % 60; // Remaining seconds
+            let updateTimer = () => {
+                let now = Math.floor(Date.now() / 1000);
+                let remainingTime = endTime - now;
 
-            // Format time as HH:mm:ss
-            document.getElementById('time-left').innerText =
-                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        } else {
-            document.getElementById('time-left').innerText = "Time's up!";
-        }
-    };
+                if (remainingTime > 0) {
+                    let hours = Math.floor(remainingTime / 3600);
+                    let minutes = Math.floor((remainingTime % 3600) / 60);
+                    let seconds = remainingTime % 60;
+                    timer.innerText = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                } else {
+                    timer.innerText = "Time's up!";
+                    if (marketStatus) {
+                        marketStatus.innerHTML = `<i class="ti ti-star-filled"></i> Market: <span class="ms-1">( Closed )</span>`;
+                    }
+                    if (submitButton) {
+                        submitButton.style.display = "none"; // Hide submit button
+                    }
+                    clearInterval(interval);
+                }
+            };
 
-    setInterval(updateTimer, 1000);
+            updateTimer(); // Run immediately
+            let interval = setInterval(updateTimer, 1000);
+        });
+    });
 </script>
+
 
 @include('Include.FooterMenu')

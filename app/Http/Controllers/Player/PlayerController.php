@@ -37,7 +37,7 @@ class PlayerController extends Controller
     $headerOption = getThemeOptions('header');
     $optionGame = getPostsByPostType('optiongame', 0, 'new', true);
     $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
-    
+
 
     // Get the current time and today's date
     $now = \Carbon\Carbon::now('Asia/Kolkata');  // Ensure the correct timezone
@@ -45,36 +45,41 @@ class PlayerController extends Controller
 
     // Loop through each Satta game and calculate the open/close times
     foreach ($sattaGame as &$satta) {
-      // Parse the morning and evening times for the game
+      // Ensure $today and $now are Carbon instances
+      $today = \Carbon\Carbon::now()->toDateString();
+      $now = \Carbon\Carbon::now();
+
+      // Parse the morning and evening times safely
       $morningStartTime = isset($satta['extraFields']['open_time_morning'])
-        ? \Carbon\Carbon::parse($today->toDateString() . ' ' . $satta['extraFields']['open_time_morning'])
+        ? \Carbon\Carbon::parse("{$today} {$satta['extraFields']['open_time_morning']}")
         : null;
 
       $morningEndTime = isset($satta['extraFields']['close_time_morning'])
-        ? \Carbon\Carbon::parse($today->toDateString() . ' ' . $satta['extraFields']['close_time_morning'])
+        ? \Carbon\Carbon::parse("{$today} {$satta['extraFields']['close_time_morning']}")
         : null;
 
       $eveningStartTime = isset($satta['extraFields']['open_time_evening'])
-        ? \Carbon\Carbon::parse($today->toDateString() . ' ' . $satta['extraFields']['open_time_evening'])
+        ? \Carbon\Carbon::parse("{$today} {$satta['extraFields']['open_time_evening']}")
         : null;
 
       $eveningEndTime = isset($satta['extraFields']['close_time_evening'])
-        ? \Carbon\Carbon::parse($today->toDateString() . ' ' . $satta['extraFields']['close_time_evening'])
+        ? \Carbon\Carbon::parse("{$today} {$satta['extraFields']['close_time_evening']}")
         : null;
 
-      // Log parsed times to check if they are correct
+      // Debugging Logs
       \Log::info("Now: {$now}");
-      \Log::info("Evening Start: {$eveningStartTime}");
-      \Log::info("Evening End: {$eveningEndTime}");
+      \Log::info("Evening Start: " . optional($eveningStartTime)->toDateTimeString());
+      \Log::info("Evening End: " . optional($eveningEndTime)->toDateTimeString());
 
-      // Check if the current time is between the start and end times for morning and evening
+      // Check if the current time falls between the open and close times
       $satta['isMorningOpen'] = $morningStartTime && $morningEndTime && $now->between($morningStartTime, $morningEndTime);
       $satta['isEveningOpen'] = $eveningStartTime && $eveningEndTime && $now->between($eveningStartTime, $eveningEndTime);
 
-      // Log the result of the open checks
-      \Log::info("Is Morning Open: {$satta['isMorningOpen']}");
-      \Log::info("Is Evening Open: {$satta['isEveningOpen']}");
-      $result = GameResult::where('game_id', $satta->post_id)->latest()->first();
+      // Log Results
+      \Log::info("Is Morning Open: " . ($satta['isMorningOpen'] ? 'Yes' : 'No'));
+      \Log::info("Is Evening Open: " . ($satta['isEveningOpen'] ? 'Yes' : 'No'));
+
+      $satta['result'] = GameResult::where('game_id', $satta['post_id'])->latest()->first()->result ?? 'NA';
     }
 
     $exposer = BidTransaction::where('user_id', $user->user_id)
@@ -91,8 +96,7 @@ class PlayerController extends Controller
       'wallet',
       'user',
       'sattaGame',
-      'exposer',
-      'result'
+      'exposer'
     ));
   }
 
@@ -371,7 +375,6 @@ class PlayerController extends Controller
       $diff = $subAdminrate - $adminRate;
       $subadminDiff = $request->bid_amount / 100 * $diff;
       $adminDiff = $request->bid_amount / 100 * $adminRate;
-
     } else {
       $diff = $request->userrate - $request->adminrate;
       $subadminDiff = $request->bid_amount / 100 * $diff;

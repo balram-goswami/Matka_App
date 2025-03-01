@@ -4,129 +4,8 @@ $news = getPostsByPostType('news', 0, 'new', true);
 $gameStatus = getThemeOptions('betSetting');
 @endphp
 
-<style>
-    .news-ticker {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        background: #111;
-        color: white;
-        padding: 12px 15px;
-        font-size: 16px;
-        font-weight: 500;
-        border-radius: 5px;
-        overflow: hidden;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        white-space: nowrap;
-    }
-
-    .news-icon {
-        font-size: 22px;
-        color: #FFC107;
-        margin-right: 25px;
-        animation: pulse 1.5s infinite alternate;
-    }
-
-    .ticker-wrapper {
-        flex: 1;
-        overflow: hidden;
-        position: relative;
-    }
-
-    .ticker-content {
-        display: inline-block;
-        white-space: nowrap;
-        animation: scroll 15s linear infinite;
-    }
-
-    @keyframes scroll {
-        from {
-            transform: translateX(100%);
-        }
-
-        to {
-            transform: translateX(-100%);
-        }
-    }
-
-    @keyframes pulse {
-        0% {
-            transform: scale(1);
-            opacity: 0.8;
-        }
-
-        100% {
-            transform: scale(1.1);
-            opacity: 1;
-        }
-    }
-
-    .stripSize {
-        margin-top: 3%;
-    }
-
-    @media only screen and (max-width: 767px) {
-        .stripSize {
-            margin-top: 10%;
-        }
-
-    }
-</style>
-
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-    .custom-card {
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .card-header {
-        background: white;
-        padding: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .card-header img {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    }
-
-    .play-btn {
-        background: red;
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 8px;
-        font-weight: bold;
-    }
-
-    .market-status {
-        color: red;
-        font-weight: bold;
-    }
-
-    .card-footer {
-        background: #FFB80C;
-        color: white;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 15px;
-    }
-
-    a {
-        text-decoration: none;
-    }
-</style>
-
 <div class="weekly-best-seller-area py-3 stripSize">
-    @if($news->count() > 1)
+    @if($news->count() > 0)
     <div class="container">
         <div class="news-ticker">
             <i class="fa-solid fa-bullhorn news-icon"></i>
@@ -218,7 +97,7 @@ $gameStatus = getThemeOptions('betSetting');
 </div>
 @endisset -->
 
-<div class="container mt-5">
+<div class="container mt-5" style="margin-top: 1rem !important;">
     @php
     $option = count($optionGame);
     @endphp
@@ -228,14 +107,14 @@ $gameStatus = getThemeOptions('betSetting');
             <div class="d-flex align-items-center">
                 <img src="../themeAssets/img/matka/matka.png" alt="Game Logo">
                 <div class="ms-3">
-                    <h5 class="mb-0" style="color: #FFC107;">TOSS GAME</h5>
-                    <p class="market-status mb-0" style="color: green;">MARKET OPEN</p>
+                    <h5 class="mb-0" style="color: #FFC107;">Toss Game</h5>
+                    <p class="market-status mb-0" style="color: green;">Market Open</p>
                 </div>
             </div>
-            <button class="play-btn"><a href="{{ route('optionGameList') }}">PLAY NOW</a></button>
+            <button class="play-btn"><a href="{{ route('optionGameList') }}">Play Now</a></button>
         </div>
         <div class="card-footer">
-            <span style="color: black;">Test your luck, make a choice, and claim your reward. Play now!</span>
+            <span style="color: black;">Test your luck, make a choice, and claim your reward. Play Now!</span>
         </div>
     </div>
     @else
@@ -244,13 +123,13 @@ $gameStatus = getThemeOptions('betSetting');
             <div class="d-flex align-items-center">
                 <img src="../themeAssets/img/matka/matka.png" alt="Game Logo">
                 <div class="ms-3">
-                    <h5 class="mb-0" style="color: #FFC107;">TOSS GAME</h5>
+                    <h5 class="mb-0" style="color: #FFC107;">Toss Game</h5>
                     <p class="market-status mb-0" style="color: green;">Toss Game Coming Soon...</p>
                 </div>
             </div>
         </div>
         <div class="card-footer">
-            <span style="color: black;">Test your luck, make a choice, and claim your reward. Play now!</span>
+            <span style="color: black;">Test your luck, make a choice, and claim your reward. Play Now!</span>
         </div>
     </div>
     @endif
@@ -271,29 +150,33 @@ $gameStatus = getThemeOptions('betSetting');
                     @if($satta['isMorningOpen'] || $satta['isEveningOpen'])
                     <p class="market-status mb-0" style="color: green;">MARKET OPEN</p>
                     @else
-                    <p class="market-status mb-0">MARKET CLOSED</p>
+                    <p class="market-status mb-0">Market Closed</p>
                     @endif
                 </div>
             </div>
             @if($satta['isMorningOpen'] || $satta['isEveningOpen'])
-            <a class="play-btn" href="{{ route('single.post', ['post_type' => $satta->post_type, 'slug' => $satta->post_name]) }}">PLAY NOW</a>
+            <a class="play-btn" href="{{ route('single.post', ['post_type' => $satta->post_type, 'slug' => $satta->post_name]) }}">Play Now</a>
             @endif
         </div>
+
         @if($satta['isMorningOpen'] || $satta['isEveningOpen'])
         <div class="card-footer">
             <strong style="color: black;">XX</strong>
-            <span style="color: black;" id="time-left-{{ $index }}" data-time-left="{{ \Carbon\Carbon::parse($satta['extraFields']['close_time_evening'])->diffInSeconds(now()) }}">
+            <span style="color: black;" id="time-left-{{ $index }}"
+                data-time-left="{{ \Carbon\Carbon::parse($satta['extraFields']['close_time_evening'])->diffInSeconds(now()) }}">
                 Loading...
             </span>
         </div>
         @else
         <div class="card-footer">
-            <strong style="color: black;">Result: {{ $result->result ?? 'NA' }} {{ $result->slot ?? 'NA' }}</strong>
+            <strong style="color: black;">{{ $satta['result'] }}</strong>
         </div>
         @endif
     </div>
+    <br>
     @endforeach
 </div>
+
 
 <div class="weekly-best-seller-area py-3">
     <div class="container" style="margin-bottom: 10%;">

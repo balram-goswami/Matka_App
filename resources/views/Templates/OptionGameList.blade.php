@@ -52,6 +52,7 @@
         </div>
         @if($closeDateTime >= $currentTimestamp)
         <div class="card-footer">
+            <strong style="color: black;"></strong>
             <strong style="color: black;">XX</strong>
             <span style="color: black;" id="time-left-{{ $index }}"
                 data-end-time="{{ \Carbon\Carbon::parse($quizgame['extraFields']['close_date'] . ' ' . $quizgame['extraFields']['close_time'])->timestamp }}"
@@ -61,7 +62,9 @@
         </div>
         @else
         <div class="card-footer">
+            <strong style="color: black;"></strong>
             <strong style="color: black;">{{$result->result ?? 'XX' }}</strong>
+            <strong style="color: black;"></strong>
         </div>
         @endif
     </div>

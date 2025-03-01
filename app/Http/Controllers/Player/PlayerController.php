@@ -39,32 +39,39 @@ class PlayerController extends Controller
     $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
 
     $now = \Carbon\Carbon::now('Asia/Kolkata');
-    $today = \Carbon\Carbon::today('Asia/Kolkata');
 
     foreach ($sattaGame as &$satta) {
-      $today = \Carbon\Carbon::now()->toDateString();
-      $now = \Carbon\Carbon::now();
+      $today = \Carbon\Carbon::now('Asia/Kolkata')->toDateString();
 
-      // Get open and close times
+      // Detect time format (12-hour or 24-hour)
+      $timeFormat = (strpos($satta['extraFields']['open_time'], 'AM') !== false || strpos($satta['extraFields']['open_time'], 'PM') !== false) ? 'h:i A' : 'H:i';
+
+      // Parse open and close times correctly
       $startTime = isset($satta['extraFields']['open_time'])
-        ? \Carbon\Carbon::parse("{$today} {$satta['extraFields']['open_time']}")
+        ? \Carbon\Carbon::createFromFormat("Y-m-d {$timeFormat}", "{$today} {$satta['extraFields']['open_time']}", 'Asia/Kolkata')
         : null;
 
       $endTime = isset($satta['extraFields']['close_time'])
-        ? \Carbon\Carbon::parse("{$today} {$satta['extraFields']['close_time']}")
+        ? \Carbon\Carbon::createFromFormat("Y-m-d {$timeFormat}", "{$today} {$satta['extraFields']['close_time']}", 'Asia/Kolkata')
         : null;
 
-      // Handle next-day end time (e.g., 2:00 AM case)
-      if ($endTime && $endTime->lt($startTime)) {
-        $endTime->addDay(); // Move endTime to next day
+      // If start time is greater than end time, move start time to the previous day
+      if ($startTime && $endTime && $startTime->gt($endTime)) {
+        $startTime->subDay(); // Move start time to the previous day
       }
 
-      // Check if the game is open
+      // Debugging Log
+      \Log::info("Game ID: {$satta['post_id']} | Now: {$now} | Start: {$startTime} | End: {$endTime}");
+
+      // Ensure the game is open when within the time range
       $satta['isOpen'] = $startTime && $endTime && $now->between($startTime, $endTime);
+
+      // Debug if game is open
+      \Log::info("Game ID: {$satta['post_id']} | isOpen: " . ($satta['isOpen'] ? 'Yes' : 'No'));
 
       // Calculate countdown time
       if ($satta['isOpen']) {
-        $satta['timeLeft'] = $now->diffInSeconds($endTime, false); // Remaining time in seconds
+        $satta['timeLeft'] = $now->diffInSeconds($endTime, false);
       } else {
         $satta['timeLeft'] = 0;
       }
@@ -72,6 +79,8 @@ class PlayerController extends Controller
       // Get game result
       $satta['result'] = GameResult::where('game_id', $satta['post_id'])->latest()->first()->result ?? 'NA';
     }
+
+
 
     $exposer = BidTransaction::where('user_id', $user->user_id)
       ->where('status', 'submitted')

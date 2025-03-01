@@ -135,7 +135,7 @@ $gameStatus = getThemeOptions('betSetting');
     @endif
 </div>
 
-<div class="container mt-5">
+<div class="container mt-5" style="margin-top: 1rem !important;">
     @foreach($sattaGame as $index => $satta)
     <div class="card custom-card">
         <div class="card-header">

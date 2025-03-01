@@ -26,9 +26,9 @@
                     <table class="table mb-0">
                         <thead>
                             <tr>
+                            <th>Result Date</th>
                                 <th>Game</th>
                                 <th>Result</th>
-                                <th>Result Date</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -37,9 +37,9 @@
                             $gameName = postName($results->game_id);
                             @endphp
                             <tr>
+                            <td>{{ $results->updated_at }}</td>
                                 <td>{{ $gameName->post_title }} ({{ $results->slot ?? ''}})</td>
                                 <td>{{ $results->result }}</td>
-                                <td>{{ $results->updated_at }}</td>
                             </tr>
                             @endforeach
                         </tbody>

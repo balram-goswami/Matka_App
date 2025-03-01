@@ -47,7 +47,7 @@ Created: December 15, 2019
 body,
 html {
   font-family: "Plus Jakarta Sans", sans-serif;
-  color: #747794;
+  color: #000000;
   overflow-x: hidden;
   background-color: #f0f0f5;
   scrollbar-width: thin;
@@ -1324,7 +1324,7 @@ textarea:invalid {
   text-align: center;
   text-transform: capitalize;
   line-height: 1;
-  color: #f3f3f3;
+  color: #000000;
   z-index: 1;
 }
 .suha-footer-nav ul li a i {
@@ -1333,7 +1333,7 @@ textarea:invalid {
   margin-bottom: 0.25rem;
 }
 .suha-footer-nav ul li a:hover {
-  color: #000000;
+  color: #ffffff;
 }
 .suha-footer-nav ul li a img {
   max-height: 1.5rem;

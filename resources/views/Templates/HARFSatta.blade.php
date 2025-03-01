@@ -30,7 +30,7 @@ $betPrice = getThemeOptions('betSetting');
             <div class="card cart-amount-area">
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <h5 class="total-price mb-0">Closed In</h5>
-                    <a class="btn btn-primary" id="time-left" data-time-left="{{ \Carbon\Carbon::parse($post['extraFields']['close_time_evening'])->diffInSeconds(now()) }}">
+                    <a class="btn btn-primary" id="time-left" data-time-left="{{ \Carbon\Carbon::parse($post['extraFields']['close_time'])->diffInSeconds(now()) }}">
                         00:00:00
                     </a>
                 </div>

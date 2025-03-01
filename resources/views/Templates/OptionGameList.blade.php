@@ -35,7 +35,7 @@
             <div class="d-flex align-items-center">
                 <img src="{{ isset($quizgame->post_image) ? publicPath($quizgame->post_image) : '../themeAssets/img/matka/matka.png' }}" alt="Game Logo">
                 <div class="ms-3">
-                    <h5 class="mb-0" style="color: #FFC107;">{{ $quizgame->post_title }}</h5>
+                    <h5 class="mb-0" style="color:rgb(0, 0, 0);"><b>{{ $quizgame->post_title }}</b></h5>
                     @if($closeDateTime >= $currentTimestamp)
                     <p class="market-status mb-0" style="color: green;">MARKET OPEN</p>
                     @else
@@ -61,7 +61,7 @@
         </div>
         @else
         <div class="card-footer">
-            <strong style="color: black;">{{$result->result ?? 'NA' }}</strong>
+            <strong style="color: black;">{{$result->result ?? 'XX' }}</strong>
         </div>
         @endif
     </div>

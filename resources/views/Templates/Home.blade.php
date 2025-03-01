@@ -107,7 +107,7 @@ $gameStatus = getThemeOptions('betSetting');
             <div class="d-flex align-items-center">
                 <img src="../themeAssets/img/matka/matka.png" alt="Game Logo">
                 <div class="ms-3">
-                    <h5 class="mb-0" style="color: #FFC107;">Toss Game</h5>
+                    <h5 class="mb-0" style="color:rgb(0, 0, 0);"><b>Toss Game</b></h5>
                     <p class="market-status mb-0" style="color: green;">Market Open</p>
                 </div>
             </div>
@@ -123,7 +123,7 @@ $gameStatus = getThemeOptions('betSetting');
             <div class="d-flex align-items-center">
                 <img src="../themeAssets/img/matka/matka.png" alt="Game Logo">
                 <div class="ms-3">
-                    <h5 class="mb-0" style="color: #FFC107;">Toss Game</h5>
+                    <h5 class="mb-0" style="color:rgb(0, 0, 0);"><b>Toss Game</b></h5>
                     <p class="market-status mb-0" style="color: green;">Toss Game Coming Soon...</p>
                 </div>
             </div>
@@ -146,7 +146,7 @@ $gameStatus = getThemeOptions('betSetting');
                 <img src="../themeAssets/img/matka/matka.png" alt="Game Logo">
                 @endif
                 <div class="ms-3">
-                    <h5 class="mb-0" style="color: #FFC107;">{{ $satta->post_title }}</h5>
+                    <h5 class="mb-0" style="color:rgb(0, 0, 0);"><b>{{ $satta->post_title }}</b></h5>
                     @if($satta['isOpen'])
                     <p class="market-status mb-0" style="color: green;">Market Open</p>
                     @else
@@ -172,7 +172,7 @@ $gameStatus = getThemeOptions('betSetting');
             </span>
             @else
             <strong></strong>
-            <strong><h4 style="color: black;">{{ $satta['result'] }}</h4></strong>
+            <strong><h4 style="color: black;">{{ $satta['result'] ?? 'XX' }}</h4></strong>
             <strong></strong>
             @endif
         </div>

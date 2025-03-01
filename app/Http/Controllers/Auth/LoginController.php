@@ -37,7 +37,12 @@ class LoginController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'password' => 'required'
-        ]);
+        ])->after(function ($validator) use ($request) {
+            $request->merge([
+                'name' => strtoupper($request->input('name'))
+            ]);
+        });
+        
         if ($validator->fails()) {
             Session::flash('warning', $validator->getMessageBag()->first());
             return Redirect::back();

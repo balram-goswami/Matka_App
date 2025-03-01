@@ -11,7 +11,6 @@ class GameResult extends Model
 
     protected $fillable = [
         'game_id',
-        'slot',
         'result'
     ];
 }

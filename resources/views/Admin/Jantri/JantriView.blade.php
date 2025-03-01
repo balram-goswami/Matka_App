@@ -40,17 +40,6 @@
                                 </select>
                             </div>
                         </div>
-
-                        <div class="col-sm-4 sattaGameDiv" style="display: none;">
-                            <div class="input-group input-group-merge">
-                                <select name="slot" id="slot" class="form-control">
-                                    <option value="">Select Game Time</option>
-                                    <option value="morning">Morning</option>
-                                    <option value="evening">Evening</option>
-                                </select>
-                            </div>
-                        </div>
-
                         <div class="col-sm-4 sattaGameDiv" style="display: none;">
                             <div class="input-group input-group-merge">
                                 <input class="form-control" name="gamedate" type="date">

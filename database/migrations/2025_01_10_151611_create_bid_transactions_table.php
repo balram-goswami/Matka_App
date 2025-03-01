@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('game_id');
             $table->string('parent_id')->nullable();
             $table->string('answer')->nullable();
-            $table->string('slot')->nullable();
             $table->string('harf_digit')->nullable();
             $table->string('bid_result')->nullable();
             $table->string('bid_amount')->nullable();

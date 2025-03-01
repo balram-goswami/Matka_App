@@ -278,14 +278,12 @@ class SubAdminController extends Controller
 
             $gameType = 'satta';
             $gameResult = GameResult::where('game_id', $game_id)
-                ->where('slot', $request->slot)
                 ->first(['result']);
 
             $dates = Carbon::parse($request->gamedate)->startOfDay();  // 00:00:00
             $enddates = Carbon::parse($request->gamedate)->endOfDay(); // 23:59:59
 
             $jantriData = BidTransaction::where('game_id', $game_id)
-                ->where('slot', $request->slot)
                 ->where('harf_digit', NULL)
                 ->whereBetween('updated_at', [$dates, $enddates])  // Corrected condition
                 ->selectRaw('answer, SUM(subadmin_dif) as total_bid, SUM(win_amount) as total_win, result_status')
@@ -294,7 +292,6 @@ class SubAdminController extends Controller
                 ->get();
 
             $jantriOddEven = BidTransaction::where('game_id', $game_id)
-                ->where('slot', $request->slot)
                 ->where('harf_digit', 'oddEven')
                 ->whereBetween('updated_at', [$dates, $enddates])  // Corrected condition
                 ->selectRaw('answer, SUM(subadmin_dif) as total_bid, SUM(win_amount) as total_win, result_status')
@@ -303,7 +300,6 @@ class SubAdminController extends Controller
                 ->get();
 
             $jantriandar = BidTransaction::where('game_id', $game_id)
-                ->where('slot', $request->slot)
                 ->where('harf_digit', 'Andar')
                 ->whereBetween('updated_at', [$dates, $enddates])  // Corrected condition
                 ->selectRaw('answer, SUM(subadmin_dif) as total_bid, SUM(win_amount) as total_win, result_status')
@@ -312,7 +308,6 @@ class SubAdminController extends Controller
                 ->get();
 
             $jantribahar = BidTransaction::where('game_id', $game_id)
-                ->where('slot', $request->slot)
                 ->where('harf_digit', 'Bahar')
                 ->whereBetween('updated_at', [$dates, $enddates])  // Corrected condition
                 ->selectRaw('answer, SUM(subadmin_dif) as total_bid, SUM(win_amount) as total_win, result_status')

@@ -31,54 +31,45 @@ class PlayerController extends Controller
       $view = "Templates.Block";
       return view('Front', compact('view'));
     }
-    // Fetch the user's wallet and theme options
+
     $wallet = Wallet::where('user_id', $user->user_id)->first();
     $homePage = getThemeOptions('homePage');
     $headerOption = getThemeOptions('header');
     $optionGame = getPostsByPostType('optiongame', 0, 'new', true);
     $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
 
-
-    // Get the current time and today's date
-    $now = \Carbon\Carbon::now('Asia/Kolkata');  // Ensure the correct timezone
+    $now = \Carbon\Carbon::now('Asia/Kolkata');
     $today = \Carbon\Carbon::today('Asia/Kolkata');
 
-    // Loop through each Satta game and calculate the open/close times
     foreach ($sattaGame as &$satta) {
-      // Ensure $today and $now are Carbon instances
       $today = \Carbon\Carbon::now()->toDateString();
       $now = \Carbon\Carbon::now();
 
-      // Parse the morning and evening times safely
-      $morningStartTime = isset($satta['extraFields']['open_time_morning'])
-        ? \Carbon\Carbon::parse("{$today} {$satta['extraFields']['open_time_morning']}")
+      // Get open and close times
+      $startTime = isset($satta['extraFields']['open_time'])
+        ? \Carbon\Carbon::parse("{$today} {$satta['extraFields']['open_time']}")
         : null;
 
-      $morningEndTime = isset($satta['extraFields']['close_time_morning'])
-        ? \Carbon\Carbon::parse("{$today} {$satta['extraFields']['close_time_morning']}")
+      $endTime = isset($satta['extraFields']['close_time'])
+        ? \Carbon\Carbon::parse("{$today} {$satta['extraFields']['close_time']}")
         : null;
 
-      $eveningStartTime = isset($satta['extraFields']['open_time_evening'])
-        ? \Carbon\Carbon::parse("{$today} {$satta['extraFields']['open_time_evening']}")
-        : null;
+      // Handle next-day end time (e.g., 2:00 AM case)
+      if ($endTime && $endTime->lt($startTime)) {
+        $endTime->addDay(); // Move endTime to next day
+      }
 
-      $eveningEndTime = isset($satta['extraFields']['close_time_evening'])
-        ? \Carbon\Carbon::parse("{$today} {$satta['extraFields']['close_time_evening']}")
-        : null;
+      // Check if the game is open
+      $satta['isOpen'] = $startTime && $endTime && $now->between($startTime, $endTime);
 
-      // Debugging Logs
-      \Log::info("Now: {$now}");
-      \Log::info("Evening Start: " . optional($eveningStartTime)->toDateTimeString());
-      \Log::info("Evening End: " . optional($eveningEndTime)->toDateTimeString());
+      // Calculate countdown time
+      if ($satta['isOpen']) {
+        $satta['timeLeft'] = $now->diffInSeconds($endTime, false); // Remaining time in seconds
+      } else {
+        $satta['timeLeft'] = 0;
+      }
 
-      // Check if the current time falls between the open and close times
-      $satta['isMorningOpen'] = $morningStartTime && $morningEndTime && $now->between($morningStartTime, $morningEndTime);
-      $satta['isEveningOpen'] = $eveningStartTime && $eveningEndTime && $now->between($eveningStartTime, $eveningEndTime);
-
-      // Log Results
-      \Log::info("Is Morning Open: " . ($satta['isMorningOpen'] ? 'Yes' : 'No'));
-      \Log::info("Is Evening Open: " . ($satta['isEveningOpen'] ? 'Yes' : 'No'));
-
+      // Get game result
       $satta['result'] = GameResult::where('game_id', $satta['post_id'])->latest()->first()->result ?? 'NA';
     }
 
@@ -330,7 +321,6 @@ class PlayerController extends Controller
     return view('Front', compact('view', 'bids', 'user', 'wallet'));
   }
 
-
   public function optionGameEntry(Request $request)
   {
     $validator = Validator::make(
@@ -353,19 +343,6 @@ class PlayerController extends Controller
 
     if ($validator->fails()) {
       return redirect()->back()->withErrors($validator)->withInput();
-    }
-
-    $gameType = Posts::where('post_id', $request->game_id)->get()->first();
-
-    if ($gameType->post_type === 'optiongame') {
-      $slots = NULL;
-    } else {
-      $time = timeonly();
-      if ($time <= '12:00:00') {
-        $slots = 'morning';
-      } else {
-        $slots = 'evening';
-      }
     }
 
     if ($request->userrate <= 10) {
@@ -398,7 +375,6 @@ class PlayerController extends Controller
     $bid->game_id = $request->game_id;
     $bid->parent_id = $parent->parent;
     $bid->answer = $request->answer;
-    $bid->slot = $slots;
     $bid->harf_digit = $request->harf_digit ?? NULL;
     $bid->bid_amount = $request->bid_amount;
     $bid->win_amount = $winAmount;

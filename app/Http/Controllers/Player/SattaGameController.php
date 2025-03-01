@@ -141,13 +141,6 @@ class SattaGameController extends Controller
             }
         }
 
-        $time = timeonly();
-        if ($time <= '12:00:00') {
-            $slots = 'morning';
-        } else {
-            $slots = 'evening';
-        }
-
         $winAmount = $request->userrate * $request->bid_amount;
         $winamount_from_admin = $request->adminrate * $request->bid_amount;
 
@@ -168,7 +161,6 @@ class SattaGameController extends Controller
             $bid->game_id = $request->game_id;
             $bid->parent_id = $parent->parent;
             $bid->answer = $combination;
-            $bid->slot = $slots;
             $bid->harf_digit = $request->harf_digit ?? NULL;
             $bid->bid_amount = $request->bid_amount;
             $bid->win_amount = $winAmount;
@@ -207,13 +199,6 @@ class SattaGameController extends Controller
         $user = getCurrentUser();
         $parent = User::where('user_id', $user->user_id)->get()->first();
 
-        $time = timeonly();
-        if ($time <= '12:00:00') {
-            $slots = 'morning';
-        } else {
-            $slots = 'evening';
-        }
-
         // Process Ander Bids (Stored as Open)
         if (!empty($request->ander)) {
             foreach ($request->ander as $digit => $amount) {
@@ -240,7 +225,6 @@ class SattaGameController extends Controller
                     $bid->game_id = $request->game_id;
                     $bid->parent_id = $parent->parent;
                     $bid->answer = $digit;
-                    $bid->slot = $slots;
                     $bid->harf_digit = 'Andar';
                     $bid->bid_amount = $amount;
                     $bid->win_amount = $winAmount;
@@ -281,7 +265,6 @@ class SattaGameController extends Controller
                     $bid->game_id = $request->game_id;
                     $bid->parent_id = $parent->parent;
                     $bid->answer = $digit;
-                    $bid->slot = $slots;
                     $bid->harf_digit = 'Bahar';
                     $bid->bid_amount = $amount;
                     $bid->win_amount = $winAmount;

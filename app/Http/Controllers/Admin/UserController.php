@@ -279,8 +279,7 @@ class UserController extends Controller
             $request->all(),
             [
                 'game_id' => 'required',
-                'result' => 'required|string|max:255',
-                'slot' => 'nullable',
+                'result' => 'required|string|max:255'
             ]
         );
 
@@ -292,7 +291,6 @@ class UserController extends Controller
         $date = dateOnly();
 
         $gameResult = GameResult::where('game_id', $request->game_id)
-            ->where('slot', $request->slot)
             ->whereDate('created_at', $date)
             ->latest()
             ->first();
@@ -304,13 +302,11 @@ class UserController extends Controller
         try {
             GameResult::create([
                 'game_id' => $request->game_id,
-                'slot' => $request->slot ?? NULL,
                 'result' => $formattedResult,
             ]);
 
             $bidTable = BidTransaction::where('game_id', $request->game_id)
                 ->where('bid_result', NULL)
-                ->where('slot', $request->slot)
                 ->get();
 
             foreach ($bidTable as $table) {
@@ -339,7 +335,6 @@ class UserController extends Controller
             // Fetch winning bids
             $winningBids = BidTransaction::where('game_id', $request->game_id)
                 ->where('result_status', 'win')
-                ->where('slot', $request->slot)
                 ->get();
 
             if ($winningBids->isNotEmpty()) {
@@ -565,14 +560,12 @@ class UserController extends Controller
 
             $gameType = 'satta';
             $gameResult = GameResult::where('game_id', $game_id)
-                ->where('slot', $request->slot)
                 ->first(['result']);
 
             $dates = Carbon::parse($request->gamedate)->startOfDay();  // 00:00:00
             $enddates = Carbon::parse($request->gamedate)->endOfDay(); // 23:59:59
 
             $jantriData = BidTransaction::where('game_id', $game_id)
-                ->where('slot', $request->slot)
                 ->where('harf_digit', NULL)
                 ->whereBetween('updated_at', [$dates, $enddates])  // Corrected condition
                 ->selectRaw('answer, SUM(admin_dif) as total_bid, SUM(winamount_from_admin) as total_win, result_status')
@@ -581,7 +574,6 @@ class UserController extends Controller
                 ->get();
 
             $jantriOddEven = BidTransaction::where('game_id', $game_id)
-                ->where('slot', $request->slot)
                 ->where('harf_digit', 'oddEven')
                 ->whereBetween('updated_at', [$dates, $enddates])  // Corrected condition
                 ->selectRaw('answer, SUM(admin_dif) as total_bid, SUM(winamount_from_admin) as total_win, result_status')
@@ -590,7 +582,6 @@ class UserController extends Controller
                 ->get();
 
             $jantriandar = BidTransaction::where('game_id', $game_id)
-                ->where('slot', $request->slot)
                 ->where('harf_digit', 'Andar')
                 ->whereBetween('updated_at', [$dates, $enddates])  // Corrected condition
                 ->selectRaw('answer, SUM(admin_dif) as total_bid, SUM(winamount_from_admin) as total_win, result_status')
@@ -599,7 +590,6 @@ class UserController extends Controller
                 ->get();
 
             $jantribahar = BidTransaction::where('game_id', $game_id)
-                ->where('slot', $request->slot)
                 ->where('harf_digit', 'Bahar')
                 ->whereBetween('updated_at', [$dates, $enddates])  // Corrected condition
                 ->selectRaw('answer, SUM(admin_dif) as total_bid, SUM(winamount_from_admin) as total_win, result_status')

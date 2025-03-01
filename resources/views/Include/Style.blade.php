@@ -18,21 +18,22 @@
         display: flex;
         align-items: center;
         width: 100%;
-        background: #2e2e2e;
+        background: rgb(29, 29, 29);
         color: white;
         padding: 12px 15px;
         font-size: 16px;
         font-weight: 500;
         border-radius: 5px;
         overflow: hidden;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         white-space: nowrap;
+        box-shadow: 0 4px 8px rgba(2, 2, 2, 0.2);
+        position: relative;
     }
 
     .news-icon {
         font-size: 22px;
         color: #FFC107;
-        margin-right: 25px;
+        margin-right: 15px;
         animation: pulse 1.5s infinite alternate;
     }
 
@@ -45,14 +46,14 @@
     .ticker-content {
         display: inline-block;
         white-space: nowrap;
-        animation: scroll 15s linear infinite;
+        will-change: transform;
+        animation: scroll 8s linear infinite;
     }
 
     @keyframes scroll {
         from {
-            transform: translateX(100%);
+            transform: translateX(200%);
         }
-
         to {
             transform: translateX(-100%);
         }
@@ -63,7 +64,6 @@
             transform: scale(1);
             opacity: 0.8;
         }
-
         100% {
             transform: scale(1.1);
             opacity: 1;
@@ -78,13 +78,12 @@
         .stripSize {
             margin-top: 10%;
         }
-
     }
 
     .custom-card {
         border-radius: 15px;
         overflow: hidden;
-        box-shadow: 0 4px 8px rgba(227, 167, 36, 0.2);
+        box-shadow: 0 4px 8px #ffcc00;
     }
 
     .card-header {
@@ -99,11 +98,11 @@
         width: 50px;
         height: 50px;
         border-radius: 50%;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 2px 5px #ffcc00;
     }
 
     .play-btn {
-        background: red;
+        background: green;
         color: white;
         border: none;
         padding: 8px 16px;
@@ -117,7 +116,7 @@
     }
 
     .card-footer {
-        background: #FFB80C;
+        background: #FFCC00;
         color: white;
         display: flex;
         justify-content: space-between;

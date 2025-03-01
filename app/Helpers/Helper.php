@@ -584,7 +584,7 @@ function priceFormat($price)
 function generateUsername()
 {
 	$randomNumber = rand(100000, 999999);
-	return "MG" . $randomNumber;
+	return "KG" . $randomNumber;
 }
 
 function genders()
@@ -1040,29 +1040,15 @@ function postnumberGameMetaBox($post_id)
 ?>
 	<br>
 	<div class="input-group row">
-		<h5 style="color: red;">Morning Game</h5>
+		<h5 style="color: red;">Game Timing</h5>
 		<div class="col-md-6">
-			<label class="col-form-label" for="open_time_morning">Morning Open Time</label><br>
-			<input type="time" name="open_time_morning" id="open_time_morning" class="form-control form-control-lg" value="<?php echo getPostMeta($post_id, 'open_time_morning') ?>">
+			<label class="col-form-label" for="open_time">Open Time</label><br>
+			<input type="time" name="open_time" id="open_time" class="form-control form-control-lg" value="<?php echo getPostMeta($post_id, 'open_time') ?>">
 			<span class="md-line"></span>
 		</div>
 		<div class="col-md-6">
-			<label class="col-form-label" for="close_time_morning">Morning Close Time</label><br>
-			<input type="time" name="close_time_morning" id="close_time_morning" class="form-control form-control-lg" value="<?php echo getPostMeta($post_id, 'close_time_morning') ?>">
-			<span class="md-line"></span>
-		</div>
-	</div>
-	<br>
-	<div class="input-group row">
-		<h5 style="color: red;">Evening Game</h5>
-		<div class="col-md-6">
-			<label class="col-form-label" for="open_time_evening">Evening Open Time</label><br>
-			<input type="time" name="open_time_evening" id="open_time_evening" class="form-control form-control-lg" value="<?php echo getPostMeta($post_id, 'open_time_evening') ?>">
-			<span class="md-line"></span>
-		</div>
-		<div class="col-md-6">
-			<label class="col-form-label" for="close_time_evening">Evening Close Time</label><br>
-			<input type="time" name="close_time_evening" id="close_time_evening" class="form-control form-control-lg" value="<?php echo getPostMeta($post_id, 'close_time_evening') ?>">
+			<label class="col-form-label" for="close_time">Close Time</label><br>
+			<input type="time" name="close_time" id="close_time" class="form-control form-control-lg" value="<?php echo getPostMeta($post_id, 'close_time') ?>">
 			<span class="md-line"></span>
 		</div>
 	</div>
@@ -1071,10 +1057,8 @@ function postnumberGameMetaBox($post_id)
 }
 function insertUpdatenumberGamePostMetaBox($request, $post_id)
 {
-	updatePostMeta($post_id, 'open_time_morning', $request->open_time_morning);
-	updatePostMeta($post_id, 'close_time_morning', $request->close_time_morning);
-	updatePostMeta($post_id, 'open_time_evening', $request->open_time_evening);
-	updatePostMeta($post_id, 'close_time_evening', $request->close_time_evening);
+	updatePostMeta($post_id, 'open_time', $request->open_time);
+	updatePostMeta($post_id, 'close_time', $request->close_time);
 }
 
 /*****Post page meta action******/

@@ -73,9 +73,7 @@
                         @if($postType === 'optiongame')
                         <td>{{ $gameDate['extraFields']['close_date'] }}</td>
                         @elseif($postType === 'numberGame')
-                        <td>Morning {{$gameDate['extraFields']['open_time_morning']}}-{{$gameDate['extraFields']['close_time_morning']}}
-                           <br>
-                           Evening {{$gameDate['extraFields']['open_time_evening']}}-{{$gameDate['extraFields']['close_time_evening']}}
+                        <td>{{$gameDate['extraFields']['open_time']}}-{{$gameDate['extraFields']['close_time']}}
                         </td>
                         @endif
 

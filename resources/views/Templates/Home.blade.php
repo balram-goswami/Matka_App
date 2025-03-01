@@ -43,8 +43,8 @@ $gameStatus = getThemeOptions('betSetting');
             <div class="single-hero-slide" style="background-image: url('../themeAssets/img/bg-img/1.jpg')">
                 <div class="slide-content h-100 d-flex align-items-center">
                     <div class="slide-text">
-                        <h4 class="text-white mb-0" data-animation="fadeInUp" data-delay="100ms" data-duration="1000ms">Matka App</h4>
-                        <p class="text-white" data-animation="fadeInUp" data-delay="400ms" data-duration="1000ms">Play Unlimited</p>
+                        <h4 class="text-white mb-0" data-animation="fadeInUp" data-delay="100ms" data-duration="1000ms"></h4>
+                        <p class="text-white" data-animation="fadeInUp" data-delay="400ms" data-duration="1000ms"></p>
                     </div>
                 </div>
             </div>
@@ -54,9 +54,9 @@ $gameStatus = getThemeOptions('betSetting');
                 <div class="slide-content h-100 d-flex align-items-center">
                     <div class="slide-text">
                         <h4 class="text-white mb-0" data-animation="fadeInUp" data-delay="100ms"
-                            data-duration="1000ms">{{ $homePage['bannerText'] ?? 'Matka App' }}</h4>
+                            data-duration="1000ms">{{ $homePage['bannerText'] ?? '' }}</h4>
                         <p class="text-white" data-animation="fadeInUp" data-delay="400ms"
-                            data-duration="1000ms">{{ $homePage['buttonText'] ?? 'Play Unlimited' }}</p>
+                            data-duration="1000ms">{{ $homePage['buttonText'] ?? '' }}</p>
                     </div>
                 </div>
             </div>
@@ -66,9 +66,9 @@ $gameStatus = getThemeOptions('betSetting');
                 <div class="slide-content h-100 d-flex align-items-center">
                     <div class="slide-text">
                         <h4 class="text-white mb-0" data-animation="fadeInUp" data-delay="100ms"
-                            data-duration="1000ms">{{ $homePage['bannerText'] ?? 'Matka App' }}</h4>
+                            data-duration="1000ms">{{ $homePage['bannerText'] ?? '' }}</h4>
                         <p class="text-white" data-animation="fadeInUp" data-delay="400ms"
-                            data-duration="1000ms">{{ $homePage['buttonText'] ?? 'Play Unlimited' }}</p>
+                            data-duration="1000ms">{{ $homePage['buttonText'] ?? '' }}</p>
                     </div>
                 </div>
             </div>
@@ -147,35 +147,78 @@ $gameStatus = getThemeOptions('betSetting');
                 @endif
                 <div class="ms-3">
                     <h5 class="mb-0" style="color: #FFC107;">{{ $satta->post_title }}</h5>
-                    @if($satta['isMorningOpen'] || $satta['isEveningOpen'])
-                    <p class="market-status mb-0" style="color: green;">MARKET OPEN</p>
+                    @if($satta['isOpen'])
+                    <p class="market-status mb-0" style="color: green;">Market Open</p>
                     @else
                     <p class="market-status mb-0">Market Closed</p>
                     @endif
                 </div>
             </div>
-            @if($satta['isMorningOpen'] || $satta['isEveningOpen'])
-            <a class="play-btn" href="{{ route('single.post', ['post_type' => $satta->post_type, 'slug' => $satta->post_name]) }}">Play Now</a>
+
+            @if($satta['isOpen'])
+            <a class="play-btn" href="{{ route('single.post', ['post_type' => $satta->post_type, 'slug' => $satta->post_name]) }}"
+                id="play-btn-{{ $index }}">
+                Play Now
+            </a>
             @endif
         </div>
 
-        @if($satta['isMorningOpen'] || $satta['isEveningOpen'])
-        <div class="card-footer">
-            <strong style="color: black;">XX</strong>
-            <span style="color: black;" id="time-left-{{ $index }}"
-                data-time-left="{{ \Carbon\Carbon::parse($satta['extraFields']['close_time_evening'])->diffInSeconds(now()) }}">
+        <div class="card-footer" style="color: black;">
+            @if($satta['isOpen'])
+            <strong>Time Left:</strong>
+            <span id="time-left-{{ $index }}"
+                data-time-left="{{ $satta['timeLeft'] }}">
                 Loading...
             </span>
+            @else
+            <strong></strong>
+            <strong><h4 style="color: black;">{{ $satta['result'] }}</h4></strong>
+            <strong></strong>
+            @endif
         </div>
-        @else
-        <div class="card-footer">
-            <strong style="color: black;">{{ $satta['result'] }}</strong>
-        </div>
-        @endif
     </div>
     <br>
     @endforeach
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        function startCountdown() {
+            document.querySelectorAll('[id^="time-left-"]').forEach(function(element) {
+                let timeLeft = parseInt(element.getAttribute("data-time-left"));
+                let index = element.id.split('-')[2];
+                let playBtn = document.getElementById(`play-btn-${index}`);
+
+                if (timeLeft > 0) {
+                    let countdown = setInterval(function() {
+                        if (timeLeft <= 0) {
+                            element.innerHTML = "Time's Up!";
+                            clearInterval(countdown);
+                            if (playBtn) {
+                                playBtn.classList.add('disabled');
+                                playBtn.setAttribute('onclick', 'return false;');
+                            }
+                            return;
+                        }
+                        let hours = Math.floor(timeLeft / 3600);
+                        let minutes = Math.floor((timeLeft % 3600) / 60);
+                        let seconds = timeLeft % 60;
+                        element.innerHTML = `${hours}h ${minutes}m ${seconds}s`;
+                        timeLeft--;
+                    }, 1000);
+                } else {
+                    element.innerHTML = "Time's Up!";
+                    if (playBtn) {
+                        playBtn.classList.add('disabled');
+                        playBtn.setAttribute('onclick', 'return false;');
+                    }
+                }
+            });
+        }
+
+        startCountdown();
+    });
+</script>
 
 
 <div class="weekly-best-seller-area py-3">
@@ -184,32 +227,3 @@ $gameStatus = getThemeOptions('betSetting');
 </div>
 
 @include('Include.FooterMenu')
-
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const timers = document.querySelectorAll("[id^='time-left-']");
-
-        timers.forEach(timer => {
-            let remainingTime = parseInt(timer.dataset.timeLeft);
-
-            const updateTimer = () => {
-                if (remainingTime > 0) {
-                    remainingTime--;
-
-                    // Calculate hours, minutes, and seconds
-                    let hours = Math.floor(remainingTime / 3600);
-                    let minutes = Math.floor((remainingTime % 3600) / 60);
-                    let seconds = remainingTime % 60;
-
-                    // Format time as HH:mm:ss
-                    timer.innerText = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                } else {
-                    timer.innerText = "Time's up!";
-                }
-            };
-
-            updateTimer(); // Initialize the timer immediately
-            setInterval(updateTimer, 1000);
-        });
-    });
-</script>

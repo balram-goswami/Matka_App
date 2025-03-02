@@ -349,8 +349,16 @@ class PlayerController extends Controller
       ]
     );
 
+
     if ($validator->fails()) {
       return redirect()->back()->withErrors($validator)->withInput();
+    }
+
+    $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
+    $game = $sattaGame->where('post_id', $request->game_id)->first();
+    $currentTime = timeonly();
+    if (isset($game['extraFields']['close_time']) && $currentTime > $game['extraFields']['close_time']) {
+      return redirect()->back()->with('danger', 'Sorry, Game time Out');
     }
 
     if ($request->userrate <= 10) {
@@ -418,6 +426,13 @@ class PlayerController extends Controller
 
       if ($bids->isEmpty()) {
         return redirect()->route('myBids')->with('error', 'No pending bids found.');
+      }
+
+      $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
+      $game = $sattaGame->where('post_id', $request->game_id)->first();
+      $currentTime = timeonly();
+      if ($currentTime > $game['extraFields']['close_time']) {
+        return redirect()->back()->with('danger', 'Sorry, Game time Out');
       }
 
       $totalBidAmount = $bids->sum('bid_amount');

@@ -6,7 +6,7 @@ $betPrice = getThemeOptions('betSetting');
 <div class="header-area" id="headerArea">
     <div class="container h-100 d-flex align-items-center justify-content-between rtl-flex-d-row-r">
         <!-- Back Button-->
-        <div class="back-button me-2"><a href="{{ route('optionGameList') }}"><i class="ti ti-arrow-left"></i></a></div>
+        <div class="back-button me-2"><a href="{{ url()->previous() }}"><i class="ti ti-arrow-left"></i></a></div>
         <!-- Page Title-->
         <div class="page-heading">
             <h6 class="mb-0">{{ $post->post_title }}</h6>
@@ -147,9 +147,9 @@ $betPrice = getThemeOptions('betSetting');
         document.querySelectorAll("[id^='time-left']").forEach(timer => {
             let endTime = parseInt(timer.dataset.endTime, 10);
             let marketStatus = document.getElementById(timer.dataset.marketId);
-            let submitButton = document.getElementById(`submit-btn-${timer.id.split('-').pop()}`);
+            let submitButton = document.getElementById(`submit-btn`);
 
-            if (isNaN(endTime)) return; // Skip if no valid end time
+            if (isNaN(endTime)) return;
 
             let updateTimer = () => {
                 let now = Math.floor(Date.now() / 1000);
@@ -166,13 +166,13 @@ $betPrice = getThemeOptions('betSetting');
                         marketStatus.innerHTML = `<i class="ti ti-star-filled"></i> Market: <span class="ms-1">( Closed )</span>`;
                     }
                     if (submitButton) {
-                        submitButton.style.display = "none"; // Hide submit button
+                        submitButton.style.display = "none"; // Hide button
                     }
                     clearInterval(interval);
                 }
             };
 
-            updateTimer(); // Run immediately
+            updateTimer();
             let interval = setInterval(updateTimer, 1000);
         });
     });

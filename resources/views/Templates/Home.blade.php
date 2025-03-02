@@ -14,9 +14,9 @@ $gameStatus = getThemeOptions('betSetting');
                     @foreach($news as $newsItem)
                     <span class="ticker-item">{{ $newsItem->post_excerpt }}</span>
                     @endforeach
-                    @foreach($news as $newsItem)  <!-- Duplicate to create seamless loop -->
+                    @foreach($news as $newsItem) <!-- Duplicate to create seamless loop -->
                     <span class="ticker-item">{{ $newsItem->post_excerpt }}</span>
-                    @endforeach  
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -121,7 +121,7 @@ $gameStatus = getThemeOptions('betSetting');
     <div class="card custom-card">
         <div class="card-header">
             <div class="d-flex align-items-center">
-                <img src="../themeAssets/img/matka/matka.png" alt="Game Logo">
+                <img src="../themeAssets/img/matka/toss.png" alt="Game Logo">
                 <div class="ms-3">
                     <h5 class="mb-0" style="color:rgb(0, 0, 0);"><b>Toss Game</b></h5>
                     <p class="market-status mb-0" style="color: green;">Toss Game Coming Soon...</p>

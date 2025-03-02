@@ -121,6 +121,13 @@ class SattaGameController extends Controller
             ]
         );
 
+        $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
+        $game = $sattaGame->where('post_id', $request->game_id)->first();
+        $currentTime = timeonly();
+        if ($currentTime > $game['extraFields']['close_time']) {
+            return redirect()->back()->with('danger', 'Sorry, Game time Out');
+        }
+
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
@@ -196,6 +203,13 @@ class SattaGameController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
+        $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
+        $game = $sattaGame->where('post_id', $request->game_id)->first();
+        $currentTime = timeonly();
+        if ($currentTime > $game['extraFields']['close_time']) {
+            return redirect()->back()->with('danger', 'Sorry, Game time Out');
+        }
+
         $user = getCurrentUser();
         $parent = User::where('user_id', $user->user_id)->get()->first();
 
@@ -216,7 +230,7 @@ class SattaGameController extends Controller
 
                     $diff = $request->userrate - $request->adminrate;
                     $getDiff = $diff * 10;
-                    $adminrate = $request->adminrate*10;
+                    $adminrate = $request->adminrate * 10;
                     $subadminDiff = $amount / 100 * $getDiff;
                     $adminDiff = $amount / 100 * $adminrate;
 
@@ -256,7 +270,7 @@ class SattaGameController extends Controller
 
                     $diff = $request->userrate - $request->adminrate;
                     $getDiff = $diff * 10;
-                    $adminrate = $request->adminrate*10;
+                    $adminrate = $request->adminrate * 10;
                     $subadminDiff = $amount / 100 * $getDiff;
                     $adminDiff = $amount / 100 * $adminrate;
 

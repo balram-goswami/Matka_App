@@ -278,9 +278,6 @@ class SubAdminController extends Controller
             $gameType = 'satta';
             $gameResult = GameResult::where('game_id', $game_id)->whereDate('created_at', $date)->first(['result']);
 
-            $dates = Carbon::parse($request->gamedate)->startOfDay();  // 00:00:00
-            $enddates = Carbon::parse($request->gamedate)->endOfDay(); // 23:59:59
-
             $jantriData = BidTransaction::where('game_id', $game_id)
                 ->where('harf_digit', NULL)
                 ->whereDate('updated_at', $date)

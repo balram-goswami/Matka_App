@@ -49,3 +49,8 @@ $homePage = getThemeOptions('homePage');
             <div class="sr-only"></div>
         </div>
     </div> -->
+    @if(session('danger'))
+    <div class="alert alert-success" style="margin-top: 10%;">
+        {{ session('danger') }}
+    </div>
+    @endif

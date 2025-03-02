@@ -7,7 +7,7 @@ $betPrice = getThemeOptions('betSetting');
     <div class="container h-100 d-flex align-items-center justify-content-between rtl-flex-d-row-r">
         <!-- Back Button -->
         <div class="back-button me-2">
-            <a href="{{ route('playerDashboard') }}"><i class="ti ti-arrow-left"></i></a>
+            <a href="{{ url()->previous() }}"><i class="ti ti-arrow-left"></i></a>
         </div>
         <!-- Page Title -->
         <div class="page-heading">
@@ -36,7 +36,7 @@ $betPrice = getThemeOptions('betSetting');
                 </div>
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <h6>Win Rate: {{$user->oddEven_game_rate}}X </h6>
-                    <h6>Min Bet Amount: {{$betPrice['oddevenGame'] ?? 'NA'}} </h6>
+                    <h6>Min Bet Amount: {{$betPrice['oddevenGameMin'] ?? 'NA'}} </h6>
                 </div>
 
                 <div class="card-body d-flex align-items-center justify-content-between">

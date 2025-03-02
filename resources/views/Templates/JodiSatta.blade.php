@@ -7,7 +7,7 @@ $betPrice = getThemeOptions('betSetting');
     <div class="container h-100 d-flex align-items-center justify-content-between rtl-flex-d-row-r">
         <!-- Back Button -->
         <div class="back-button me-2">
-            <a href="{{ route('playerDashboard') }}"><i class="ti ti-arrow-left"></i></a>
+            <a href="{{ url()->previous() }}"><i class="ti ti-arrow-left"></i></a>
         </div>
         <!-- Page Title -->
         <div class="page-heading">
@@ -36,7 +36,7 @@ $betPrice = getThemeOptions('betSetting');
                 </div>
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <h6>Win Rate: {{$user->jodi_game_rate}}X </h6>
-                    <h6>Min Bet Amount: {{$betPrice['jodiGame'] ?? 'NA'}} </h6>
+                    <h6>Min Bet Amount: {{$betPrice['jodiGameMin'] ?? 'NA'}} </h6>
                 </div>
 
                 <div class="card-body d-flex align-items-center justify-content-between">
@@ -105,9 +105,7 @@ $betPrice = getThemeOptions('betSetting');
                                 <td>Total</td>
                                 <td>{{ $totalAmount }}</td>
                                 <td>{{ $winAmount }}</td>
-                                <th scope="row">
-
-                                </th>
+                                <th scope="row"></th>
                             </tr>
                         </tbody>
                     </table>
@@ -127,7 +125,7 @@ $betPrice = getThemeOptions('betSetting');
                         <input type="text" name="admin_cut" value="{{ $user->jodi_game_rate}}" hidden>
                         <input type="text" name="subadmin_cut" value="{{ $user->jodi_commission}}" hidden>
                         @if($wallet->balance >= $totalAmount)
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" id="submit-btn" class="btn btn-primary">Submit</button>
                         @else
                         <label class="text-danger mt-2">Insufficient Balance</label>
                         @endif
@@ -142,28 +140,33 @@ $betPrice = getThemeOptions('betSetting');
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const timer = document.getElementById("time-left");
+        let submitButton = document.getElementById("submit-btn");
 
         if (timer) {
-            let remainingTime = parseInt(timer.dataset.timeLeft);
+            let remainingTime = parseInt(timer.dataset.timeLeft, 10);
 
             const updateTimer = () => {
                 if (remainingTime > 0) {
-                    remainingTime--;
-
                     const hours = Math.floor(remainingTime / 3600);
                     const minutes = Math.floor((remainingTime % 3600) / 60);
                     const seconds = remainingTime % 60;
 
                     timer.innerText = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    remainingTime--;
                 } else {
                     timer.innerText = "Time's up!";
+                    if (submitButton) {
+                        submitButton.style.display = "none"; // Hide submit button when time is up
+                    }
+                    clearInterval(interval);
                 }
             };
 
             updateTimer();
-            setInterval(updateTimer, 1000);
+            let interval = setInterval(updateTimer, 1000);
         }
     });
 </script>
+
 
 @include('Include.FooterMenu')

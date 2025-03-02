@@ -2,7 +2,7 @@
 <div class="header-area" id="headerArea">
     <div class="container h-100 d-flex align-items-center justify-content-between rtl-flex-d-row-r">
         <!-- Back Button-->
-        <div class="back-button me-2"><a href="{{ route('playerDashboard') }}"><i class="ti ti-arrow-left"></i></a></div>
+        <div class="back-button me-2"><a href="{{ url()->previous() }}"><i class="ti ti-arrow-left"></i></a></div>
         <!-- Page Title-->
         <div class="page-heading">
             <h6 class="mb-0">Withdraw Money</h6>
@@ -76,12 +76,12 @@
                         </thead>
                         <tbody>
                             @foreach ($requests as $request)
-                                <tr>
-                                    <td><a class="product-title"
-                                            href="single-product.html">{{ $request->withdraw_amount }}</a></td>
-                                    <td><a class="product-title"
-                                            href="single-product.html">{{ $request->request_status }}</a></td>
-                                </tr>
+                            <tr>
+                                <td><a class="product-title"
+                                        href="single-product.html">{{ $request->withdraw_amount }}</a></td>
+                                <td><a class="product-title"
+                                        href="single-product.html">{{ $request->request_status }}</a></td>
+                            </tr>
                             @endforeach
 
                         </tbody>

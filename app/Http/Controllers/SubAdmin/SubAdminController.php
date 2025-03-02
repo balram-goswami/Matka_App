@@ -271,21 +271,19 @@ class SubAdminController extends Controller
             $view = 'SubAdmin.Jantri.Table';
             return view('Admin', compact('view', 'jantriData', 'gameType', 'game', 'gameResult'));
         } else {
-
             $game_id = $request->sattaGame;
             $time = $request->sattaGameTime;
-            $date = $request->date;
+            $date = $request->gamedate;
 
             $gameType = 'satta';
-            $gameResult = GameResult::where('game_id', $game_id)
-                ->first(['result']);
+            $gameResult = GameResult::where('game_id', $game_id)->whereDate('created_at', $date)->first(['result']);
 
             $dates = Carbon::parse($request->gamedate)->startOfDay();  // 00:00:00
             $enddates = Carbon::parse($request->gamedate)->endOfDay(); // 23:59:59
 
             $jantriData = BidTransaction::where('game_id', $game_id)
                 ->where('harf_digit', NULL)
-                ->whereBetween('updated_at', [$dates, $enddates])  // Corrected condition
+                ->whereDate('updated_at', $date)
                 ->selectRaw('answer, SUM(subadmin_dif) as total_bid, SUM(win_amount) as total_win, result_status')
                 ->groupBy('answer', 'result_status')
                 ->orderBy('answer', 'asc')
@@ -293,7 +291,7 @@ class SubAdminController extends Controller
 
             $jantriOddEven = BidTransaction::where('game_id', $game_id)
                 ->where('harf_digit', 'oddEven')
-                ->whereBetween('updated_at', [$dates, $enddates])  // Corrected condition
+                ->whereDate('updated_at', $date)  // Corrected condition
                 ->selectRaw('answer, SUM(subadmin_dif) as total_bid, SUM(win_amount) as total_win, result_status')
                 ->groupBy('answer', 'result_status')
                 ->orderBy('answer', 'asc')
@@ -301,7 +299,7 @@ class SubAdminController extends Controller
 
             $jantriandar = BidTransaction::where('game_id', $game_id)
                 ->where('harf_digit', 'Andar')
-                ->whereBetween('updated_at', [$dates, $enddates])  // Corrected condition
+                ->whereDate('updated_at', $date)  // Corrected condition
                 ->selectRaw('answer, SUM(subadmin_dif) as total_bid, SUM(win_amount) as total_win, result_status')
                 ->groupBy('answer', 'result_status')
                 ->orderBy('answer', 'asc')
@@ -309,7 +307,7 @@ class SubAdminController extends Controller
 
             $jantribahar = BidTransaction::where('game_id', $game_id)
                 ->where('harf_digit', 'Bahar')
-                ->whereBetween('updated_at', [$dates, $enddates])  // Corrected condition
+                ->whereDate('updated_at', $date)  // Corrected condition
                 ->selectRaw('answer, SUM(subadmin_dif) as total_bid, SUM(win_amount) as total_win, result_status')
                 ->groupBy('answer', 'result_status')
                 ->orderBy('answer', 'asc')

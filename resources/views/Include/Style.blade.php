@@ -41,19 +41,24 @@
         flex: 1;
         overflow: hidden;
         position: relative;
+        width: 100%;
     }
 
     .ticker-content {
-        display: inline-block;
+        display: flex;
+        gap: 50px;
+        /* Space between news items */
         white-space: nowrap;
         will-change: transform;
-        animation: scroll 8s linear infinite;
+        animation: scroll 15s linear infinite;
     }
 
+    /* Make sure the animation duration adjusts dynamically */
     @keyframes scroll {
         from {
-            transform: translateX(50%);
+            transform: translateX(100%);
         }
+
         to {
             transform: translateX(-100%);
         }
@@ -64,21 +69,25 @@
             transform: scale(1);
             opacity: 0.8;
         }
+
         100% {
             transform: scale(1.1);
             opacity: 1;
         }
     }
 
-    .stripSize {
-        margin-top: 3%;
-    }
-
+    /* Responsive adjustments */
     @media only screen and (max-width: 767px) {
         .stripSize {
             margin-top: 10%;
         }
+
+        .ticker-content {
+            animation-duration: 10s;
+            /* Faster scrolling on mobile */
+        }
     }
+
 
     .custom-card {
         border-radius: 15px;

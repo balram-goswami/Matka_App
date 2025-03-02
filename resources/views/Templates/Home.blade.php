@@ -4,18 +4,15 @@ $news = getPostsByPostType('news', 0, 'new', true);
 $gameStatus = getThemeOptions('betSetting');
 @endphp
 
-<div class="weekly-best-seller-area py-3 stripSize">
+<div class="weekly-best-seller-area py-3 stripSize" style="margin-top: 3rem !important;">
     @if($news->count() > 0)
     <div class="container">
         <div class="news-ticker">
             <i class="fa-solid fa-bullhorn news-icon"></i>
             <div class="ticker-wrapper">
                 <div class="ticker-content">
-                    @foreach($news as $index => $newsItem)
-                    <span>{{ $newsItem->post_excerpt }}</span>
-                    @if(!$loop->last)
-                    <span> || </span>
-                    @endif
+                    @foreach($news as $newsItem)
+                    <span class="ticker-item">{{ $newsItem->post_excerpt }}</span>
                     @endforeach
                 </div>
             </div>
@@ -23,6 +20,7 @@ $gameStatus = getThemeOptions('betSetting');
     </div>
     @endif
 </div>
+
 
 <div class="container">
     <div>

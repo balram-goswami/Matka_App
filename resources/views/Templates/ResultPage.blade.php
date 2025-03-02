@@ -38,7 +38,7 @@
                             @endphp
                             <tr>
                             <td>{{ $results->updated_at }}</td>
-                                <td>{{ $gameName->post_title }} ({{ $results->slot ?? ''}})</td>
+                                <td>{{ $gameName->post_title }}</td>
                                 <td>{{ $results->result }}</td>
                             </tr>
                             @endforeach

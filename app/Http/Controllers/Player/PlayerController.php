@@ -42,6 +42,7 @@ class PlayerController extends Controller
 
     foreach ($sattaGame as &$satta) {
       $today = \Carbon\Carbon::now('Asia/Kolkata')->toDateString();
+      $tomorrow = \Carbon\Carbon::tomorrow('Asia/Kolkata')->toDateString();
 
       // Detect time format (12-hour or 24-hour)
       $timeFormat = (strpos($satta['extraFields']['open_time'], 'AM') !== false || strpos($satta['extraFields']['open_time'], 'PM') !== false) ? 'h:i A' : 'H:i';
@@ -55,9 +56,9 @@ class PlayerController extends Controller
         ? \Carbon\Carbon::createFromFormat("Y-m-d {$timeFormat}", "{$today} {$satta['extraFields']['close_time']}", 'Asia/Kolkata')
         : null;
 
-      // If start time is greater than end time, move start time to the previous day
-      if ($startTime && $endTime && $startTime->gt($endTime)) {
-        $startTime->subDay(); // Move start time to the previous day
+      // If endTime is earlier than startTime, it means it belongs to the next day
+      if ($startTime && $endTime && $endTime->lt($startTime)) {
+        $endTime->addDay(); // Move end time to the next day
       }
 
       // Debugging Log
@@ -77,10 +78,8 @@ class PlayerController extends Controller
       }
 
       // Get game result
-      $satta['result'] = GameResult::where('game_id', $satta['post_id'])->latest()->first()->result ?? 'NA';
+      $satta['result'] = GameResult::where('game_id', $satta['post_id'])->latest()->first()->result ?? 'XX';
     }
-
-
 
     $exposer = BidTransaction::where('user_id', $user->user_id)
       ->where('status', 'submitted')

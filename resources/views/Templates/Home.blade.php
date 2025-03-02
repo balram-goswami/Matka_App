@@ -4,7 +4,7 @@ $news = getPostsByPostType('news', 0, 'new', true);
 $gameStatus = getThemeOptions('betSetting');
 @endphp
 
-<div class="weekly-best-seller-area py-3 stripSize" style="margin-top: 3rem !important;">
+<div class="weekly-best-seller-area py-3" style="margin-top: 3rem;">
     @if($news->count() > 0)
     <div class="container">
         <div class="news-ticker">
@@ -14,13 +14,15 @@ $gameStatus = getThemeOptions('betSetting');
                     @foreach($news as $newsItem)
                     <span class="ticker-item">{{ $newsItem->post_excerpt }}</span>
                     @endforeach
+                    @foreach($news as $newsItem)  <!-- Duplicate to create seamless loop -->
+                    <span class="ticker-item">{{ $newsItem->post_excerpt }}</span>
+                    @endforeach  
                 </div>
             </div>
         </div>
     </div>
     @endif
 </div>
-
 
 <div class="container">
     <div>
@@ -170,7 +172,9 @@ $gameStatus = getThemeOptions('betSetting');
             </span>
             @else
             <strong></strong>
-            <strong><h4 style="color: black;">{{ $satta['result'] ?? 'XX' }}</h4></strong>
+            <strong>
+                <h4 style="color: black;">{{ $satta['result'] ?? 'XX' }}</h4>
+            </strong>
             <strong></strong>
             @endif
         </div>
@@ -223,5 +227,6 @@ $gameStatus = getThemeOptions('betSetting');
     <div class="container" style="margin-bottom: 10%;">
     </div>
 </div>
+
 
 @include('Include.FooterMenu')

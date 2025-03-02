@@ -14,18 +14,21 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
+   :root {
+        --speed: 10s; /* Default speed */
+    }
+
     .news-ticker {
         display: flex;
         align-items: center;
         width: 100%;
-        background: rgb(29, 29, 29);
+        background: #1d1d1d;
         color: white;
         padding: 12px 15px;
         font-size: 16px;
         font-weight: 500;
         border-radius: 5px;
         overflow: hidden;
-        white-space: nowrap;
         box-shadow: 0 4px 8px rgba(2, 2, 2, 0.2);
         position: relative;
     }
@@ -34,59 +37,45 @@
         font-size: 22px;
         color: #FFC107;
         margin-right: 15px;
-        animation: pulse 1.5s infinite alternate;
+        animation: pulse 0.5s infinite alternate;
     }
 
     .ticker-wrapper {
-        flex: 1;
+        display: flex;
+        width: 100%;
         overflow: hidden;
         position: relative;
-        width: 100%;
     }
 
     .ticker-content {
         display: flex;
-        gap: 50px;
-        /* Space between news items */
         white-space: nowrap;
-        will-change: transform;
-        animation: scroll 15s linear infinite;
+        animation: scroll var(--speed) linear infinite;
+        min-width: max-content; /* Ensures content fits properly */
     }
 
-    /* Make sure the animation duration adjusts dynamically */
+    .ticker-item {
+        margin-right: 50px; /* Space between news items */
+        display: inline-block;
+    }
+
+    /* Keyframe animation for smooth scrolling */
     @keyframes scroll {
         from {
-            transform: translateX(100%);
+            transform: translateX(0);
         }
-
         to {
-            transform: translateX(-100%);
+            transform: translateX(-50%);
         }
     }
 
-    @keyframes pulse {
-        0% {
-            transform: scale(1);
-            opacity: 0.8;
-        }
-
-        100% {
-            transform: scale(1.1);
-            opacity: 1;
+    /* Mobile: Adjust speed */
+    @media (max-width: 767px) {
+        :root {
+            --speed: 15s;
         }
     }
 
-    /* Responsive adjustments */
-    @media only screen and (max-width: 767px) {
-        .stripSize {
-            margin-top: 10%;
-        }
-
-        .ticker-content {
-            animation-duration: 10s;
-            /* Faster scrolling on mobile */
-        }
-    }
 
 
     .custom-card {

@@ -25,8 +25,13 @@
                 <div class="col-6">
                     <div class="card catagory-card" style="background-color: #FFCC00;">
                         <div class="card-body px-2">
-                            <a href="{{ route('jodiSatta', ['post_id' => $post->post_id]) }}"><img src="{{publicPath('..\themeAssets\img\matka\matka.png')}}"
-                                    alt=""><span style="color: white;">Jodi</span>
+                            <a href="{{ route('jodiSatta', ['post_id' => $post->post_id]) }}">
+                                @if(isset($post->post_image))
+                                <img src="{{ publicPath($post->post_image) }}" alt="">
+                                @else
+                                <img src="{{ publicPath('..\themeAssets\img\matka\matka.png') }}" alt="">
+                                @endif
+                                    <span style="color: white;">Jodi</span>
                             </a>
                         </div>
                     </div>
@@ -34,22 +39,37 @@
                 <!-- Catagory Card -->
                 <div class="col-6">
                     <div class="card catagory-card" style="background-color: #FFCC00;">
-                        <div class="card-body px-2"><a href="{{ route('harfSatta', ['post_id' => $post->post_id]) }}"><img src="{{publicPath('..\themeAssets\img\matka\matka.png')}}"
-                                    alt=""><span style="color: white;">HARF</span></a></div>
+                        <div class="card-body px-2"><a href="{{ route('harfSatta', ['post_id' => $post->post_id]) }}">
+                            @if(isset($post->post_image))
+                                <img src="{{ publicPath($post->post_image) }}" alt="">
+                                @else
+                                <img src="{{ publicPath('..\themeAssets\img\matka\matka.png') }}" alt="">
+                                @endif
+                                    <span style="color: white;">HARF</span></a></div>
                     </div>
                 </div>
                 <!-- Catagory Card -->
                 <div class="col-6">
                     <div class="card catagory-card" style="background-color: #FFCC00;">
-                        <div class="card-body px-2"><a href="{{ route('crossingSatta', ['post_id' => $post->post_id]) }}"><img src="{{publicPath('..\themeAssets\img\matka\matka.png')}}"
-                                    alt=""><span style="color: white;">CROSSING</span></a></div>
+                        <div class="card-body px-2"><a href="{{ route('crossingSatta', ['post_id' => $post->post_id]) }}">
+                            @if(isset($post->post_image))
+                                <img src="{{ publicPath($post->post_image) }}" alt="">
+                                @else
+                                <img src="{{ publicPath('..\themeAssets\img\matka\matka.png') }}" alt="">
+                                @endif
+                                    <span style="color: white;">CROSSING</span></a></div>
                     </div>
                 </div>
                 <!-- Catagory Card -->
                 <div class="col-6">
                     <div class="card catagory-card" style="background-color: #FFCC00;">
-                        <div class="card-body px-2"><a href="{{ route('oddEvenSatta', ['post_id' => $post->post_id]) }}"><img src="{{publicPath('..\themeAssets\img\matka\matka.png')}}"
-                                    alt=""><span style="color: white;">ODD & EVEN</span></a></div>
+                        <div class="card-body px-2"><a href="{{ route('oddEvenSatta', ['post_id' => $post->post_id]) }}">
+                            @if(isset($post->post_image))
+                                <img src="{{ publicPath($post->post_image) }}" alt="">
+                                @else
+                                <img src="{{ publicPath('..\themeAssets\img\matka\matka.png') }}" alt="">
+                                @endif
+                                    <span style="color: white;">ODD & EVEN</span></a></div>
                     </div>
                 </div>
 

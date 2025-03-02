@@ -78,7 +78,7 @@ class PlayerController extends Controller
       }
 
       // Get game result
-      $satta['result'] = GameResult::where('game_id', $satta['post_id'])->latest()->first()->result ?? 'XX';
+      $satta['result'] = GameResult::where('game_id', $satta['post_id'])->wheredate('created_at', $today)->latest()->first()->result ?? 'XX';
     }
 
     $exposer = BidTransaction::where('user_id', $user->user_id)
@@ -331,77 +331,99 @@ class PlayerController extends Controller
 
   public function optionGameEntry(Request $request)
   {
-    $validator = Validator::make(
-      $request->all(),
-      [
-        'user_id' => 'required',
-        'game_id' => 'required',
-        'answer' => 'required',
-
-        'adminrate' => 'nullable',
-        'subadmincommission' => 'nullable',
-
-        'userrate' => 'nullable',
-        'usercommission' => 'nullable',
-
-        'bid_amount' => 'required',
-        'harf_digit' => 'nullable',
-      ]
-    );
-
+    $validator = Validator::make($request->all(), [
+      'user_id'            => 'required',
+      'game_id'            => 'required',
+      'answer'             => 'required',
+      'bid_amount'         => 'required|numeric',
+      'adminrate'          => 'nullable|numeric',
+      'subadmincommission' => 'nullable|numeric',
+      'userrate'           => 'nullable|numeric',
+      'usercommission'     => 'nullable|numeric',
+      'harf_digit'         => 'nullable',
+    ]);
 
     if ($validator->fails()) {
       return redirect()->back()->withErrors($validator)->withInput();
     }
 
-    $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
-    $game = $sattaGame->where('post_id', $request->game_id)->first();
-    $currentTime = timeonly();
-    if (isset($game['extraFields']['close_time']) && $currentTime > $game['extraFields']['close_time']) {
-      return redirect()->back()->with('danger', 'Sorry, Game time Out');
+    $gameType = Posts::where('post_id', $request->game_id)->first();
+    if (!$gameType) {
+      return redirect()->back()->with('danger', 'Invalid game selected.');
     }
 
-    if ($request->userrate <= 10) {
-      $adminRate = ($request->adminrate - 1) * 100;
-      $subAdminrate = ($request->userrate - 1) * 100;
+    $currentTime = time();
 
-      $diff = $subAdminrate - $adminRate;
-      $subadminDiff = $request->bid_amount / 100 * $diff;
-      $adminDiff = $request->bid_amount / 100 * $adminRate;
+    if ($gameType->post_type === 'numberGame') {
+      $game = getPostsByPostType('numberGame', 0, 'new', true)->where('post_id', $request->game_id)->first();
+
+      if (!$game || !isset($game['extraFields']['open_time'], $game['extraFields']['close_time'])) {
+        return redirect()->back()->with('danger', 'Game timings are not set.');
+      }
+
+      $openTime  = strtotime($game['extraFields']['open_time']);
+      $closeTime = strtotime($game['extraFields']['close_time']);
+
+      if (($closeTime < $openTime && !($currentTime >= $openTime || $currentTime < strtotime('+1 day', $closeTime))) ||
+        ($closeTime >= $openTime && ($currentTime < $openTime || $currentTime > $closeTime))
+      ) {
+        return redirect()->back()->with('danger', 'Sorry, Game time Out');
+      }
     } else {
-      $diff = $request->userrate - $request->adminrate;
-      $subadminDiff = $request->bid_amount / 100 * $diff;
-      $adminDiff = $request->bid_amount / 100 * $request->adminrate;
+      $game = getPostsByPostType('optionGame', 0, 'new', true)->where('post_id', $request->game_id)->first();
+
+      if (!$game || !isset($game['extraFields']['close_date'], $game['extraFields']['close_time'])) {
+        return redirect()->back()->with('danger', 'Game end date or time is not set.');
+      }
+
+      $endDateTime = strtotime($game['extraFields']['close_date'] . ' ' . $game['extraFields']['close_time']);
+
+      if ($currentTime > $endDateTime) {
+        return redirect()->back()->with('danger', 'Sorry, Game time Out');
+      }
     }
+
+    $adminRate = $request->adminrate ?? 0;
+    $userRate = $request->userrate ?? 0;
+
+    if ($userRate <= 10) {
+      $adminRate *= 100;
+      $subAdminRate = ($userRate - 1) * 100;
+    } else {
+      $subAdminRate = $userRate - $adminRate;
+    }
+
+    $subadminDiff = ($request->bid_amount / 100) * $subAdminRate;
+    $adminDiff = ($request->bid_amount / 100) * $adminRate;
 
     $user = getCurrentUser();
-    $parent = User::where('user_id', $user->user_id)->get()->first();
+    $parent = User::where('user_id', $user->user_id)->first();
 
-    $winAmount = $request->userrate * $request->bid_amount;
-    $winamount_from_admin = $request->adminrate * $request->bid_amount;
+    $winAmount = $userRate * $request->bid_amount;
+    $winAmountFromAdmin = $adminRate * $request->bid_amount;
 
-    $player_commission = $request->bid_amount * $request->usercommission / 100;
-    $subadmin_amount = $request->bid_amount - $player_commission;
+    $playerCommission = ($request->bid_amount * ($request->usercommission ?? 0)) / 100;
+    $subadminAmount = $request->bid_amount - $playerCommission;
 
-    $subadmin_commission = $request->bid_amount * $request->subadmincommission / 100;
-    $admin_amount = $request->bid_amount - $subadmin_commission;
+    $subadminCommission = ($request->bid_amount * ($request->subadmincommission ?? 0)) / 100;
+    $adminAmount = $request->bid_amount - $subadminCommission;
 
-    $bid = new BidTransaction;
-    $bid->user_id = $request->user_id;
-    $bid->game_id = $request->game_id;
-    $bid->parent_id = $parent->parent;
-    $bid->answer = $request->answer;
-    $bid->harf_digit = $request->harf_digit ?? NULL;
-    $bid->bid_amount = $request->bid_amount;
-    $bid->win_amount = $winAmount;
-    $bid->subadmin_amount = $subadmin_amount;
-    $bid->player_commission = $player_commission;
-    $bid->winamount_from_admin = $winamount_from_admin;
-    $bid->admin_amount = $admin_amount;
-    $bid->admin_dif = $adminDiff;
-    $bid->subadmin_dif = $subadminDiff;
-    $bid->subadmin_commission = $subadmin_commission;
-    $bid->save();
+    BidTransaction::create([
+      'user_id'               => $request->user_id,
+      'game_id'               => $request->game_id,
+      'parent_id'             => $parent->parent ?? null,
+      'answer'                => $request->answer,
+      'harf_digit'            => $request->harf_digit ?? null,
+      'bid_amount'            => $request->bid_amount,
+      'win_amount'            => $winAmount,
+      'subadmin_amount'       => $subadminAmount,
+      'player_commission'     => $playerCommission,
+      'winamount_from_admin'  => $winAmountFromAdmin,
+      'admin_amount'          => $adminAmount,
+      'admin_dif'             => $adminDiff,
+      'subadmin_dif'          => $subadminDiff,
+      'subadmin_commission'   => $subadminCommission,
+    ]);
 
     return redirect()->back()->with('success', 'Bid Placed Successfully');
   }
@@ -425,15 +447,69 @@ class PlayerController extends Controller
         ->get();
 
       if ($bids->isEmpty()) {
-        return redirect()->route('myBids')->with('error', 'No pending bids found.');
+        return redirect()->route('myBids')->with('danger', 'No pending bids found.');
       }
 
-      $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
-      $game = $sattaGame->where('post_id', $request->game_id)->first();
-      $currentTime = timeonly();
-      if ($currentTime > $game['extraFields']['close_time']) {
-        return redirect()->back()->with('danger', 'Sorry, Game time Out');
+      // Get game name
+      $game = Posts::where('post_id', $request->game_id)->first();
+      $gameName = $game->post_title ?? 'Unknown Game';
+
+      if ($game->post_type === 'numberGame') {
+        $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
+        $game = $sattaGame->where('post_id', $request->game_id)->first();
+        $currentTime = strtotime(timeonly()); // Current time as a timestamp
+
+        $openTime = isset($game['extraFields']['open_time']) ? strtotime($game['extraFields']['open_time']) : null;
+        $closeTime = isset($game['extraFields']['close_time']) ? strtotime($game['extraFields']['close_time']) : null;
+
+        // Check if times exist
+        if (!$openTime || !$closeTime) {
+          return redirect()->back()->with('danger', 'Game timings are not set.');
+        }
+
+        // Handle cases where closing time is past midnight (next day)
+        if ($closeTime < $openTime) {
+          // Close time is in the next day (e.g., open 8 AM, close 2 AM next day)
+          if ($currentTime >= $openTime || $currentTime < strtotime('+1 day', $closeTime)) {
+            // Game is open
+          } else {
+            return redirect()->back()->with('danger', 'Sorry, Game time Out');
+          }
+        } else {
+          // Normal case where close time is on the same day
+          if ($currentTime >= $openTime && $currentTime <= $closeTime) {
+            // Game is open
+          } else {
+            return redirect()->back()->with('danger', 'Sorry, Game time Out');
+          }
+        }
+      } else {
+        $optionGame = getPostsByPostType('optionGame', 0, 'new', true);
+        $game = $optionGame->where('post_id', $request->game_id)->first();
+        $currentTime = strtotime("now"); // Current timestamp
+
+        $endDate = isset($game['extraFields']['close_date']) ? $game['extraFields']['close_date'] : null;
+        $endTime = isset($game['extraFields']['close_time']) ? $game['extraFields']['close_time'] : null;
+
+        // Ensure both date and time exist
+        if (!$endDate || !$endTime) {
+          return redirect()->back()->with('danger', 'Game end date or time is not set.');
+        }
+
+        // Combine date and time into a single timestamp
+        $endDateTime = strtotime("$endDate $endTime");
+
+        // Check if the game is still open
+        if ($currentTime > $endDateTime) {
+          return redirect()->back()->with('danger', 'Sorry, Game time Out');
+        }
+
+        // Optional: Calculate time remaining
+        $timeRemaining = $endDateTime - $currentTime;
+        $hoursRemaining = floor($timeRemaining / 3600);
+        $minutesRemaining = floor(($timeRemaining % 3600) / 60);
       }
+
 
       $totalBidAmount = $bids->sum('bid_amount');
       $totalCommission = $bids->sum('player_commission');
@@ -441,10 +517,6 @@ class PlayerController extends Controller
 
       // Update bid status
       BidTransaction::whereIn('id', $bids->pluck('id'))->update(['status' => 'submitted']);
-
-      // Get game name
-      $game = Posts::where('post_id', $request->game_id)->first();
-      $gameName = $game->post_title ?? 'Unknown Game';
 
       // Get user & parent wallets
       $userWallet = Wallet::where('user_id', $request->user_id)->first();
@@ -524,7 +596,9 @@ class PlayerController extends Controller
   {
     $user = getCurrentUser();
     $wallet = Wallet::where('user_id', $user->user_id)->first();
-    $list = WalletTransactions::where('user_id', $user->user_id)->paginate(25);
+    $list = WalletTransactions::where('user_id', $user->user_id)
+      ->orderBy('created_at', 'desc') // Sorting in ascending order
+      ->paginate(25);
 
     $view = 'Templates.Transaction';
     return view('Front', compact('view', 'list', 'user', 'wallet'));

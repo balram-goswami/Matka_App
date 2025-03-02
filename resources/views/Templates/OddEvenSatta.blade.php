@@ -11,7 +11,7 @@ $betPrice = getThemeOptions('betSetting');
         </div>
         <!-- Page Title -->
         <div class="page-heading">
-            <h6 class="mb-0">{{ $post->post_title}} Odd/Even Game</h6>
+            <h6 class="mb-0" style="color: black;">{{ $post->post_title}} Odd/Even Game</h6>
         </div>
         <!-- Navbar Toggler -->
         <div class="suha-navbar-toggler ms-2" data-bs-toggle="offcanvas" data-bs-target="#suhaOffcanvas"

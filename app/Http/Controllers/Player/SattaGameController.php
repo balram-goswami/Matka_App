@@ -120,16 +120,39 @@ class SattaGameController extends Controller
                 'usercommission' => 'nullable',
             ]
         );
-
-        $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
-        $game = $sattaGame->where('post_id', $request->game_id)->first();
-        $currentTime = timeonly();
-        if ($currentTime > $game['extraFields']['close_time']) {
-            return redirect()->back()->with('danger', 'Sorry, Game time Out');
+        $gameType = Posts::where('post_id', $request->game_id)->first();
+        if (!$gameType) {
+            return redirect()->back()->with('danger', 'Invalid game selected.');
         }
+        $currentTime = time();
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+        if ($gameType->post_type === 'numberGame') {
+            $game = getPostsByPostType('numberGame', 0, 'new', true)->where('post_id', $request->game_id)->first();
+
+            if (!$game || !isset($game['extraFields']['open_time'], $game['extraFields']['close_time'])) {
+                return redirect()->back()->with('danger', 'Game timings are not set.');
+            }
+
+            $openTime  = strtotime($game['extraFields']['open_time']);
+            $closeTime = strtotime($game['extraFields']['close_time']);
+
+            if (($closeTime < $openTime && !($currentTime >= $openTime || $currentTime < strtotime('+1 day', $closeTime))) ||
+                ($closeTime >= $openTime && ($currentTime < $openTime || $currentTime > $closeTime))
+            ) {
+                return redirect()->back()->with('danger', 'Sorry, Game time Out');
+            }
+        } else {
+            $game = getPostsByPostType('optionGame', 0, 'new', true)->where('post_id', $request->game_id)->first();
+
+            if (!$game || !isset($game['extraFields']['close_date'], $game['extraFields']['close_time'])) {
+                return redirect()->back()->with('danger', 'Game end date or time is not set.');
+            }
+
+            $endDateTime = strtotime($game['extraFields']['close_date'] . ' ' . $game['extraFields']['close_time']);
+
+            if ($currentTime > $endDateTime) {
+                return redirect()->back()->with('danger', 'Sorry, Game time Out');
+            }
         }
 
         $numbers = array_unique(array_map('intval', explode(',', $request->numbers)));
@@ -203,11 +226,40 @@ class SattaGameController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
-        $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
-        $game = $sattaGame->where('post_id', $request->game_id)->first();
-        $currentTime = timeonly();
-        if ($currentTime > $game['extraFields']['close_time']) {
-            return redirect()->back()->with('danger', 'Sorry, Game time Out');
+
+        $gameType = Posts::where('post_id', $request->game_id)->first();
+        if (!$gameType) {
+            return redirect()->back()->with('danger', 'Invalid game selected.');
+        }
+        $currentTime = time();
+
+        if ($gameType->post_type === 'numberGame') {
+            $game = getPostsByPostType('numberGame', 0, 'new', true)->where('post_id', $request->game_id)->first();
+
+            if (!$game || !isset($game['extraFields']['open_time'], $game['extraFields']['close_time'])) {
+                return redirect()->back()->with('danger', 'Game timings are not set.');
+            }
+
+            $openTime  = strtotime($game['extraFields']['open_time']);
+            $closeTime = strtotime($game['extraFields']['close_time']);
+
+            if (($closeTime < $openTime && !($currentTime >= $openTime || $currentTime < strtotime('+1 day', $closeTime))) ||
+                ($closeTime >= $openTime && ($currentTime < $openTime || $currentTime > $closeTime))
+            ) {
+                return redirect()->back()->with('danger', 'Sorry, Game time Out');
+            }
+        } else {
+            $game = getPostsByPostType('optionGame', 0, 'new', true)->where('post_id', $request->game_id)->first();
+
+            if (!$game || !isset($game['extraFields']['close_date'], $game['extraFields']['close_time'])) {
+                return redirect()->back()->with('danger', 'Game end date or time is not set.');
+            }
+
+            $endDateTime = strtotime($game['extraFields']['close_date'] . ' ' . $game['extraFields']['close_time']);
+
+            if ($currentTime > $endDateTime) {
+                return redirect()->back()->with('danger', 'Sorry, Game time Out');
+            }
         }
 
         $user = getCurrentUser();

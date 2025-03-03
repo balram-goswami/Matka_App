@@ -30,7 +30,10 @@ $betPrice = getThemeOptions('betSetting');
             <div class="card cart-amount-area">
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <h5 class="total-price mb-0">Closed In</h5>
-                    <a class="btn btn-primary" id="time-left" data-time-left="{{ \Carbon\Carbon::parse($post['extraFields']['close_time'])->diffInSeconds(now()) }}">
+                    <a class="btn btn-primary" id="time-left"
+                        data-open-time="{{ \Carbon\Carbon::parse($post['extraFields']['open_time'])->format('H:i') }}"
+                        data-close-time="{{ \Carbon\Carbon::parse($post['extraFields']['close_time'])->format('H:i') }}"
+                        data-current-time="{{ now()->format('H:i') }}">
                         00:00:00
                     </a>
                 </div>
@@ -141,33 +144,5 @@ $betPrice = getThemeOptions('betSetting');
         </div>
     </div>
 </div>
-
-<!-- Timer Script -->
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const timer = document.getElementById("time-left");
-
-        if (timer) {
-            let remainingTime = parseInt(timer.dataset.timeLeft);
-
-            const updateTimer = () => {
-                if (remainingTime > 0) {
-                    remainingTime--;
-
-                    const hours = Math.floor(remainingTime / 3600);
-                    const minutes = Math.floor((remainingTime % 3600) / 60);
-                    const seconds = remainingTime % 60;
-
-                    timer.innerText = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                } else {
-                    timer.innerText = "Time's up!";
-                }
-            };
-
-            updateTimer();
-            setInterval(updateTimer, 1000);
-        }
-    });
-</script>
 
 @include('Include.FooterMenu')

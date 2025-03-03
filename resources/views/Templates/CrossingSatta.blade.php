@@ -29,13 +29,16 @@ $betPrice = getThemeOptions('betSetting');
             <div class="card cart-amount-area">
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <h5 class="total-price mb-0">Closed In</h5>
-                    <a class="btn btn-primary" id="time-left" data-time-left="{{ \Carbon\Carbon::parse($post['extraFields']['close_time'])->diffInSeconds(now()) }}">
+                    <a class="btn btn-primary" id="time-left"
+                        data-open-time="{{ \Carbon\Carbon::parse($post['extraFields']['open_time'])->format('H:i') }}"
+                        data-close-time="{{ \Carbon\Carbon::parse($post['extraFields']['close_time'])->format('H:i') }}"
+                        data-current-time="{{ now()->format('H:i') }}">
                         00:00:00
                     </a>
                 </div>
                 <div class="card-body d-flex align-items-center justify-content-between">
-                <h6>Win Rate: {{$user->crossing_game_rate}}X </h6>
-                <h6>Min Bet Amount: {{$betPrice['crossingGameMin'] ?? 'NA'}} </h6>
+                    <h6>Win Rate: {{$user->crossing_game_rate}}X </h6>
+                    <h6>Min Bet Amount: {{$betPrice['crossingGameMin'] ?? 'NA'}} </h6>
                 </div>
 
                 <div class="card-body d-flex align-items-center justify-content-between">
@@ -46,7 +49,7 @@ $betPrice = getThemeOptions('betSetting');
                             <div class="col-md-12 col-12">
                                 <input type="text" name="user_id" value="{{ $user->user_id }}" hidden>
                                 <input type="text" name="game_id" value="{{ $post->post_id }}" hidden>
-                                
+
                                 <input type="text" name="adminrate" value="{{ $parentDetails->crossing_game_rate }}" hidden>
                                 <input type="text" name="subadmincommission" value="{{ $parentDetails->crossing_commission }}" hidden>
                                 <input type="text" name="userrate" value="{{ $user->crossing_game_rate }}" hidden>
@@ -58,18 +61,21 @@ $betPrice = getThemeOptions('betSetting');
 
                             <!-- Number Buttons -->
                             <div class="col-md-12 mt-3">
-                                <div class="btn-group w-100" role="group">
-                                    <!-- Buttons for numbers 0-9 -->
-                                    <button type="button" class="btn btn-outline-primary number-btn" data-number="0">0</button>
-                                    <button type="button" class="btn btn-outline-primary number-btn" data-number="1">1</button>
-                                    <button type="button" class="btn btn-outline-primary number-btn" data-number="2">2</button>
-                                    <button type="button" class="btn btn-outline-primary number-btn" data-number="3">3</button>
-                                    <button type="button" class="btn btn-outline-primary number-btn" data-number="4">4</button>
-                                    <button type="button" class="btn btn-outline-primary number-btn" data-number="5">5</button>
-                                    <button type="button" class="btn btn-outline-primary number-btn" data-number="6">6</button>
-                                    <button type="button" class="btn btn-outline-primary number-btn" data-number="7">7</button>
-                                    <button type="button" class="btn btn-outline-primary number-btn" data-number="8">8</button>
-                                    <button type="button" class="btn btn-outline-primary number-btn" data-number="9">9</button>
+                                <div class="d-flex flex-wrap justify-content-center">
+                                    <!-- First Row (0-4) -->
+                                    <div class="d-flex w-100 justify-content-center mb-2">
+                                        <!-- Buttons for numbers 0-9 -->
+                                        <button type="button" class="btn btn-outline-primary number-btn border p-3 mx-1" data-number="0">0</button>
+                                        <button type="button" class="btn btn-outline-primary number-btn border p-3 mx-1" data-number="1">1</button>
+                                        <button type="button" class="btn btn-outline-primary number-btn border p-3 mx-1" data-number="2">2</button>
+                                        <button type="button" class="btn btn-outline-primary number-btn border p-3 mx-1" data-number="3">3</button>
+                                        <button type="button" class="btn btn-outline-primary number-btn border p-3 mx-1" data-number="4">4</button>
+                                        <button type="button" class="btn btn-outline-primary number-btn border p-3 mx-1" data-number="5">5</button>
+                                        <button type="button" class="btn btn-outline-primary number-btn border p-3 mx-1" data-number="6">6</button>
+                                        <button type="button" class="btn btn-outline-primary number-btn border p-3 mx-1" data-number="7">7</button>
+                                        <button type="button" class="btn btn-outline-primary number-btn border p-3 mx-1" data-number="8">8</button>
+                                        <button type="button" class="btn btn-outline-primary number-btn border p-3 mx-1" data-number="9">9</button>
+                                    </div>
                                 </div>
                                 <label class="text-danger mt-2">Selections</label>
                                 <input type="text" name="numbers" id="numbers" value="{{ old('numbers') }}" required readonly>
@@ -149,33 +155,6 @@ $betPrice = getThemeOptions('betSetting');
     </div>
 </div>
 
-<!-- Timer Script -->
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const timer = document.getElementById("time-left");
-
-        if (timer) {
-            let remainingTime = parseInt(timer.dataset.timeLeft);
-
-            const updateTimer = () => {
-                if (remainingTime > 0) {
-                    remainingTime--;
-
-                    const hours = Math.floor(remainingTime / 3600);
-                    const minutes = Math.floor((remainingTime % 3600) / 60);
-                    const seconds = remainingTime % 60;
-
-                    timer.innerText = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                } else {
-                    timer.innerText = "Time's up!";
-                }
-            };
-
-            updateTimer();
-            setInterval(updateTimer, 1000);
-        }
-    });
-</script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {

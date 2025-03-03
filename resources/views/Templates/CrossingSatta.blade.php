@@ -46,7 +46,7 @@ $betPrice = getThemeOptions('betSetting');
                         @csrf
                         <div class="input-group row">
                             <!-- Answer Input -->
-                            <div class="col-md-12 col-12">
+                            <div class="col-md-12 mt-3">
                                 <input type="text" name="user_id" value="{{ $user->user_id }}" hidden>
                                 <input type="text" name="game_id" value="{{ $post->post_id }}" hidden>
 
@@ -55,7 +55,7 @@ $betPrice = getThemeOptions('betSetting');
                                 <input type="text" name="userrate" value="{{ $user->crossing_game_rate }}" hidden>
                                 <input type="text" name="usercommission" value="{{ $user->crossing_commission }}" hidden>
 
-                                <label class="text-danger mt-2">Enter Bid Amount</label>
+                                <label class="text-danger">Enter Bid Amount</label>
                                 <input type="text" name="bid_amount" min="{{ $betPrice['crossingGameMin'] ?? '100'}}" max="{{ $betPrice['crossingGamemax'] ?? $wallet->balance }}" placeholder="Bid Amount" value="{{ old('bid_amount') }}" required>
                             </div>
 
@@ -64,12 +64,14 @@ $betPrice = getThemeOptions('betSetting');
                                 <div class="d-flex flex-wrap justify-content-center">
                                     <!-- First Row (0-4) -->
                                     <div class="d-flex w-100 justify-content-center mb-2">
-                                        <!-- Buttons for numbers 0-9 -->
                                         <button type="button" class="btn btn-outline-primary number-btn border p-3 mx-1" data-number="0">0</button>
                                         <button type="button" class="btn btn-outline-primary number-btn border p-3 mx-1" data-number="1">1</button>
                                         <button type="button" class="btn btn-outline-primary number-btn border p-3 mx-1" data-number="2">2</button>
                                         <button type="button" class="btn btn-outline-primary number-btn border p-3 mx-1" data-number="3">3</button>
                                         <button type="button" class="btn btn-outline-primary number-btn border p-3 mx-1" data-number="4">4</button>
+                                    </div>
+                                    <!-- Second Row (5-9) -->
+                                    <div class="d-flex w-100 justify-content-center">
                                         <button type="button" class="btn btn-outline-primary number-btn border p-3 mx-1" data-number="5">5</button>
                                         <button type="button" class="btn btn-outline-primary number-btn border p-3 mx-1" data-number="6">6</button>
                                         <button type="button" class="btn btn-outline-primary number-btn border p-3 mx-1" data-number="7">7</button>
@@ -77,7 +79,7 @@ $betPrice = getThemeOptions('betSetting');
                                         <button type="button" class="btn btn-outline-primary number-btn border p-3 mx-1" data-number="9">9</button>
                                     </div>
                                 </div>
-                                <label class="text-danger mt-2">Selections</label>
+                                <label class="text-danger">Selections</label>
                                 <input type="text" name="numbers" id="numbers" value="{{ old('numbers') }}" required readonly>
                             </div>
 
@@ -154,7 +156,6 @@ $betPrice = getThemeOptions('betSetting');
         </div>
     </div>
 </div>
-
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {

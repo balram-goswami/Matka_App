@@ -37,49 +37,64 @@ class PlayerController extends Controller
     $headerOption = getThemeOptions('header');
     $optionGame = getPostsByPostType('optiongame', 0, 'new', true);
     $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
-
     $now = \Carbon\Carbon::now('Asia/Kolkata');
 
     foreach ($sattaGame as &$satta) {
-      $today = \Carbon\Carbon::now('Asia/Kolkata')->toDateString();
-      $tomorrow = \Carbon\Carbon::tomorrow('Asia/Kolkata')->toDateString();
+      $today = $now->toDateString();
+      $tomorrow = $now->copy()->addDay()->toDateString();
+      $yesterday = $now->copy()->subDay()->toDateString();
 
-      // Detect time format (12-hour or 24-hour)
-      $timeFormat = (strpos($satta['extraFields']['open_time'], 'AM') !== false || strpos($satta['extraFields']['open_time'], 'PM') !== false) ? 'h:i A' : 'H:i';
-
-      // Parse open and close times correctly
-      $startTime = isset($satta['extraFields']['open_time'])
-        ? \Carbon\Carbon::createFromFormat("Y-m-d {$timeFormat}", "{$today} {$satta['extraFields']['open_time']}", 'Asia/Kolkata')
-        : null;
-
-      $endTime = isset($satta['extraFields']['close_time'])
-        ? \Carbon\Carbon::createFromFormat("Y-m-d {$timeFormat}", "{$today} {$satta['extraFields']['close_time']}", 'Asia/Kolkata')
-        : null;
-
-      // If endTime is earlier than startTime, it means it belongs to the next day
-      if ($startTime && $endTime && $endTime->lt($startTime)) {
-        $endTime->addDay(); // Move end time to the next day
+      if (empty($satta['extraFields']['open_time']) || empty($satta['extraFields']['close_time'])) {
+        $satta['isOpen'] = false;
+        $satta['timeLeft'] = 0;
+        continue;
       }
 
-      // Debugging Log
-      \Log::info("Game ID: {$satta['post_id']} | Now: {$now} | Start: {$startTime} | End: {$endTime}");
+      // Detect time format (12-hour or 24-hour)
+      $timeFormat = (stripos($satta['extraFields']['open_time'], 'AM') !== false || stripos($satta['extraFields']['open_time'], 'PM') !== false)
+        ? 'h:i A'
+        : 'H:i';
 
-      // Ensure the game is open when within the time range
-      $satta['isOpen'] = $startTime && $endTime && $now->between($startTime, $endTime);
+      try {
+        // **Today’s Opening Time (Always at 10:00 PM)**
+        $todayStartTime = \Carbon\Carbon::createFromFormat("Y-m-d {$timeFormat}", "{$today} {$satta['extraFields']['open_time']}", 'Asia/Kolkata');
 
-      // Debug if game is open
-      \Log::info("Game ID: {$satta['post_id']} | isOpen: " . ($satta['isOpen'] ? 'Yes' : 'No'));
+        // **Today’s Closing Time (Always at 03:00 PM next day)**
+        $todayEndTime = \Carbon\Carbon::createFromFormat("Y-m-d {$timeFormat}", "{$tomorrow} {$satta['extraFields']['close_time']}", 'Asia/Kolkata');
 
-      // Calculate countdown time
-      if ($satta['isOpen']) {
-        $satta['timeLeft'] = $now->diffInSeconds($endTime, false);
-      } else {
+        // **Yesterday's Opening Time (10:00 PM yesterday)**
+        $yesterdayStartTime = \Carbon\Carbon::createFromFormat("Y-m-d {$timeFormat}", "{$yesterday} {$satta['extraFields']['open_time']}", 'Asia/Kolkata');
+
+        // **Yesterday’s Closing Time (03:00 PM today)**
+        $yesterdayEndTime = \Carbon\Carbon::createFromFormat("Y-m-d {$timeFormat}", "{$today} {$satta['extraFields']['close_time']}", 'Asia/Kolkata');
+
+        // **Check if Market is Open**
+        $satta['isOpen'] = ($now->between($yesterdayStartTime, $yesterdayEndTime) || $now->between($todayStartTime, $todayEndTime));
+
+        // **Calculate Time Left**
+        if ($satta['isOpen']) {
+          if ($now->between($yesterdayStartTime, $yesterdayEndTime)) {
+            $satta['timeLeft'] = max($now->diffInSeconds($yesterdayEndTime, false), 0);
+          } else {
+            $satta['timeLeft'] = max($now->diffInSeconds($todayEndTime, false), 0);
+          }
+        } else {
+          $satta['timeLeft'] = 0;
+        }
+      } catch (\Exception $e) {
+        $satta['isOpen'] = false;
         $satta['timeLeft'] = 0;
+        continue;
       }
 
       // Get game result
-      $satta['result'] = GameResult::where('game_id', $satta['post_id'])->wheredate('created_at', $today)->latest()->first()->result ?? 'XX';
+      $satta['result'] = GameResult::where('game_id', $satta['post_id'])
+        ->whereDate('created_at', $today)
+        ->latest()
+        ->first()
+        ->result ?? 'XX';
     }
+
 
     $exposer = BidTransaction::where('user_id', $user->user_id)
       ->where('status', 'submitted')

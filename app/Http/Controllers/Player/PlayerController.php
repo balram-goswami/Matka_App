@@ -36,6 +36,7 @@ class PlayerController extends Controller
     $homePage = getThemeOptions('homePage');
     $headerOption = getThemeOptions('header');
     $optionGame = getPostsByPostType('optiongame', 0, 'new', true);
+
     $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
     $now = \Carbon\Carbon::now('Asia/Kolkata');
 
@@ -50,34 +51,23 @@ class PlayerController extends Controller
         continue;
       }
 
-      // Detect time format (12-hour or 24-hour)
       $timeFormat = (stripos($satta['extraFields']['open_time'], 'AM') !== false || stripos($satta['extraFields']['open_time'], 'PM') !== false)
         ? 'h:i A'
         : 'H:i';
 
       try {
-        // **Today’s Opening Time (Always at 10:00 PM)**
         $todayStartTime = \Carbon\Carbon::createFromFormat("Y-m-d {$timeFormat}", "{$today} {$satta['extraFields']['open_time']}", 'Asia/Kolkata');
 
-        // **Today’s Closing Time (Always at 03:00 PM next day)**
-        $todayEndTime = \Carbon\Carbon::createFromFormat("Y-m-d {$timeFormat}", "{$tomorrow} {$satta['extraFields']['close_time']}", 'Asia/Kolkata');
+        $closingDate = ($satta['extraFields']['close_time'] < $satta['extraFields']['open_time']) ? $tomorrow : $today;
+        $todayEndTime = \Carbon\Carbon::createFromFormat("Y-m-d {$timeFormat}", "{$closingDate} {$satta['extraFields']['close_time']}", 'Asia/Kolkata');
 
-        // **Yesterday's Opening Time (10:00 PM yesterday)**
         $yesterdayStartTime = \Carbon\Carbon::createFromFormat("Y-m-d {$timeFormat}", "{$yesterday} {$satta['extraFields']['open_time']}", 'Asia/Kolkata');
-
-        // **Yesterday’s Closing Time (03:00 PM today)**
         $yesterdayEndTime = \Carbon\Carbon::createFromFormat("Y-m-d {$timeFormat}", "{$today} {$satta['extraFields']['close_time']}", 'Asia/Kolkata');
 
-        // **Check if Market is Open**
-        $satta['isOpen'] = ($now->between($yesterdayStartTime, $yesterdayEndTime) || $now->between($todayStartTime, $todayEndTime));
+        $satta['isOpen'] = ($now->between($todayStartTime, $todayEndTime) || $now->between($yesterdayStartTime, $yesterdayEndTime));
 
-        // **Calculate Time Left**
         if ($satta['isOpen']) {
-          if ($now->between($yesterdayStartTime, $yesterdayEndTime)) {
-            $satta['timeLeft'] = max($now->diffInSeconds($yesterdayEndTime, false), 0);
-          } else {
-            $satta['timeLeft'] = max($now->diffInSeconds($todayEndTime, false), 0);
-          }
+          $satta['timeLeft'] = max($now->diffInSeconds($todayEndTime, false), 0);
         } else {
           $satta['timeLeft'] = 0;
         }
@@ -87,13 +77,13 @@ class PlayerController extends Controller
         continue;
       }
 
-      // Get game result
       $satta['result'] = GameResult::where('game_id', $satta['post_id'])
         ->whereDate('created_at', $today)
         ->latest()
         ->first()
         ->result ?? 'XX';
     }
+
 
 
     $exposer = BidTransaction::where('user_id', $user->user_id)

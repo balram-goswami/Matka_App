@@ -20,60 +20,65 @@
 
 <div class="container mt-5">
     @php
-        $option = count($optionGame);
+    $option = count($optionGame);
     @endphp
-    @if($option >= 1)
-        @foreach($optionGame as $index => $quizgame)
-            @php
-                $closeDateTime = strtotime($quizgame['extraFields']['close_date'] . ' ' . $quizgame['extraFields']['close_time']);
-                $currentTimestamp = time();
-                $result = DB::table('game_results')->where('game_id', $quizgame->post_id)->first();
-                $marketClosed = $closeDateTime < $currentTimestamp;
-            @endphp
 
-            @if(!($marketClosed && $result))  {{-- Exclude if market is closed and result exists --}}
-                <div class="card custom-card">
-                    <div class="card-header">
-                        <div class="d-flex align-items-center">
-                            <img src="{{ isset($quizgame->post_image) ? publicPath($quizgame->post_image) : '../themeAssets/img/matka/matka.png' }}" alt="Game Logo">
-                            <div class="ms-3">
-                                <h5 class="mb-0" style="color:rgb(0, 0, 0);"><b>{{ $quizgame->post_title }}</b></h5>
-                                @if(!$marketClosed)
-                                    <p class="market-status mb-0" style="color: green;">MARKET OPEN</p>
-                                @else
-                                    <p class="market-status mb-0" style="color: red;">MARKET CLOSED</p>
-                                    <p class="market-status mb-0" style="color: black;">{{ $result->result ?? 'Waiting for Result' }}</p>
-                                @endif
-                            </div>
-                        </div>
+    @if($option >= 1)
+    @foreach($optionGame as $index => $quizgame)
+    @php
+    $closeDateTime = strtotime($quizgame['extraFields']['close_date'] . ' ' . $quizgame['extraFields']['close_time']);
+    $currentTimestamp = time();
+    $result = DB::table('game_results')->where('game_id', $quizgame->post_id)->first();
+    $marketClosed = $closeDateTime < $currentTimestamp;
+
+        $resultTime=$result ? strtotime($result->created_at) : null;
+        $excludeGame = $marketClosed && $result && ($currentTimestamp - $resultTime > 5 * 3600);
+        @endphp
+
+        @if(!$excludeGame) 
+        <div class="card custom-card">
+            <div class="card-header">
+                <div class="d-flex align-items-center">
+                    <img src="{{ isset($quizgame->post_image) ? publicPath($quizgame->post_image) : '../themeAssets/img/matka/matka.png' }}" alt="Game Logo">
+                    <div class="ms-3">
+                        <h5 class="mb-0" style="color:rgb(0, 0, 0);"><b>{{ $quizgame->post_title }}</b></h5>
                         @if(!$marketClosed)
-                            <button class="play-btn">
-                                <a href="{{ route('single.post', ['post_type' => $quizgame->post_type, 'slug' => $quizgame->post_name]) }}">PLAY NOW</a>
-                            </button>
+                        <p class="market-status mb-0" style="color: green;">MARKET OPEN</p>
+                        @else
+                        <p class="market-status mb-0" style="color: red;">MARKET CLOSED</p>
+                        <p class="market-status mb-0" style="color: black;">{{ $result->result ?? 'Waiting for Result' }}</p>
                         @endif
                     </div>
-                    @if(!$marketClosed)
-                        <div class="card-footer">
-                            <strong style="color: black;"></strong>
-                            <strong style="color: black;">XX</strong>
-                            <span style="color: black;" id="time-left-{{ $index }}"
-                                data-end-time="{{ \Carbon\Carbon::parse($quizgame['extraFields']['close_date'] . ' ' . $quizgame['extraFields']['close_time'])->timestamp }}"
-                                data-market-id="market-status-{{ $index }}">
-                                Loading...
-                            </span>
-                        </div>
-                    @else
-                        <div class="card-footer">
-                            <strong style="color: black;"></strong>
-                            <strong style="color: black;">{{ $result->result ?? 'XX' }}</strong>
-                            <strong style="color: black;"></strong>
-                        </div>
-                    @endif
                 </div>
-                <br>
+                @if(!$marketClosed)
+                <button class="play-btn">
+                    <a href="{{ route('single.post', ['post_type' => $quizgame->post_type, 'slug' => $quizgame->post_name]) }}">PLAY NOW</a>
+                </button>
+                @endif
+            </div>
+
+            @if(!$marketClosed)
+            <div class="card-footer">
+                <strong style="color: black;"></strong>
+                <strong style="color: black;">XX</strong>
+                <span style="color: black;" id="time-left-{{ $index }}"
+                    data-end-time="{{ \Carbon\Carbon::parse($quizgame['extraFields']['close_date'] . ' ' . $quizgame['extraFields']['close_time'])->timestamp }}"
+                    data-market-id="market-status-{{ $index }}">
+                    Loading...
+                </span>
+            </div>
+            @else
+            <div class="card-footer">
+                <strong style="color: black;"></strong>
+                <strong style="color: black;">{{ $result->result ?? 'XX' }}</strong>
+                <strong style="color: black;"></strong>
+            </div>
             @endif
+        </div>
+        <br>
+        @endif
         @endforeach
-    @else
+        @else
         <div class="card custom-card">
             <div class="card-header">
                 <div class="d-flex align-items-center">
@@ -88,10 +93,8 @@
                 <span style="color: black;">Test your luck, make a choice, and claim your reward. Play now!</span>
             </div>
         </div>
-    @endif
+        @endif
 </div>
-
-
 
 <div class="weekly-best-seller-area py-3">
     <div class="container">

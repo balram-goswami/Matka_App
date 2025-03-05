@@ -35,9 +35,9 @@ class PlayerController extends Controller
     $wallet = Wallet::where('user_id', $user->user_id)->first();
     $homePage = getThemeOptions('homePage');
     $headerOption = getThemeOptions('header');
-    $optionGame = getPostsByPostType('optiongame', 0, 'new', true);
+    $optionGame = getPostsByPostType('optiongame', 0, 'order', true);
 
-    $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
+    $sattaGame = getPostsByPostType('numberGame', 0, 'order', true);
     $now = \Carbon\Carbon::now('Asia/Kolkata');
 
     foreach ($sattaGame as &$satta) {
@@ -76,8 +76,10 @@ class PlayerController extends Controller
         continue;
       }
 
+      $lastClosedDate = $now->lt($todayEndTime) ? $yesterday : $today;
+
       $satta['result'] = GameResult::where('game_id', $satta['post_id'])
-        ->whereDate('created_at', $today)
+        ->whereDate('created_at', $lastClosedDate)
         ->latest()
         ->first()
         ->result ?? 'XX';

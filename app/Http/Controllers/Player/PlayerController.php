@@ -58,17 +58,16 @@ class PlayerController extends Controller
       try {
         $todayStartTime = \Carbon\Carbon::createFromFormat("Y-m-d {$timeFormat}", "{$today} {$satta['extraFields']['open_time']}", 'Asia/Kolkata');
 
+        // Determine the correct closing date (same day or next day)
         $closingDate = ($satta['extraFields']['close_time'] < $satta['extraFields']['open_time']) ? $tomorrow : $today;
         $todayEndTime = \Carbon\Carbon::createFromFormat("Y-m-d {$timeFormat}", "{$closingDate} {$satta['extraFields']['close_time']}", 'Asia/Kolkata');
 
-        $yesterdayStartTime = \Carbon\Carbon::createFromFormat("Y-m-d {$timeFormat}", "{$yesterday} {$satta['extraFields']['open_time']}", 'Asia/Kolkata');
-        $yesterdayEndTime = \Carbon\Carbon::createFromFormat("Y-m-d {$timeFormat}", "{$today} {$satta['extraFields']['close_time']}", 'Asia/Kolkata');
-
-        $satta['isOpen'] = ($now->between($todayStartTime, $todayEndTime) || $now->between($yesterdayStartTime, $yesterdayEndTime));
-
-        if ($satta['isOpen']) {
+        // Ensure daily opening and closing cycle is correctly maintained
+        if ($now->between($todayStartTime, $todayEndTime)) {
+          $satta['isOpen'] = true;
           $satta['timeLeft'] = max($now->diffInSeconds($todayEndTime, false), 0);
         } else {
+          $satta['isOpen'] = false;
           $satta['timeLeft'] = 0;
         }
       } catch (\Exception $e) {
@@ -83,8 +82,6 @@ class PlayerController extends Controller
         ->first()
         ->result ?? 'XX';
     }
-
-
 
     $exposer = BidTransaction::where('user_id', $user->user_id)
       ->where('status', 'submitted')

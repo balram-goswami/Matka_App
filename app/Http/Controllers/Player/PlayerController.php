@@ -38,7 +38,7 @@ class PlayerController extends Controller
     $optionGame = getPostsByPostType('optiongame', 0, 'order', true);
 
     $sattaGame = getPostsByPostType('numberGame', 0, 'order', true);
-    $now = \Carbon\Carbon::now('Asia/Kolkata');
+    $now = Carbon::now('Asia/Kolkata'); // Current IST time
 
     foreach ($sattaGame as &$satta) {
       $today = $now->toDateString();
@@ -56,19 +56,28 @@ class PlayerController extends Controller
         : 'H:i';
 
       try {
-        $todayStartTime = \Carbon\Carbon::createFromFormat("Y-m-d {$timeFormat}", "{$today} {$satta['extraFields']['open_time']}", 'Asia/Kolkata');
+        $openTime = Carbon::createFromFormat("Y-m-d {$timeFormat}", "{$today} {$satta['extraFields']['open_time']}", 'Asia/Kolkata');
 
-        // Determine the correct closing date (same day or next day)
-        $closingDate = ($satta['extraFields']['close_time'] < $satta['extraFields']['open_time']) ? $tomorrow : $today;
-        $todayEndTime = \Carbon\Carbon::createFromFormat("Y-m-d {$timeFormat}", "{$closingDate} {$satta['extraFields']['close_time']}", 'Asia/Kolkata');
+        $closeTime = Carbon::createFromFormat("Y-m-d {$timeFormat}", "{$today} {$satta['extraFields']['close_time']}", 'Asia/Kolkata');
+        if ($closeTime->lessThan($openTime)) {
+          $closeTime->addDay(); 
+        }
 
-        // Ensure daily opening and closing cycle is correctly maintained
-        if ($now->between($todayStartTime, $todayEndTime)) {
+        if ($now->between($openTime, $closeTime)) {
           $satta['isOpen'] = true;
-          $satta['timeLeft'] = max($now->diffInSeconds($todayEndTime, false), 0);
-        } else {
-          $satta['isOpen'] = false;
-          $satta['timeLeft'] = 0;
+          $satta['timeLeft'] = max($now->diffInSeconds($closeTime, false), 0);
+        }
+        else {
+          $yesterdayOpenTime = $openTime->copy()->subDay();
+          $yesterdayCloseTime = $closeTime->copy()->subDay();
+
+          if ($now->between($yesterdayOpenTime, $yesterdayCloseTime)) {
+            $satta['isOpen'] = true;
+            $satta['timeLeft'] = max($now->diffInSeconds($yesterdayCloseTime, false), 0);
+          } else {
+            $satta['isOpen'] = false;
+            $satta['timeLeft'] = 0;
+          }
         }
       } catch (\Exception $e) {
         $satta['isOpen'] = false;
@@ -76,7 +85,7 @@ class PlayerController extends Controller
         continue;
       }
 
-      $lastClosedDate = $now->lt($todayEndTime) ? $yesterday : $today;
+      $lastClosedDate = ($now->lessThan($closeTime)) ? $yesterday : $today;
 
       $satta['result'] = GameResult::where('game_id', $satta['post_id'])
         ->whereDate('created_at', $lastClosedDate)

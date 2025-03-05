@@ -116,7 +116,7 @@ $betPrice = getThemeOptions('betSetting');
                                         @csrf
                                         <button type="submit" class="remove-product"><i
                                                 class="ti ti-x"></i></button>
-                                        <form>
+                                    </form>
                                 </th>
                             </tr>
                             @endforeach
@@ -133,9 +133,9 @@ $betPrice = getThemeOptions('betSetting');
                 </div>
 
                 <div class="card-body d-flex align-items-center justify-content-between">
-                    <form action="{{ route('cancelAllBid', ['game_id' => $post->post_id]) }}" method="POST"
-                        id="cancelAllBid">
+                    <form action="{{ route('cancelAllBid') }}" method="POST" id="cancelAllBid">
                         @csrf
+                        <input type="text" name="game_id" value="{{ $post->post_id }}" hidden>
                         <button type="submit" class="btn btn-primary">Cancel</button>
                     </form>
                     <form action="{{ route('submitAllBid') }}" method="POST" id="submitAllBid">

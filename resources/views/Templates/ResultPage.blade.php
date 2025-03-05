@@ -32,7 +32,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($result->reverse() as $results)
+                            @foreach ($result as $results)
                             @php
                             $gameName = postName($results->game_id);
                             @endphp

@@ -25,7 +25,7 @@ Route::get('resultPage', [PlayerController::class, 'resultPage'])->name('resultP
 Route::post('optionGameEntry', [PlayerController::class, 'optionGameEntry'])->name('optionGameEntry');
 Route::post('deleteBid/{id}', [PlayerController::class, 'deleteBid'])->name('deleteBid');
 Route::post('submitAllBid', [PlayerController::class, 'submitAllBid'])->name('submitAllBid');
-Route::post('cancelAllBid/{game_id}', [PlayerController::class, 'cancelAllBid'])->name('cancelAllBid');
+Route::post('cancelAllBid', [PlayerController::class, 'cancelAllBid'])->name('cancelAllBid');
 Route::post('claimAmount/{bid_id}', [PlayerController::class, 'claimAmount'])->name('claimAmount');
 
 Route::get('jodiSatta', [SattaGameController::class, 'jodiSatta'])->name('jodiSatta');

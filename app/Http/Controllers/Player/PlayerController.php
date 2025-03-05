@@ -581,20 +581,22 @@ class PlayerController extends Controller
   }
 
 
-  public function cancelAllBid($game_id)
+  public function cancelAllBid(Request $request)
   {
     $user = getCurrentUser();
+
     $deletedRows = BidTransaction::where('user_id', $user->user_id)
-      ->where('game_id', $game_id)
+      ->where('game_id', $request->game_id)
       ->where('status', 'pending')
       ->delete();
 
     if ($deletedRows > 0) {
-      return redirect()->back()->with('success', 'All Bids Canceled Successfully');
+      return redirect()->back()->with('success', 'All Pending Bids Canceled Successfully');
     } else {
-      return redirect()->back()->with('error', 'No Bids Found to Cancel');
+      return redirect()->back()->with('error', 'No Pending Bids Found to Cancel');
     }
   }
+
 
   public function transaction()
   {
@@ -611,7 +613,7 @@ class PlayerController extends Controller
   public function resultPage()
   {
     $user = getCurrentUser();
-    $result = GameResult::paginate(10);
+    $result = GameResult::orderBy('id', 'desc')->paginate(10);
     $view = 'Templates.ResultPage';
 
     return view('Front', compact('view', 'result', 'user'));

@@ -205,13 +205,24 @@ class PlayerController extends Controller
   }
 
   public function optionGameList()
-  {
+{
     $user = getCurrentUser();
     $wallet = Wallet::where('user_id', $user->user_id)->first();
     $optionGame = getPostsByPostType('optiongame', 0, 'new', true);
+
+    // Sort games by close_date in ascending order
+    $optionGame = collect($optionGame)->sortBy(function ($quizgame) {
+        $closeDateTime = isset($quizgame['extraFields']['close_date'], $quizgame['extraFields']['close_time']) 
+            ? strtotime($quizgame['extraFields']['close_date'] . ' ' . $quizgame['extraFields']['close_time']) 
+            : PHP_INT_MAX; // Use a high number for missing dates so they appear last
+        return $closeDateTime;
+    })->values()->all();
+    
     $view = 'Templates.OptionGameList';
     return view('Front', compact('view', 'optionGame', 'user', 'wallet'));
-  }
+}
+
+
 
   public function addMoneyPage()
   {

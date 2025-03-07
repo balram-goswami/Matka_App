@@ -145,7 +145,7 @@ $betPrice = getThemeOptions('betSetting');
                                         @csrf
                                         <button type="submit" class="remove-product"><i
                                                 class="ti ti-x"></i></button>
-                                        <form>
+                                    </form>
                                 </th>
                             </tr>
                             @endforeach

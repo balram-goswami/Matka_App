@@ -70,7 +70,7 @@ $betPrice = getThemeOptions('betSetting');
                                 $availableBalance = $balance - $totalAmount;
                                 @endphp
                                 <input class="form-control border mb-1" id="bid_amount" name="bid_amount" type="number"
-                                    placeholder="Bid Amount" min="{{$betPrice['oddevenGameMin'] ?? '10'}}"  max="{{ $betPrice['oddevenGameMax'] ?? $availableBalance }}" step="0.01" required>
+                                    placeholder="Bid Amount" min="{{$betPrice['oddevenGameMin'] ?? '10'}}" max="{{ $betPrice['oddevenGameMax'] ?? $availableBalance }}" step="0.01" required>
                             </div>
                             <!-- Submit Button -->
                             <div class="col-md-6 col-12">
@@ -83,7 +83,7 @@ $betPrice = getThemeOptions('betSetting');
             <br>
             <!-- Bid Table -->
             <div class="cart-table card mb-3">
-                <div class="table-responsive card-body"> 
+                <div class="table-responsive card-body">
                     <table class="table mb-0">
                         <thead>
                             <tr>
@@ -104,7 +104,7 @@ $betPrice = getThemeOptions('betSetting');
                                         @csrf
                                         <button type="submit" class="remove-product"><i
                                                 class="ti ti-x"></i></button>
-                                        <form>
+                                    </form>
                                 </th>
                             </tr>
                             @endforeach

@@ -30,12 +30,12 @@ $betPrice = getThemeOptions('betSetting');
             <div class="card cart-amount-area">
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <h5 class="total-price mb-0">Closed In</h5>
-                    <a class="btn btn-primary" id="time-left" 
-    data-open-time="{{ \Carbon\Carbon::parse($post['extraFields']['open_time'])->format('H:i') }}" 
-    data-close-time="{{ \Carbon\Carbon::parse($post['extraFields']['close_time'])->format('H:i') }}" 
-    data-current-time="{{ now()->format('H:i') }}">
-    00:00:00
-</a>
+                    <a class="btn btn-primary" id="time-left"
+                        data-open-time="{{ \Carbon\Carbon::parse($post['extraFields']['open_time'])->format('H:i') }}"
+                        data-close-time="{{ \Carbon\Carbon::parse($post['extraFields']['close_time'])->format('H:i') }}"
+                        data-current-time="{{ now()->format('H:i') }}">
+                        00:00:00
+                    </a>
                 </div>
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <h6>Win Rate: {{$user->jodi_game_rate}}X </h6>
@@ -100,7 +100,7 @@ $betPrice = getThemeOptions('betSetting');
                                         @csrf
                                         <button type="submit" class="remove-product"><i
                                                 class="ti ti-x"></i></button>
-                                        <form>
+                                    </form>
                                 </th>
                             </tr>
                             @endforeach

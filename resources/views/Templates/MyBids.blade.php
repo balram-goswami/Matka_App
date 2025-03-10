@@ -39,7 +39,7 @@
                             $gameName = postName($bid->game_id);
                             @endphp
                             <tr>
-                                <td>{{ $bid->updated_at }}</td>
+                                <td>{{ $bid->created_at }}</td>
                                 <td>{{ $gameName->post_title }}</td>
                                 <td>{{ $bid->answer }}</td>
                                 <td>{{ $bid->bid_amount }}</td>

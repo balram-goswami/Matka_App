@@ -14,7 +14,7 @@
                                 <select name="game_id" id="gameid" class="form-control">
                                     <option value="">Select Option</option>
                                     @foreach ($numberGame as $choice)
-                                    @if (isset($choice['extraFields']['close_date']) && $choice['extraFields']['close_date'] >= dateonly())
+                                    @if (isset($choice['extraFields']['close_date']) && $choice['extraFields']['close_date'] == dateonly())
                                     <option value="{{ $choice->post_id }}">{{ $choice->post_title }}</option>
                                     @endif
                                     @endforeach
@@ -56,8 +56,8 @@
                             <div class="input-group input-group-merge">
                                 <select name="game_id" id="game_id" class="form-control">
                                     <option value="">Select Game</option>
-                                    @foreach ($sattaGame as $satta)
-                                    <option value="{{ $satta->post_id }}">{{ $satta->post_title }}</option>
+                                    @foreach ($filteredSattaGame as $satta)
+                                    <option value="{{ $satta['post_id'] }}">{{ $satta['post_title'] }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -105,6 +105,9 @@
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+            <div class="pagination mt-3">
+                {{$results->links()}}
             </div>
         </div>
     </div>

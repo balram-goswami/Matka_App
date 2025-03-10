@@ -243,9 +243,43 @@ class UserController extends Controller
         $user = $this->service->select();
         $numberGame = getPostsByPostType('optiongame', 0, 'new', true);
         $sattaGame = getPostsByPostType('numberGame', 0, 'new', true);
-        $results = GameResult::all();
+        $results = GameResult::orderBy('created_at', 'DESC')->paginate(25);
 
         $gameNames = [];
+        $filteredSattaGame = [];
+        $now = Carbon::now('Asia/Kolkata');
+
+        foreach ($sattaGame as $satta) {
+            if (empty($satta['extraFields']['open_time']) || empty($satta['extraFields']['close_time'])) {
+                continue;
+            }
+
+            $timeFormat = (stripos($satta['extraFields']['open_time'], 'AM') !== false || stripos($satta['extraFields']['open_time'], 'PM') !== false)
+                ? 'h:i A'
+                : 'H:i';
+
+            try {
+                $today = $now->toDateString();
+                $tomorrow = $now->copy()->addDay()->toDateString();
+
+                $openTime = Carbon::createFromFormat("Y-m-d {$timeFormat}", "{$today} {$satta['extraFields']['open_time']}", 'Asia/Kolkata');
+                $closeTime = Carbon::createFromFormat("Y-m-d {$timeFormat}", "{$today} {$satta['extraFields']['close_time']}", 'Asia/Kolkata');
+
+                if ($closeTime->lessThan($openTime)) {
+                    $closeTime->addDay();
+                }
+
+                if ($openTime->lessThan($closeTime)) {
+                    $openTime->addDay();
+                }
+
+                if ($now->greaterThan($closeTime) && $now->lessThan($openTime)) {
+                    $filteredSattaGame[] = $satta;
+                }
+            } catch (\Exception $e) {
+                continue;
+            }
+        }
 
         foreach ($results as $result) {
             $game = Posts::where('post_id', $result->game_id)->first();
@@ -254,8 +288,9 @@ class UserController extends Controller
 
         $view = 'Admin.Results.ResultDashboard';
 
-        return view('Admin', compact('view', 'user', 'numberGame', 'sattaGame', 'results', 'gameNames'));
+        return view('Admin', compact('view', 'user', 'numberGame', 'filteredSattaGame', 'results', 'gameNames'));
     }
+
 
     public function paymentRequest()
     {
@@ -288,15 +323,36 @@ class UserController extends Controller
         }
 
         $formattedResult = str_pad($request->result, 2, '0', STR_PAD_LEFT);
-        $date = dateOnly();
+        $currentTime = now();
 
-        $gameResult = GameResult::where('game_id', $request->game_id)
-            ->whereDate('created_at', $date)
-            ->latest()
-            ->first();
+        // Fetch game details
+        $sattaGames = getPostsByPostType('numberGame', 0, 'order', true);
+        $game = collect($sattaGames)->firstWhere('post_id', $request->game_id);
 
-        if ($gameResult) {
-            return redirect()->back()->with('danger', 'Result Already Declared');
+        if (!$game) {
+            return redirect()->back()->with('danger', 'Invalid game ID');
+        }
+
+        $openTime = Carbon::parse($game['extraFields']['open_time']);
+        $closeTime = Carbon::parse($game['extraFields']['close_time']);
+
+        // Handle case where close time is today but open time is the next day
+        if ($closeTime->greaterThan($openTime)) {
+            $openTime->addDay();
+        }
+
+        // Ensure result is declared only once per game cycle
+        $lastGameResult = GameResult::where('game_id', $request->game_id)
+            ->where('created_at', '>=', $closeTime->format('Y-m-d H:i:s'))
+            ->exists();
+
+        if ($lastGameResult) {
+            return redirect()->back()->with('danger', 'Result Already Declared. New result can be declared after the next closing time.');
+        }
+
+        // Ensure result can be declared only **after closing and before next opening**
+        if (!($currentTime->greaterThan($closeTime) && $currentTime->lessThan($openTime))) {
+            return redirect()->back()->with('danger', 'Result can only be declared after closing time and before the next opening time.');
         }
 
         try {
@@ -306,7 +362,8 @@ class UserController extends Controller
             ]);
 
             $bidTable = BidTransaction::where('game_id', $request->game_id)
-                ->where('bid_result', NULL)
+                ->whereNull('bid_result')
+                ->where('status', 'submitted')
                 ->get();
 
             foreach ($bidTable as $table) {
@@ -327,6 +384,8 @@ class UserController extends Controller
                 // Ensure filtering by harf_digit to update the correct bid
                 BidTransaction::where('game_id', $gameId)
                     ->where('harf_digit', $table->harf_digit)
+                    ->whereNull('bid_result')
+                    ->where('status', 'submitted')
                     ->update([
                         'bid_result' => $bidResult,
                         'result_status' => DB::raw("CASE WHEN answer = '" . addslashes($bidResult) . "' THEN 'win' ELSE 'loss' END"),
@@ -335,6 +394,7 @@ class UserController extends Controller
             // Fetch winning bids
             $winningBids = BidTransaction::where('game_id', $request->game_id)
                 ->where('result_status', 'win')
+                ->where('status', 'submitted')
                 ->get();
 
             if ($winningBids->isNotEmpty()) {
@@ -380,6 +440,7 @@ class UserController extends Controller
 
             // Update bid transactions
             BidTransaction::where('game_id', $request->game_id)
+                ->where('status', 'submitted')
                 ->update([
                     'bid_result' => $request->result,
                     'result_status' => DB::raw("CASE WHEN answer = '$request->result' THEN 'win' ELSE 'loss' END"),
@@ -791,7 +852,7 @@ class UserController extends Controller
 
     private function clameWinAmount()
     {
-        $bids = BidTransaction::where('result_status', 'win')->get();
+        $bids = BidTransaction::where('result_status', 'win')->where('status', 'submitted')->get();
 
         if ($bids->isEmpty()) {
             return redirect()->back()->with('error', 'No winning bid found.');
@@ -907,7 +968,7 @@ class UserController extends Controller
             return redirect()->back()->with('success', 'Result Declared Successfully and Win Amount Paid.');
         } catch (\Exception $e) {
             \DB::rollBack();
-            return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
+            return redirect()->back()->with('danger', 'Something went wrong: ' . $e->getMessage());
         }
     }
 

@@ -84,13 +84,18 @@ class PlayerController extends Controller
         continue;
       }
 
-      $lastClosedDate = ($now->lessThan($closeTime)) ? $yesterday : $today;
+      $lastClosedDate = $today;
 
-      $satta['result'] = GameResult::where('game_id', $satta['post_id'])
-        ->whereDate('created_at', $lastClosedDate)
-        ->latest()
-        ->first()
-        ->result ?? 'XX';
+      if ($now->lessThan($closeTime)) {
+        $satta['result'] = 'XX';
+      } else {
+        $result = GameResult::where('game_id', $satta['post_id'])
+          ->where('created_at', '>', $closeTime)
+          ->latest()
+          ->first();
+
+        $satta['result'] = $result->result ?? 'XX';
+      }
     }
 
     $exposer = BidTransaction::where('user_id', $user->user_id)
@@ -98,7 +103,6 @@ class PlayerController extends Controller
       ->whereNull('bid_result')
       ->get();
 
-    // Return the view with the necessary data
     return view('Front', compact(
       'view',
       'homePage',

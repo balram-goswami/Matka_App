@@ -29,7 +29,7 @@
                                 @if(isset($post->post_image))
                                 <img src="{{ publicPath($post->post_image) }}" alt="">
                                 @else
-                                <img src="{{ publicPath('..\themeAssets\img\matka\matka.png') }}" alt="">
+                                <img src="{{ publicPath('..\themeAssets\img\King\King.png') }}" alt="">
                                 @endif
                                     <span style="color: white;">Jodi</span>
                             </a>
@@ -43,7 +43,7 @@
                             @if(isset($post->post_image))
                                 <img src="{{ publicPath($post->post_image) }}" alt="">
                                 @else
-                                <img src="{{ publicPath('..\themeAssets\img\matka\matka.png') }}" alt="">
+                                <img src="{{ publicPath('..\themeAssets\img\King\King.png') }}" alt="">
                                 @endif
                                     <span style="color: white;">HARF</span></a></div>
                     </div>
@@ -55,7 +55,7 @@
                             @if(isset($post->post_image))
                                 <img src="{{ publicPath($post->post_image) }}" alt="">
                                 @else
-                                <img src="{{ publicPath('..\themeAssets\img\matka\matka.png') }}" alt="">
+                                <img src="{{ publicPath('..\themeAssets\img\King\King.png') }}" alt="">
                                 @endif
                                     <span style="color: white;">CROSSING</span></a></div>
                     </div>
@@ -67,7 +67,7 @@
                             @if(isset($post->post_image))
                                 <img src="{{ publicPath($post->post_image) }}" alt="">
                                 @else
-                                <img src="{{ publicPath('..\themeAssets\img\matka\matka.png') }}" alt="">
+                                <img src="{{ publicPath('..\themeAssets\img\King\King.png') }}" alt="">
                                 @endif
                                     <span style="color: white;">ODD & EVEN</span></a></div>
                     </div>

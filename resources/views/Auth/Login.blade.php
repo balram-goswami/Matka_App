@@ -4,10 +4,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, shrink-to-fit=no">
-    <meta name="description" content="Matka App - Login Page">
+    <meta name="description" content="King App - Login Page">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="theme-color" content="#625AFA">
-    <title>Matka App - Login Page</title>
+    <title>King App - Login Page</title>
     <link rel="icon" href="img/icons/icon-72x72.png">
     <!-- CSS Libraries -->
     @include('Include.Style')
@@ -35,7 +35,7 @@
                     @if(isset($logo['headerlogo']))
                     <img class="big-logo" src="{{ publicPath($logo['headerlogo']) }}" alt="">
                     @else
-                    <img class="big-logo" src="..\themeAssets\img\matka\matka.png" alt="">
+                    <img class="big-logo" src="..\themeAssets\img\King\King.png" alt="">
                     @endif
 
                     <!-- Register Form-->
@@ -74,7 +74,7 @@
         @if(isset($logo['headerlogo']))
         <img src="{{ publicPath($logo['headerlogo']) }}" alt="Website Logo" style="width: 50px; height: auto;">
         @else
-        <img src="..\themeAssets\img\matka\matka.png" alt="Website Logo" style="width: 50px; height: auto;">
+        <img src="..\themeAssets\img\King\King.png" alt="Website Logo" style="width: 50px; height: auto;">
         @endif
         <p class="mt-2" style="color: #fff;">&copy; {{ $homePage['copyright'] }}</p>
     </footer>

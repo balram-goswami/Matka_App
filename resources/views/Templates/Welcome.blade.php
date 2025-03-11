@@ -1,5 +1,5 @@
 <div class="intro-wrapper d-flex align-items-center justify-content-center text-center">
-    <div class="container"><img class="big-logo" src="..\themeAssets\img\matka\matka.png" alt=""></div>
+    <div class="container"><img class="big-logo" src="..\themeAssets\img\King\King.png" alt=""></div>
 </div>
 
 

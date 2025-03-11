@@ -177,7 +177,7 @@ class ApiController extends Controller
         $form->save();
         $emailBody = view('Email.EnquiryRequest', compact('enquiry'));
 
-        $this->communicationService->mail(adminEmail(), 'Enquiry (Matka)', $emailBody, [], '', '', '', '');
+        $this->communicationService->mail(adminEmail(), 'Enquiry (King)', $emailBody, [], '', '', '', '');
         return Response()->json(['message' => 'Thanks for connecting'],200);
     }
     public function subscribeUs(Request $request){       
@@ -199,7 +199,7 @@ class ApiController extends Controller
 
         $emailBody2 = view('Email.SubscribeRequest', compact('subsciber'));
 
-        $this->communicationService->mail($subsciber->email, 'Subscriptions (Matka)', $emailBody2, [], '', '', '', '');
+        $this->communicationService->mail($subsciber->email, 'Subscriptions (King)', $emailBody2, [], '', '', '', '');
 
         return Response()->json(['message' => 'Thanks for subscribing'],200);
     }

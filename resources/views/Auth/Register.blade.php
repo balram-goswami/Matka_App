@@ -5,14 +5,14 @@
     <meta charset="utf-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, shrink-to-fit=no">
-    <meta name="description" content="Matka App - Register Page">
+    <meta name="description" content="King App - Register Page">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="theme-color" content="#625AFA">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <!-- The above tags *must* come first in the head, any other head content must come *after* these tags -->
     <!-- Title -->
-    <title>Matka App - Register Page</title>
+    <title>King App - Register Page</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -43,7 +43,7 @@
         <div class="background-shape"></div>
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-10 col-lg-8"><img class="big-logo" src="..\themeAssets\img\matka\matka.png"
+                <div class="col-10 col-lg-8"><img class="big-logo" src="..\themeAssets\img\King\King.png"
                         alt="">
                     <!-- Register Form-->
                     <div class="register-form mt-5">

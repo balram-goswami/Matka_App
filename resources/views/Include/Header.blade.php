@@ -12,7 +12,7 @@ $homePage = getThemeOptions('homePage');
     <meta name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, shrink-to-fit=no">
     @if(isset($headerOption['meta_description']))
-    <meta name="description" content="{{ $headerOption['meta_description'] ?? 'Matka App - Play Unlimited'}}">
+    <meta name="description" content="{{ $headerOption['meta_description'] ?? 'King App - Play Unlimited'}}">
     @endif
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="theme-color" content="#625AFA">
@@ -21,7 +21,7 @@ $homePage = getThemeOptions('homePage');
     <!-- The above tags *must* come first in the head, any other head content must come *after* these tags -->
     <!-- Title -->
     @if(isset($headerOption['meta_title']))
-    <title>{{ $headerOption['meta_title'] ?? 'Matka App - Play Unlimited'}}</title>
+    <title>{{ $headerOption['meta_title'] ?? 'King App - Play Unlimited'}}</title>
     @endif
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

@@ -105,7 +105,7 @@ $gameStatus = getThemeOptions('betSetting');
     <div class="card custom-card">
         <div class="card-header">
             <div class="d-flex align-items-center">
-                <img src="../themeAssets/img/matka/matka.png" alt="Game Logo">
+                <img src="../themeAssets/img/matka/toss.png" alt="Game Logo">
                 <div class="ms-3">
                     <h5 class="mb-0" style="color:rgb(0, 0, 0);"><b>Toss Game</b></h5>
                     <p class="market-status mb-0" style="color: green;">Market Open</p>
@@ -143,7 +143,7 @@ $gameStatus = getThemeOptions('betSetting');
                 @if (isset($satta->post_image))
                 <img src="{{ publicPath($satta->post_image) }}" alt="Game Logo">
                 @else
-                <img src="../themeAssets/img/matka/matka.png" alt="Game Logo">
+                <img src="../themeAssets/img/matka/king.png" alt="Game Logo">
                 @endif
                 <div class="ms-3">
                     <h5 class="mb-0" style="color:rgb(0, 0, 0);"><b>{{ $satta->post_title }}</b></h5>

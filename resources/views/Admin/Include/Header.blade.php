@@ -8,12 +8,12 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>{{ isset($setting['meta_title']) ? $setting['meta_title'] : 'Dashboard | Matka' }}</title>
+    <title>{{ isset($setting['meta_title']) ? $setting['meta_title'] : 'Dashboard | King' }}</title>
 
-    <meta name="keyword" content="{{ isset($setting['meta_keyword']) ? $setting['meta_keyword'] : 'Matka' }}" />
+    <meta name="keyword" content="{{ isset($setting['meta_keyword']) ? $setting['meta_keyword'] : 'King' }}" />
 
     <meta name="description"
-        content="{{ isset($setting['meta_description']) ? $setting['meta_description'] : 'Matka' }}" />
+        content="{{ isset($setting['meta_description']) ? $setting['meta_description'] : 'King' }}" />
 
     <!-- Favicon -->
     @if (isset($setting['headerfavicon']) && $setting['headerfavicon'])
@@ -37,7 +37,7 @@
                         @if (isset($setting['headerlogo']) && $setting['headerlogo'])
                         <img src="<?php echo asset($setting['headerlogo']); ?>" style="max-width: 110px;" alt class="h-auto" />
                         @else
-                        <span>Matka App </span>
+                        <span>King App </span>
                         @endif
                     </a>
 
@@ -125,7 +125,7 @@
                                         @if (isset($setting['headerlogo']))
                                         <img src="{{ publicPath($setting['headerlogo']) }}" alt class="w-px-40 h-auto rounded-circle" />
                                         @else
-                                        <img src="<?php echo assetPath('..\themeAssets\img\matka\matka.png'); ?>" alt class="w-px-40 h-auto rounded-circle" />
+                                        <img src="<?php echo assetPath('..\themeAssets\img\King\King.png'); ?>" alt class="w-px-40 h-auto rounded-circle" />
                                         @endif
                                     </div>
                                 </a>

@@ -58,7 +58,7 @@
                       <td>{{ $allMailFields->overall_rating }}</td>
                     </tr>
                     <tr>
-                      <th> Recommend Matka to friends/family? :- </th>
+                      <th> Recommend King to friends/family? :- </th>
                       <td>{{ $allMailFields->recommend_service }}</td>
                     </tr>
                     <tr>
@@ -82,7 +82,7 @@
                       <td>{{ $allMailFields->feedback_suggestion }}</td>
                     </tr>
                     <tr>
-                      <th> Happy for Matka to use your feedback :- </th>
+                      <th> Happy for King to use your feedback :- </th>
                       <td>{{ $allMailFields->market_activity }}</td>
                     </tr>
                   </tbody>                     

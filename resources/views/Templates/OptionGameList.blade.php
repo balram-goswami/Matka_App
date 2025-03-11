@@ -39,7 +39,7 @@
         <div class="card custom-card">
             <div class="card-header">
                 <div class="d-flex align-items-center">
-                    <img src="{{ isset($quizgame->post_image) ? publicPath($quizgame->post_image) : '../themeAssets/img/matka/matka.png' }}" alt="Game Logo">
+                    <img src="{{ isset($quizgame->post_image) ? publicPath($quizgame->post_image) : '../themeAssets/img/King/King.png' }}" alt="Game Logo">
                     <div class="ms-3">
                         <h5 class="mb-0" style="color:rgb(0, 0, 0);"><b>{{ $quizgame->post_title }}</b></h5>
                         @if(!$marketClosed)
@@ -82,7 +82,7 @@
         <div class="card custom-card">
             <div class="card-header">
                 <div class="d-flex align-items-center">
-                    <img src="../themeAssets/img/matka/matka.png" alt="Game Logo">
+                    <img src="../themeAssets/img/King/King.png" alt="Game Logo">
                     <div class="ms-3">
                         <h5 class="mb-0" style="color: #FFC107;">TOSS GAME</h5>
                         <p class="market-status mb-0" style="color: green;">Toss Game Coming Soon...</p>

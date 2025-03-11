@@ -9,7 +9,7 @@ $homePage = getThemeOptions('homePage');
         @if(isset($headerOption['headerlogo']))
         <div class="logo-wrapper"><a href=""><img src="{{ publicPath($headerOption['headerlogo']) }}" alt="headerLogo" style="height: 50px;"></a>
             @else
-            <div class="logo-wrapper"><a href=""><img src="..\themeAssets\img\King\King.png" alt="headerLogo" style="height: 50px;"></a>
+            <div class="logo-wrapper"><a href=""><img src="..\themeAssets\img\matka\king.png" alt="headerLogo" style="height: 50px;"></a>
                 @endif
             </div>
             <div class="navbar-logo-container d-flex align-items-center">

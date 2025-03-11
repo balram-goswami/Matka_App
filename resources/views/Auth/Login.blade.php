@@ -35,7 +35,7 @@
                     @if(isset($logo['headerlogo']))
                     <img class="big-logo" src="{{ publicPath($logo['headerlogo']) }}" alt="">
                     @else
-                    <img class="big-logo" src="..\themeAssets\img\King\King.png" alt="">
+                    <img class="big-logo" src="..\themeAssets\img\matka\king.png" alt="">
                     @endif
 
                     <!-- Register Form-->
@@ -74,7 +74,7 @@
         @if(isset($logo['headerlogo']))
         <img src="{{ publicPath($logo['headerlogo']) }}" alt="Website Logo" style="width: 50px; height: auto;">
         @else
-        <img src="..\themeAssets\img\King\King.png" alt="Website Logo" style="width: 50px; height: auto;">
+        <img src="..\themeAssets\img\matka\king.png" alt="Website Logo" style="width: 50px; height: auto;">
         @endif
         <p class="mt-2" style="color: #fff;">&copy; {{ $homePage['copyright'] }}</p>
     </footer>

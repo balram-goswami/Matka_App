@@ -43,7 +43,7 @@
         <div class="background-shape"></div>
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-10 col-lg-8"><img class="big-logo" src="..\themeAssets\img\King\King.png"
+                <div class="col-10 col-lg-8"><img class="big-logo" src="..\themeAssets\img\matka\king.png"
                         alt="">
                     <!-- Register Form-->
                     <div class="register-form mt-5">

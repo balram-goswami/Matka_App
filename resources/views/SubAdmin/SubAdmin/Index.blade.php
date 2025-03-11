@@ -51,9 +51,9 @@ $currentUser = getCurrentUser();
                     </div>
                     <div class="col-sm-5 text-center text-sm-left">
                         <div class="card-body pb-0 px-0 px-md-4" style="margin-bottom: 10px;">
-                            <img src="..\themeAssets\img\King\King.png" height="140" alt="View Badge User"
-                                data-app-dark-img="..\themeAssets\img\King\King.png"
-                                data-app-light-img="..\themeAssets\img\King\King.png" />
+                            <img src="..\themeAssets\img\matka\king.png" height="140" alt="View Badge User"
+                                data-app-dark-img="..\themeAssets\img\matka\king.png"
+                                data-app-light-img="..\themeAssets\img\matka\king.png" />
                         </div>
                     </div>
                 </div>

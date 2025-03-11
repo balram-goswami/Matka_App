@@ -125,7 +125,7 @@
                                         @if (isset($setting['headerlogo']))
                                         <img src="{{ publicPath($setting['headerlogo']) }}" alt class="w-px-40 h-auto rounded-circle" />
                                         @else
-                                        <img src="<?php echo assetPath('..\themeAssets\img\King\King.png'); ?>" alt class="w-px-40 h-auto rounded-circle" />
+                                        <img src="<?php echo assetPath('..\themeAssets\img\matka\king.png'); ?>" alt class="w-px-40 h-auto rounded-circle" />
                                         @endif
                                     </div>
                                 </a>

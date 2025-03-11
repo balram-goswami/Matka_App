@@ -22,9 +22,9 @@ $homePage = getThemeOptions('header');
                                 data-app-dark-img="{{ publicPath($homePage['headerlogo']) }}"
                                 data-app-light-img="{{ publicPath($homePage['headerlogo']) }}" />
                             @else
-                            <img src="..\themeAssets\img\King\King.png" height="140" alt="View Badge User"
-                                data-app-dark-img="..\themeAssets\img\King\King.png"
-                                data-app-light-img="..\themeAssets\img\King\King.png" />
+                            <img src="..\themeAssets\img\matka\king.png" height="140" alt="View Badge User"
+                                data-app-dark-img="..\themeAssets\img\matka\king.png"
+                                data-app-light-img="..\themeAssets\img\matka\king.png" />
                             @endif
                         </div>
                     </div>

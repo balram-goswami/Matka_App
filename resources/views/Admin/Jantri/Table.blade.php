@@ -4,7 +4,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-header">Jantri Table</h5>
-                <h5 class="card-header">Result: {{ $gameResult->result ?? 'Result Not Declared' }}</h5>
+                <h5 class="card-header">Jantri Date: {{ $gameResult->result ?? 'Result Not Declared' }}</h5>
             </div>
             <div class="table-responsive text-nowrap">
                 @php
@@ -47,7 +47,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-header">Jantri Table</h5>
-                <h5 class="card-header">Result: {{ $gameResult->result ?? 'Result Not Declared' }}</h5>
+                <h5 class="card-header">Result Date: {{ $date }}</h5>
             </div>
             <div class="table-responsive text-nowrap">
                 @php
@@ -60,6 +60,7 @@
                             <th>Numbers</th>
                             <th>My Earning (Total: {{ number_format($totalEarnings, 2) }})</th>
                             <th>Loss Amount (Total: {{ number_format($totalLoss, 2) }})</th>
+                            <th>Result</th>
                         </tr>
                     </thead>
                     <tbody class="table-border-bottom-0">
@@ -79,6 +80,7 @@
                                     <span class="badge bg-label-secondary me-1">{{ number_format($bid ? $bid->total_win : 0, 2) }}</span>
                                     @endif
                                 </td>
+                                <td>{{ $bid->bid_result ?? '-' }}</td>
                             </tr>
                             @endfor
                     </tbody>
@@ -107,6 +109,7 @@
                             <th>Type</th>
                             <th>My Earning (Total: {{ number_format($totalEarnings, 2) }})</th>
                             <th>Loss Amount (Total: {{ number_format($totalLoss, 2) }})</th>
+                            <th>Result</th>
                         </tr>
                     </thead>
                     <tbody class="table-border-bottom-0">
@@ -123,6 +126,7 @@
                                 <span class="badge bg-label-secondary me-1">{{ number_format($data ? $data->total_win: 0, 2) }}</span>
                                 @endif
                             </td>
+                            <td>{{ $data->bid_result ?? '-' }}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -151,6 +155,7 @@
                             <th>Answer</th>
                             <th>My Earning (Total: {{ number_format($totalEarnings, 2) }})</th>
                             <th>Loss Amount (Total: {{ number_format($totalLoss, 2) }})</th>
+                            <th>Result</th>
                         </tr>
                     </thead>
                     <tbody class="table-border-bottom-0">
@@ -167,6 +172,7 @@
                                 <span class="badge bg-label-secondary me-1">{{ number_format($data ? $data->total_win: 0, 2) }}</span>
                                 @endif
                             </td>
+                            <td>{{ $data->bid_result ?? '-' }}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -194,6 +200,7 @@
                             <th>Answer</th>
                             <th>My Earning (Total: {{ number_format($totalEarnings, 2) }})</th>
                             <th>Loss Amount (Total: {{ number_format($totalLoss, 2) }})</th>
+                            <th>Result</th>
                         </tr>
                     </thead>
                     <tbody class="table-border-bottom-0">
@@ -210,6 +217,7 @@
                                 <span class="badge bg-label-secondary me-1">{{ number_format($data ? $data->total_win: 0, 2) }}</span>
                                 @endif
                             </td>
+                            <td>{{ $data->bid_result ?? '-' }}</td>
                         </tr>
                         @endforeach
                     </tbody>

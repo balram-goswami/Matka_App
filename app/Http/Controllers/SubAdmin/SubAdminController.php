@@ -281,37 +281,37 @@ class SubAdminController extends Controller
             $jantriData = BidTransaction::where('game_id', $game_id)
                 ->where('harf_digit', NULL)
                 ->whereDate('updated_at', $date)
-                ->selectRaw('answer, SUM(subadmin_dif) as total_bid, SUM(win_amount) as total_win, result_status')
-                ->groupBy('answer', 'result_status')
+                ->selectRaw('answer, SUM(subadmin_dif) as total_bid, SUM(win_amount) as total_win, result_status, bid_result')
+                ->groupBy('answer', 'result_status', 'bid_result')
                 ->orderBy('answer', 'asc')
                 ->get();
 
             $jantriOddEven = BidTransaction::where('game_id', $game_id)
                 ->where('harf_digit', 'oddEven')
-                ->whereDate('updated_at', $date)  // Corrected condition
-                ->selectRaw('answer, SUM(subadmin_dif) as total_bid, SUM(win_amount) as total_win, result_status')
-                ->groupBy('answer', 'result_status')
+                ->whereDate('updated_at', $date)
+                ->selectRaw('answer, SUM(subadmin_dif) as total_bid, SUM(win_amount) as total_win, result_status, bid_result')
+                ->groupBy('answer', 'result_status', 'bid_result')
                 ->orderBy('answer', 'asc')
                 ->get();
 
             $jantriandar = BidTransaction::where('game_id', $game_id)
                 ->where('harf_digit', 'Andar')
-                ->whereDate('updated_at', $date)  // Corrected condition
-                ->selectRaw('answer, SUM(subadmin_dif) as total_bid, SUM(win_amount) as total_win, result_status')
-                ->groupBy('answer', 'result_status')
+                ->whereDate('updated_at', $date)
+                ->selectRaw('answer, SUM(subadmin_dif) as total_bid, SUM(win_amount) as total_win, result_status, bid_result')
+                ->groupBy('answer', 'result_status', 'bid_result')
                 ->orderBy('answer', 'asc')
                 ->get();
 
             $jantribahar = BidTransaction::where('game_id', $game_id)
                 ->where('harf_digit', 'Bahar')
-                ->whereDate('updated_at', $date)  // Corrected condition
-                ->selectRaw('answer, SUM(subadmin_dif) as total_bid, SUM(win_amount) as total_win, result_status')
-                ->groupBy('answer', 'result_status')
+                ->whereDate('updated_at', $date)
+                ->selectRaw('answer, SUM(subadmin_dif) as total_bid, SUM(win_amount) as total_win, result_status, bid_result')
+                ->groupBy('answer', 'result_status', 'bid_result')
                 ->orderBy('answer', 'asc')
                 ->get();
 
             $view = 'SubAdmin.Jantri.Table';
-            return view('Admin', compact('view', 'jantriData', 'gameType', 'gameResult', 'jantriOddEven', 'jantriandar', 'jantribahar'));
+            return view('Admin', compact('view', 'jantriData', 'gameType', 'gameResult', 'jantriOddEven', 'jantriandar', 'jantribahar', 'date'));
         }
 
         return redirect()->back()->with('danger', 'No Jantri Found.');

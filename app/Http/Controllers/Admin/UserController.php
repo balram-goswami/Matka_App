@@ -606,6 +606,7 @@ class UserController extends Controller
             $game = $getgame->where('post_id', $game_id)->first();
 
             $jantriData = BidTransaction::where('game_id', $game_id)
+                ->where('status', 'submitted')
                 ->selectRaw('answer, SUM(admin_dif) as total_bid, SUM(winamount_from_admin) as total_win, result_status')
                 ->groupBy('answer', 'result_status')
                 ->orderBy('answer', 'asc')
@@ -624,6 +625,7 @@ class UserController extends Controller
 
             $jantriData = BidTransaction::where('game_id', $game_id)
                 ->where('harf_digit', NULL)
+                ->where('status', 'submitted')
                 ->whereDate('created_at', $date)
                 ->selectRaw('answer, SUM(admin_dif) as total_bid, SUM(winamount_from_admin) as total_win, result_status, bid_result')
                 ->groupBy('answer', 'result_status', 'bid_result')
@@ -632,7 +634,8 @@ class UserController extends Controller
 
             $jantriOddEven = BidTransaction::where('game_id', $game_id)
                 ->where('harf_digit', 'oddEven')
-                ->whereDate('created_at', $date) 
+                ->where('status', 'submitted')
+                ->whereDate('created_at', $date)
                 ->selectRaw('answer, SUM(subadmin_dif) as total_bid, SUM(win_amount) as total_win, result_status, bid_result')
                 ->groupBy('answer', 'result_status', 'bid_result')
                 ->orderBy('answer', 'asc')
@@ -640,7 +643,8 @@ class UserController extends Controller
 
             $jantriandar = BidTransaction::where('game_id', $game_id)
                 ->where('harf_digit', 'Andar')
-                ->whereDate('created_at', $date) 
+                ->where('status', 'submitted')
+                ->whereDate('created_at', $date)
                 ->selectRaw('answer, SUM(subadmin_dif) as total_bid, SUM(win_amount) as total_win, result_status, bid_result')
                 ->groupBy('answer', 'result_status', 'bid_result')
                 ->orderBy('answer', 'asc')
@@ -648,7 +652,8 @@ class UserController extends Controller
 
             $jantribahar = BidTransaction::where('game_id', $game_id)
                 ->where('harf_digit', 'Bahar')
-                ->whereDate('created_at', $date) 
+                ->where('status', 'submitted')
+                ->whereDate('created_at', $date)
                 ->selectRaw('answer, SUM(subadmin_dif) as total_bid, SUM(win_amount) as total_win, result_status, bid_result')
                 ->groupBy('answer', 'result_status', 'bid_result')
                 ->orderBy('answer', 'asc')
